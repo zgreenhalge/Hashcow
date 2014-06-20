@@ -5,8 +5,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-import setUp.SimpleSlickGame;
-
 public class Main extends StateBasedGame {
 
 	private static AppGameContainer appgc;

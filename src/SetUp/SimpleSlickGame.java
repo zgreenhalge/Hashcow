@@ -1,4 +1,4 @@
-package setUp;
+package SetUp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
