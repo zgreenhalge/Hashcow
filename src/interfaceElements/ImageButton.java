@@ -1,44 +1,53 @@
     package interfaceElements;
      
     import org.newdawn.slick.Animation;
-    import org.newdawn.slick.Color;
-    import org.newdawn.slick.Graphics;
-    import org.newdawn.slick.Image;
-    import org.newdawn.slick.SlickException;
-    import org.newdawn.slick.gui.GUIContext;
-    import org.newdawn.slick.gui.MouseOverArea;
-    import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.gui.GUIContext;
+import org.newdawn.slick.gui.MouseOverArea;
+import org.newdawn.slick.state.StateBasedGame;
      
-    import resourcemanager.SoundManager;
+
+import resourceManager.SoundManager;
      
     public class ImageButton extends MouseOverArea {
      
-        private boolean activated = false;
+        private boolean enabled = false;
         private boolean lastMouseOver = false;
-        private Animation animation;
-        private Image inactiveButton;
-        private Image activeButton;
         private StateBasedGame sbg;
         private int stateID;
+        private ButtonAction action;
      
-        public ImageButton(GUIContext guic, Animation animation, int x, int y,
-                StateBasedGame sbg, int stateID) throws SlickException {
-            super(guic, animation.getImage(1), x, y);
+        /**
+         * 
+         * @param guic - the GameContainer
+         * @param animation - Animation consisting of three states: 1-the normal button image, 2-the mouse over image, 3-the button clicked image
+         * @param x - x value of top left
+         * @param y - y value of top left
+         * @param sbg - the current game
+         * @param stateID - the state in which this button exists
+         * @param action - the action the button will take when pressed
+         * @throws SlickException - when something goes wrong
+         */
+        public ImageButton(GameContainer gc, Animation animation, int x, int y,
+                StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
+            super((GUIContext)gc, animation.getImage(0), x, y);
             super.setMouseDownColor(Color.red);
             super.setMouseOverColor(Color.blue);
-            this.animation = animation;
+            super.setMouseOverImage(animation.getImage(1));
+            super.setMouseDownImage(animation.getImage(2));
             this.sbg = sbg;
             this.stateID = stateID;
-     
-            inactiveButton = new Image("sprites/menu/button.png");
-            activeButton = new Image("sprites/menu/button2.png");
+            this.action = action;
+            
         }
      
         @Override
         public void mouseMoved(int oldx, int oldy, int newx, int newy) {
             if (sbg.getCurrentStateID() == stateID) {
-                if (isMouseOver() && !lastMouseOver && !isActivated()) {
-                    SoundManager.getInstance().getButtonOver().play(1, (float) .2);
+                if (isMouseOver() && !lastMouseOver && !isEnabled()) {
+                    //SoundManager.playSound(SoundManager.BUTTON_HOVER);
                     lastMouseOver = true;
                 } else if (!isMouseOver()) {
                     lastMouseOver = false;
@@ -47,32 +56,26 @@
             super.mouseMoved(oldx, oldy, newx, newy);
         }
      
-        @Override
-        public void render(GUIContext guic, Graphics g) {
-            if (activated) {
-                g.drawImage(activeButton, getX() - 7, getY() - 5);
-                g.drawAnimation(animation, getX() + 2, getY() + 2);
-            } else {
-                g.drawImage(inactiveButton, getX() - 7, getY() - 5);
-                super.render(guic, g);
-            }
+        public boolean isEnabled() {
+            return enabled;
         }
      
-        public boolean isActivated() {
-            return activated;
-        }
-     
-        protected void setActivated(boolean b) {
-            activated = b;
+        protected void setEnabled(boolean b) {
+            enabled = b;
         }
      
         @Override
         public void mouseClicked(int button, int x, int y, int clickCount) {
-            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-                activated = !activated;
-                SoundManager.getInstance().getButtonClick().play();
-            }
-            super.mouseClicked(button, x, y, clickCount);
+        	if(enabled){
+	            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
+	                //SoundManager.playSound(SoundManager.BUTTON_CLICKED);
+	            	action.activate();
+	            }
+	            super.mouseClicked(button, x, y, clickCount);
+        	}
+        	else{
+        		//SoundManager.playSound(SoundManager.BUTTON_DISABLED);
+        	}
         }
      
     }

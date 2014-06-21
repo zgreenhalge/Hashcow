@@ -46,7 +46,8 @@ public class SoundManager {
     
     public static boolean isPlaying(int id){
         switch(id){
-            case 0: 
+            case 0: return menuMusic.playing();
+            default: return false;
         }
     }
             
