@@ -6,9 +6,9 @@
 
 package resourceManager;
 
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -16,46 +16,87 @@ import org.newdawn.slick.util.ResourceLoader;
  */
 public class SoundManager {
     
+	private static SoundManager INSTANCE;
+	
+	private static float volume;
+	private static float pitch;
     private static Sound menuMusic;
-    public final int MAIN_MENU = 0;
+    public static final int MAIN_MENU = 0;
     
-    private SoundManager(){
-        //enforce static class, never instantiate this
+    
+    public SoundManager(GameContainer container) throws SlickException{
+    	volume = container.getMusicVolume();
+    	pitch = 1.0f;
+        menuMusic = new Sound("res/MainMenu.wav");
+        INSTANCE = this;
     }
     
-    public static void playSound(int id){
+    /**
+     * Retrieve the current SoundManager
+     * @return the SoundManager Instance currently in use
+     */
+    public static SoundManager getInstance(){
+    	return INSTANCE;
+    }
+    
+    public void setVolume(float f){
+    	if(f <= 1.0f && f >= 0f)
+    		volume = f;
+    }
+    
+    public float getVolume(){
+    	return volume;
+    }
+    
+    public void setPitch(float f){
+    	if(f <= 1.0f && f >= 0f)
+    		pitch = f;
+    }
+    
+    public float getPitch(){
+    	return pitch;
+    }
+    
+    public void playSound(int id){
         switch(id){
-            case 0: menuMusic.play(); break;
+            case 0: menuMusic.play(pitch, volume); break;
             default: break;
         }
     }
     
-    public static void loopSound(int id){
+    public void playSound(int id, int pitch, int volume){
         switch(id){
-            case 0: menuMusic.loop(); break;
+            case 0: menuMusic.play(pitch, volume); break;
             default: break;
         }
     }
     
-    public static void stopSound(int id){
+    public void loopSound(int id){
+        switch(id){
+            case 0: menuMusic.loop(pitch, volume); break;
+            default: break;
+        }
+    }
+    
+    public void loopSound(int id, int pitch, int volume){
+        switch(id){
+            case 0: menuMusic.loop(pitch, volume); break;
+            default: break;
+        }
+    }
+    
+    public void stopSound(int id){
         switch(id){
             case 0: menuMusic.stop(); break;
             default: break;
         }
     }
     
-    public static boolean isPlaying(int id){
+    public boolean isPlaying(int id){
         switch(id){
             case 0: return menuMusic.playing();
             default: return false;
         }
     }
             
-    /**
-     * Loads all resources used by the SoundManager
-     * @throws org.newdawn.slick.SlickException when there are errors accessing the files
-     */
-    public static void init() throws SlickException{
-        menuMusic = new Sound(ResourceLoader.getResourceAsStream("res/MainMenu.wav"), "Main Menu");
-    }
 }

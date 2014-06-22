@@ -1,6 +1,6 @@
     package interfaceElements;
      
-    import org.newdawn.slick.Animation;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -11,7 +11,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.SoundManager;
      
-    public class ImageButton extends MouseOverArea {
+    public class ImageButton extends MouseOverArea implements Button {
      
         private boolean enabled = false;
         private boolean lastMouseOver = false;
@@ -47,7 +47,7 @@ import resourceManager.SoundManager;
         public void mouseMoved(int oldx, int oldy, int newx, int newy) {
             if (sbg.getCurrentStateID() == stateID) {
                 if (isMouseOver() && !lastMouseOver && !isEnabled()) {
-                    //SoundManager.playSound(SoundManager.BUTTON_HOVER);
+                    //SoundManager.getInstance().playSound(SoundManager.BUTTON_OVER);
                     lastMouseOver = true;
                 } else if (!isMouseOver()) {
                     lastMouseOver = false;
@@ -60,7 +60,7 @@ import resourceManager.SoundManager;
             return enabled;
         }
      
-        protected void setEnabled(boolean b) {
+        public void setEnabled(boolean b) {
             enabled = b;
         }
      
@@ -68,13 +68,13 @@ import resourceManager.SoundManager;
         public void mouseClicked(int button, int x, int y, int clickCount) {
         	if(enabled){
 	            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-	                //SoundManager.playSound(SoundManager.BUTTON_CLICKED);
+	                //SoundManager.getInstance().playSound(SoundManager.BUTTON_CLICKED);
 	            	action.activate();
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	}
         	else{
-        		//SoundManager.playSound(SoundManager.BUTTON_DISABLED);
+        		//SoundManager.getInstance().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
      

@@ -8,6 +8,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import resourceManager.SoundManager;
+
 public class SimpleSlickGame extends StateBasedGame{
 	
 	private static AppGameContainer appgc;
