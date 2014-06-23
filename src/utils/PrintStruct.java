@@ -49,7 +49,7 @@ public class PrintStruct implements Comparable<PrintStruct>{
 			g.drawString(Time.setDate(timeRecorded).currentTime() + ": " + exception.getMessage(), x, topY);
 			for(StackTraceElement ste: st){
 				num++;
-				g.drawString("  " + ste.getFileName()+":"+ste.getLineNumber() + " " + ste.getMethodName(), x, topY+(num*lh));
+				g.drawString("      " + ste.getFileName()+":"+ste.getLineNumber() + " " + ste.getMethodName(), x, topY+(num*lh));
 			}
 			return st.length+1;
 		}else{

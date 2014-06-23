@@ -1,4 +1,4 @@
-package interfaceElements;
+package interfaceElements.buttonActions;
 
 import org.newdawn.slick.GameContainer;
 

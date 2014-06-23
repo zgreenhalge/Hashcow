@@ -13,7 +13,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
-public class Logger implements Subject{
+public class Logger{
 
 	
     private Logger(){}
@@ -116,8 +116,6 @@ public class Logger implements Subject{
 		g.setFont(ttfont);
 		//g.setColor(Color.darkGray);
 		//g.fillRect(X, Y, (float)300, (float)(lineHeight*PRINT_LENGTH)); //paint background
-		
-
 		int y = 0;
 		int i = printList.size();
 		while(y < PRINT_LENGTH && i > 0){
@@ -136,30 +134,20 @@ public class Logger implements Subject{
 		g.setFont(prevFont);
 	}
 
-	/**
-	 * Silently log the exception. If dev mode is active, all calls are printed. 
-	 * @param e - the exception to be logged
-	 */
 	public static void log(Exception e) {
            if(dev)
                    loudLog(e);
            else{
-	           writeOut.add(Time.updateCal().dateTime() + ": " + e.getMessage());
+	           writeOut.add("["+Time.updateCal().dateTime()+"]: " + e.getMessage());
 	           if(!e.getLocalizedMessage().equals(e.getMessage()))
-	           	writeOut.add(" " + e.getLocalizedMessage());
+	        	   writeOut.add(" " + e.getLocalizedMessage());
 	           for(StackTraceElement ste: e.getStackTrace()){
-	                   writeOut.add("   " + ste.toString());
-	           }
-	           writeOut.add("#####################################");
+	               writeOut.add("   " + ste.toString());
+	           };
 	           printList.add(new PrintStruct(e));
 		}
 	}
 
-	/**
-	 * Logs the given input, equivalent to Stream.&nbsp;print(String).&nbsp;
-	 * If dev mode is active, all calls are printed.
-	 * @param input - the String to be recorded
-	 */
 	@Deprecated
 	public static void log(String input) {
 		if(dev) 
@@ -170,34 +158,23 @@ public class Logger implements Subject{
 		}
 	}
 	
-	/**
-	 * Logs the given input as a new line.&nbsp; Equivalent to Stream.&nbsp;println(String).&nbsp;
-	 * If dev mode is active, all calls are printed. 
-	 * @param input - the String to be recorded
-	 */
 	public static void logLine(String input){
 		if(dev) 
 			loudLogLine(input);
-		else
+		else{
 			writeOut.add(input);
+			printList.add(new PrintStruct(input));
+		}
 	}
 
-	/**
-	 * Logs and prints the given input, equivalent to Stream.&nbsp;print(String).&nbsp;
-	 * @param input - the String to be recorded
-	 */
 	@Deprecated
 	public static void loudLog(String input){
 		System.out.print(input);
 		writeOut.get(writeOut.size()-1).concat(input);
 		printList.add(new PrintStruct(input));
-		render();
+		alertObservers();
 	}
 
-	/**
-	 * Logs the given input.&nbsp; This method will never print out.
-	 * @param input
-	 */
 	public static void logNote(String input){
 		writeOut.add(input);
 		printList.add(new PrintStruct(input));
@@ -208,56 +185,41 @@ public class Logger implements Subject{
 		writeOut.add(input);
 	}
 	
-	/**
-	 * Logs and prints the given input, equivalent to Stream.&nbsp;println(String).&nbsp;
-	 * @param input - the String to be recorded
-	 */
 	public static void loudLogLine(String input){
 		System.out.println(input);
 		writeOut.add(input);
 		printList.add(new PrintStruct(input));
-		render();
+		alertObservers();
 	}
 	
-	/**
-	 * Logs and prints the stack trace of the given exception.
-	 * @param e - the Exception to be recorded
-	 */
 	public static void loudLog(Exception e) {
 		System.out.flush();
 		System.err.flush();
-                writeOut.add("At " + Time.updateCal().dateTime());
-		writeOut.add("#####################################");
-		writeOut.add("Exception: " + e.getMessage());
+		writeOut.add("["+Time.updateCal().dateTime()+"]:" + e.getMessage());
 		writeOut.add(" " + e.getLocalizedMessage());
 		for(StackTraceElement ste: e.getStackTrace()){
 			writeOut.add(ste.toString());
 		}
-		writeOut.add("#####################################");
 		PrintStruct temp = new PrintStruct(e);
 		System.out.println(temp.getMessage());
 		printList.add(temp);
-		render();
+		alertObservers();
 	}
 
-	@Override
-	public void registerObserver(Observer o) {
+	public static void registerObserver(Observer o) {
 		obs.add(o);
 	}
 
-	@Override
-	public void unregisterObserver(Observer o) {
+	public static void unregisterObserver(Observer o) {
 		obs.remove(o);
 	}
 
-	@Override
-	public void alertObservers() {
+	public static void alertObservers() {
 		for(Observer o: obs)
 			o.alert(ID);
 	}
 
-	@Override
-	public int getID() {
+	public static int getID() {
 		return ID;
 	}
 

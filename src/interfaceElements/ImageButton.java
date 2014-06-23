@@ -1,5 +1,7 @@
 package interfaceElements;
      
+import interfaceElements.buttonActions.ButtonAction;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -8,6 +10,7 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
      
+
 
 import resourceManager.SoundManager;
 import utils.Logger;
@@ -21,6 +24,7 @@ import utils.Logger;
         private ButtonAction action;
         private String name;
         private static int num = 0;
+        private boolean report;
      
         /**
          * 
@@ -47,18 +51,6 @@ import utils.Logger;
             
         }
      
-        @Override
-        public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-            if (sbg.getCurrentStateID() == stateID) {
-                if (isMouseOver() && !lastMouseOver && !isEnabled()) {
-                    //SoundManager.getInstance().playSound(SoundManager.BUTTON_OVER);
-                    lastMouseOver = true;
-                } else if (!isMouseOver()) {
-                    lastMouseOver = false;
-                }
-            }
-            super.mouseMoved(oldx, oldy, newx, newy);
-        }
      
         public boolean isEnabled() {
             return enabled;
@@ -67,31 +59,52 @@ import utils.Logger;
         public void setEnabled(boolean b) {
             enabled = b;
         }
+        
+        public void setReport(boolean b){
+        	report = b;
+        }
+        
+        public boolean isReporting(){
+        	return report;
+        }
+
+        @Override
+        public String getName() {
+        	return name;
+        }
+        
+        @Override
+        public Button setName(String s) {
+        	name = s;
+        	return this;
+        }
+        
+        @Override
+        public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+        	if (sbg.getCurrentStateID() == stateID) {
+        		if (isMouseOver() && !lastMouseOver && !isEnabled()) {
+        			SoundManager.getManager().playSound(SoundManager.BUTTON_OVER);
+        			lastMouseOver = true;
+        		} else if (!isMouseOver()) {
+        			lastMouseOver = false;
+        		}
+        	}
+        	super.mouseMoved(oldx, oldy, newx, newy);
+        }
      
         @Override
         public void mouseClicked(int button, int x, int y, int clickCount) {
         	if(enabled){
 	            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-	                //SoundManager.getInstance().playSound(SoundManager.BUTTON_CLICKED);
-	            	action.activate();
-	            	Logger.logLine(name + " pressed.");
+	                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
+	                if(action != null) action.activate();
+	            	if(report) Logger.logLine(name + " pressed.");
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	}
         	else{
-        		//SoundManager.getInstance().playSound(SoundManager.BUTTON_DISABLED);
+        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public Button setName(String s) {
-			name = s;
-			return this;
-		}
-     
+ 
     }

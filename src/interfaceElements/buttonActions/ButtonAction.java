@@ -1,4 +1,4 @@
-package interfaceElements;
+package interfaceElements.buttonActions;
 
 public class ButtonAction {
 

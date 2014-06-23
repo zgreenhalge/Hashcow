@@ -1,6 +1,8 @@
     package interfaceElements;
      
-    import java.awt.Font;
+    import interfaceElements.buttonActions.ButtonAction;
+
+import java.awt.Font;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -12,6 +14,7 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
 
+import resourceManager.SoundManager;
 import utils.Logger;
      
     public class TextButton extends MouseOverArea implements Button{
@@ -29,6 +32,7 @@ import utils.Logger;
         private String name;
         private static int num = 0;
         private int oldX, oldY, bigX, bigY;
+        private boolean report = false;
      
         public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
         	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
@@ -38,7 +42,7 @@ import utils.Logger;
             this.stateID = stateID;
             this.action = action;
             borderColor = Color.darkGray;
-            biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()), false);
+            biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()*(11/10)), false);
             name = "State"+stateID+"TextButton"+(num++);
             oldX = x;
             oldY = y;
@@ -74,6 +78,25 @@ import utils.Logger;
         	borderColor = c;
         }
         
+        @Override
+        public String getName() {
+        	return name;
+        }
+        
+        @Override
+        public Button setName(String s) {
+        	name = s;
+        	return this;
+        }
+        
+        public void setReport(boolean b){
+        	report = b;
+        }
+        
+        public boolean isReporting(){
+        	return report;
+        }
+
         @Override
         public void render(GUIContext guic, Graphics g) {
             g.setFont(ttfont);
@@ -113,12 +136,16 @@ import utils.Logger;
             super.render(guic, g);
             g.setColor(standard);
         }
+        
+        private void renderClick(){
+        	
+        }
      
         @Override
         public void mouseMoved(int oldx, int oldy, int newx, int newy) {
             if (sbg.getCurrentStateID() == stateID && isEnabled){//if in proper state & button is active
                 if (isMouseOver() && !lastMouseOver){//if mouse is over && wasn't previously over
-                    //SoundManager.getInstance().playSound(SoundManager.BUTTON_OVER); //play sound
+                    SoundManager.getManager().playSound(SoundManager.BUTTON_OVER); //play sound
                     lastMouseOver = true;	//make sure sound won't repeat
                 } else if (!isMouseOver()) { //if mouse is not over button
                     lastMouseOver = false;	//allow sound to be played again
@@ -131,25 +158,16 @@ import utils.Logger;
         public void mouseClicked(int button, int x, int y, int clickCount) {
         	if(isEnabled){
         		if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-	                //SoundManager.getInstance().playSound(SoundManager.BUTTON_CLICK);
-	            	action.activate();
-	            	Logger.logLine(name + " pressed.");
+        			if(report) Logger.logLine(name + " pressed.");
+	                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
+	                renderClick();
+	                if(action != null) action.activate();
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	} else{
-        		//SoundManager.getInstance().play
+        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
 
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public Button setName(String s) {
-			name = s;
-			return this;
-		}
      
     }

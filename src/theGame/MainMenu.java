@@ -1,39 +1,83 @@
 package theGame;
 
 
+import interfaceElements.Button;
+import interfaceElements.TextButton;
+import interfaceElements.buttonActions.ExitGameAction;
+import interfaceElements.buttonActions.UnImplementedAction;
+
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
+import resourceManager.SoundManager;
 import utils.Logger;
 
 public class MainMenu extends HCGameState {
 
 	public static final int ID = 001;
+	private SoundManager sm;
+	private TextButton NEW;
+	private TextButton LOAD;
+	private TextButton SETTINGS;
+	private TextButton EXIT;
+	private ArrayList<Button> buttons;
+	
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		super.init(container, game);
 		try{Logger.init(new File("logs"), container);}
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		super.init(container, game);
+		sm = SoundManager.getManager();
+		SoundManager.setVolume(.5f);
+		sm.loopSound(SoundManager.MAIN_MENU);
+		Font buttonFont = new Font("Times New Roman", Font.ITALIC, 18);
+		TrueTypeFont ttfont = new TrueTypeFont(buttonFont, false);
+		NEW = new TextButton(container, buttonFont, "New Game",
+				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
+				game, this.getID(), 
+				new UnImplementedAction());
+		LOAD = new TextButton(container, buttonFont, "Load Game",
+				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
+				game, this.getID(), 
+				new UnImplementedAction());
+		SETTINGS = new TextButton(container, buttonFont, "Settings",
+				container.getWidth()/2-ttfont.getWidth("Settings")/2, container.getHeight()-ttfont.getLineHeight()*4,
+				game, this.getID(),
+				new UnImplementedAction());
+		EXIT = new TextButton(container, buttonFont, "Exit",
+				container.getWidth()/2-ttfont.getWidth("Exit")/2, container.getHeight()-ttfont.getLineHeight()*3,
+				game, this.getID(), 
+				new ExitGameAction());
+		buttons = new ArrayList<Button>();
+		buttons.add(NEW);
+		buttons.add(LOAD);
+		buttons.add(SETTINGS);
+		buttons.add(EXIT);
+		for(Button b: buttons)
+			b.setReport(true);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		Font awtFont = new Font("Verdana", Font.BOLD, 24);
-	    g.setFont(new TrueTypeFont(awtFont, false));
-	    g.drawString("THERE IS NO MENU", 275, 200);
+		g.setAntiAlias(true);
+	    for(Button b: buttons){
+	    	b.render((GUIContext)container, g);
+	    }
 	    super.render(container, game, g);
 	}
 

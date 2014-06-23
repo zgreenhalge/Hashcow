@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import interfaceElements.Button;
-import interfaceElements.ButtonAction;
 import interfaceElements.TextButton;
-import interfaceElements.ToggleFPSAction;
+import interfaceElements.buttonActions.ButtonAction;
+import interfaceElements.buttonActions.ToggleFPSAction;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -58,8 +58,8 @@ public class TestState extends BasicGameState {
 		mouseWasDown = false;
 		buttonFont = new Font("Verdana", Font.PLAIN, 12);
 		ttfont = new TrueTypeFont(buttonFont, false);
-		sm = new SoundManager(gc);
-		sm.setVolume(0.25f);
+		sm = SoundManager.getManager();
+		SoundManager.setVolume(1.0f);
 		sm.loopSound(SoundManager.MAIN_MENU);
 		toggleFPSButton = new TextButton(gc,
 				buttonFont,

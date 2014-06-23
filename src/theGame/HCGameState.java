@@ -13,11 +13,12 @@ import org.newdawn.slick.state.StateBasedGame;
 import utils.Logger;
 import utils.Observer;
 
-public abstract class HCGameState extends BasicGameState implements Observer {
+public class HCGameState extends BasicGameState implements Observer {
 
 	private boolean displayLog;
+	private final Object displayLock = new Object();
 	private int logDelta;
-	private static final int DISPLAY_LENGTH = 10000; //how long to display the log 
+	private static final int DISPLAY_LENGTH = 3000; //how long to display the log 
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException{
@@ -29,6 +30,7 @@ public abstract class HCGameState extends BasicGameState implements Observer {
 			}
 		}
 		Logger.logNote("State " + getID() + " is initializing");
+		Logger.registerObserver(this);
 	}
 
 	@Override
@@ -36,21 +38,27 @@ public abstract class HCGameState extends BasicGameState implements Observer {
 		Logger.setContainer(container);
 		if(displayLog || logDelta < DISPLAY_LENGTH)
 			Logger.render();
+		g.drawString("logDelta: " + logDelta, 0, 40);
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		logDelta += delta;
+		synchronized(displayLock){logDelta += delta;}
 		if(container.getInput().isKeyPressed(Input.KEY_GRAVE))
-			logDelta = 0;
+			displayLog = !displayLog;
 	}
 
 	public void alert(int caller_id){
-		if(caller_id == Logger.ID)
-			logDelta = 0;
+		if(caller_id == Logger.ID){
+			Logger.logLine("Alert recieved from Logger");
+			synchronized(displayLock){logDelta = 0;}
+		}
 	}
 	
+	//MUST BE OVERRIDDEN IN EACH SUB CLASS
 	@Override
-	public abstract int getID();
+	public int getID(){
+		return -1;
+	}
 
 }
