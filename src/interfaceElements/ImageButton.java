@@ -1,4 +1,4 @@
-    package interfaceElements;
+package interfaceElements;
      
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -89,9 +89,9 @@ import utils.Logger;
 		}
 
 		@Override
-		public void setName(String s) {
+		public Button setName(String s) {
 			name = s;
-			
+			return this;
 		}
      
     }

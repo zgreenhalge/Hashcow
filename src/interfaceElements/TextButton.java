@@ -17,7 +17,6 @@ import utils.Logger;
     public class TextButton extends MouseOverArea implements Button{
      
         private TrueTypeFont ttfont;
-        private Font font;
         private String text;
         private boolean lastMouseOver = false;
         private StateBasedGame sbg;
@@ -29,11 +28,11 @@ import utils.Logger;
         private Color borderColor;
         private String name;
         private static int num = 0;
+        private int oldX, oldY, bigX, bigY;
      
         public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
         	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
         	this.ttfont = new TrueTypeFont(font, false);
-            this.font = font;
             this.text = text;
             this.sbg = sbg;
             this.stateID = stateID;
@@ -41,6 +40,10 @@ import utils.Logger;
             borderColor = Color.darkGray;
             biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()), false);
             name = "State"+stateID+"TextButton"+(num++);
+            oldX = x;
+            oldY = y;
+            bigX = x - (biggerFont.getWidth(text) - ttfont.getWidth(text));
+            bigY = y - (biggerFont.getLineHeight() - ttfont.getLineHeight());
         }
      
         public void setEnabled(boolean b) {
@@ -80,6 +83,11 @@ import utils.Logger;
                 if (isMouseOver()) {
                     g.setFont(biggerFont);
                     g.setColor(new Color(200, 50, 30));
+                    setX(bigX);
+                    setY(bigY);
+                }else { 
+                	setX(oldX);
+                    setY(oldY);
                 }
             } else {
                 g.setColor(Color.gray);
@@ -139,8 +147,9 @@ import utils.Logger;
 		}
 
 		@Override
-		public void setName(String s) {
+		public Button setName(String s) {
 			name = s;
+			return this;
 		}
      
     }

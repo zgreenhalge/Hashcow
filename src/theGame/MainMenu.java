@@ -2,24 +2,30 @@ package theGame;
 
 
 import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class MainMenu extends BasicGameState {
+import utils.Logger;
 
-	public static final int ID = 0;
+public class MainMenu extends HCGameState {
+
+	public static final int ID = 001;
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
-		// TODO Auto-generated method stub
-
+		try{Logger.init(new File("logs"), container);}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		super.init(container, game);
 	}
 
 	@Override
@@ -28,7 +34,7 @@ public class MainMenu extends BasicGameState {
 		Font awtFont = new Font("Verdana", Font.BOLD, 24);
 	    g.setFont(new TrueTypeFont(awtFont, false));
 	    g.drawString("THERE IS NO MENU", 275, 200);
-
+	    super.render(container, game, g);
 	}
 
 	@Override
@@ -38,6 +44,7 @@ public class MainMenu extends BasicGameState {
 			container.exit();
 		if(container.getInput().isKeyPressed(Input.KEY_ENTER))
 			game.enterState(InGame.ID);
+		super.update(container, game, delta);
 	}
 	
 	@Override

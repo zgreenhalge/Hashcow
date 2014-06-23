@@ -43,7 +43,7 @@ public class TestState extends BasicGameState {
 	private int prevX;
 	private int prevY;
 	private boolean displayLog;
-	private long displayStart;
+	private long displayDelta;
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame game) throws SlickException{
@@ -119,18 +119,16 @@ public class TestState extends BasicGameState {
 		g.drawString("X: " + X + " Y: " + Y, 650, 0);
 		for(Button b: buttons)
 			b.render((GUIContext)container, g);
-		if(displayLog){
-			if(container.getTime() - displayStart > 10000)
-				displayLog = false;
-			Logger.render();
-		}
-		
+		if(displayLog) Logger.render();		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		//actions every step go here
+		displayDelta += delta;
+		if(displayDelta > 10000)
+			displayLog = false;
 		if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 			if(mouseWasDown){
 				X = prevX + input.getMouseX() - startX;
@@ -147,7 +145,7 @@ public class TestState extends BasicGameState {
 		}
 		if(input.isKeyPressed(Input.KEY_GRAVE)){
 			displayLog = !displayLog;
-			displayStart = container.getTime();
+			displayDelta = 0;
 		}
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			X -= 1;

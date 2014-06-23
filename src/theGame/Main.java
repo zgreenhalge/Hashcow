@@ -5,6 +5,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import utils.Logger;
+
 public class Main extends StateBasedGame {
 
 	private static AppGameContainer appgc;
@@ -26,6 +28,12 @@ public class Main extends StateBasedGame {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public void enterState(int id){
+		Logger.logNote("Transitioning to state " + id);
+		super.enterState(id);
+	}
+	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenu());

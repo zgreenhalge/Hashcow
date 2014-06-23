@@ -13,11 +13,13 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
-public class Logger {
+public class Logger implements Subject{
 
 	
     private Logger(){}
 
+    public static final int ID = 000;
+    
     private static String dateTime;
     private static File logFolder;
     private static File currentLog;
@@ -32,6 +34,8 @@ public class Logger {
 	private static float X;
 	private static float Y;
 	private static int lineHeight;
+	private static ArrayList<Observer> obs;
+	private static boolean init = false;
 
     /**
      * Initializes the Logger with the given root.
@@ -41,6 +45,7 @@ public class Logger {
      */
 	public static void init(File logDir, GameContainer container) throws IOException{
 		dateTime = Time.updateCal().fileDateTime();
+		logDir.mkdirs();
 		logFolder = logDir;
 		currentLog = new File(logFolder, dateTime + ".txt");
 		logFolder.mkdirs();
@@ -55,6 +60,12 @@ public class Logger {
 		PRINT_LENGTH = container.getHeight()/lineHeight;
 		X = 0;	//left boundary of print area
 		Y = container.getHeight()-(lineHeight*PRINT_LENGTH); //top boundary of print area
+		obs = new ArrayList<Observer>();
+		init = true;
+	}
+	
+	public static boolean isInit(){
+		return init;
 	}
 	
 	/**
@@ -79,6 +90,10 @@ public class Logger {
 	 */
 	public static void flush() throws IOException{
 		writeOut();
+	}
+	
+	public static void setContainer(GameContainer container){
+		gc = container;
 	}
 	
 	/**
@@ -110,7 +125,10 @@ public class Logger {
 			if(temp.isException()){
 				g.setColor(Color.red);
 			}else{
-				g.setColor(Color.white);
+				if(g.getBackground().equals(Color.white))
+					g.setColor(Color.black);
+				else
+					g.setColor(Color.white);
 			}
 			y += temp.render(g, (int)X, (int)(Y+(lineHeight*(PRINT_LENGTH-1))-(lineHeight*y)));
 		}
@@ -220,6 +238,27 @@ public class Logger {
 		System.out.println(temp.getMessage());
 		printList.add(temp);
 		render();
+	}
+
+	@Override
+	public void registerObserver(Observer o) {
+		obs.add(o);
+	}
+
+	@Override
+	public void unregisterObserver(Observer o) {
+		obs.remove(o);
+	}
+
+	@Override
+	public void alertObservers() {
+		for(Observer o: obs)
+			o.alert(ID);
+	}
+
+	@Override
+	public int getID() {
+		return ID;
 	}
 
 }
