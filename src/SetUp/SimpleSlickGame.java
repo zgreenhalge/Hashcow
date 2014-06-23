@@ -1,6 +1,7 @@
 package SetUp;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -22,9 +23,9 @@ public class SimpleSlickGame extends StateBasedGame{
 			appgc.start();
 		}
 		catch (Exception ex){
-			Logger.logInput("CRITICAL EXCEPTION THROWN: " + ex.getMessage());
+			Logger.streamLog("CRITICAL EXCEPTION THROWN: " + ex.getMessage());
+			Logger.writeOut();
 			throw ex;
-			
 		}
 	}
 	
@@ -36,5 +37,14 @@ public class SimpleSlickGame extends StateBasedGame{
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new TestState());
+	}
+	
+	public static void exit(){
+		try {
+			Logger.writeOut();
+		} catch (IOException e) {
+			System.err.println("Exception thrown while peacefully writing logs");
+		}
+		appgc.exit();
 	}
 }

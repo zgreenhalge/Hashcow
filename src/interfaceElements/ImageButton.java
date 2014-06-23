@@ -10,6 +10,7 @@ import org.newdawn.slick.state.StateBasedGame;
      
 
 import resourceManager.SoundManager;
+import utils.Logger;
      
     public class ImageButton extends MouseOverArea implements Button {
      
@@ -18,6 +19,8 @@ import resourceManager.SoundManager;
         private StateBasedGame sbg;
         private int stateID;
         private ButtonAction action;
+        private String name;
+        private static int num = 0;
      
         /**
          * 
@@ -40,6 +43,7 @@ import resourceManager.SoundManager;
             this.sbg = sbg;
             this.stateID = stateID;
             this.action = action;
+            name = "State"+stateID+"ImageButton"+(num++);
             
         }
      
@@ -70,6 +74,7 @@ import resourceManager.SoundManager;
 	            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
 	                //SoundManager.getInstance().playSound(SoundManager.BUTTON_CLICKED);
 	            	action.activate();
+	            	Logger.logLine(name + " pressed.");
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	}
@@ -77,5 +82,16 @@ import resourceManager.SoundManager;
         		//SoundManager.getInstance().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public void setName(String s) {
+			name = s;
+			
+		}
      
     }

@@ -34,6 +34,7 @@ public class TestState extends BasicGameState {
 	private TextButton logMessageButton;
 	private ArrayList<Button> buttons;
 	private Font buttonFont;
+	private TrueTypeFont ttfont;
 	private int Y;
 	private int X;
 	private boolean mouseWasDown;
@@ -49,26 +50,28 @@ public class TestState extends BasicGameState {
 		//first time set up goes here
 		try{
 			Logger.init(new File("logs"), gc);
+			Logger.setDev(true);
 		}catch(IOException ioe){
 			Logger.loudLog(ioe);
 		}
 		buttons = new ArrayList<Button>();
 		mouseWasDown = false;
 		buttonFont = new Font("Verdana", Font.PLAIN, 12);
+		ttfont = new TrueTypeFont(buttonFont, false);
 		sm = new SoundManager(gc);
-		sm.setVolume(0);
+		sm.setVolume(0.25f);
 		sm.loopSound(SoundManager.MAIN_MENU);
 		toggleFPSButton = new TextButton(gc,
 				buttonFont,
 				"Toggle FPS",
-				790-new TrueTypeFont(buttonFont, false).getWidth("Toggle FPS"), 470-new TrueTypeFont(buttonFont, false).getHeight(),
+				790-ttfont.getWidth("Toggle FPS"), 470-ttfont.getHeight(),
 				game,
 				this.getID(),
 				new ToggleFPSAction(gc));
 		toggleBordersButton = new TextButton(gc,
 				buttonFont,
 				"Toggle Borders",
-				790-new TrueTypeFont(buttonFont, false).getWidth("Toggle Borders"), 460-new TrueTypeFont(buttonFont, false).getHeight()*2,
+				790-ttfont.getWidth("Toggle Borders"), 460-ttfont.getHeight()*2,
 				game,
 				this.getID(), 
 				new ButtonAction(){
@@ -81,7 +84,7 @@ public class TestState extends BasicGameState {
 		logMessageButton = new TextButton(gc,
 				buttonFont,
 				"Log Message",
-				790-new TrueTypeFont(buttonFont, false).getWidth("Log Message"), 450-new TrueTypeFont(buttonFont, false).getHeight()*3,
+				790-ttfont.getWidth("Log Message"), 450-ttfont.getHeight()*3,
 				game,
 				this.getID(), 
 				new ButtonAction(){
@@ -92,7 +95,7 @@ public class TestState extends BasicGameState {
 		logExceptionButton = new TextButton(gc,
 				buttonFont,
 				"Log Exception",
-				790-new TrueTypeFont(buttonFont, false).getWidth("Log Exception"), 440-new TrueTypeFont(buttonFont, false).getHeight()*4,
+				790-ttfont.getWidth("Log Exception"), 440-ttfont.getHeight()*4,
 				game,
 				this.getID(), 
 				new ButtonAction(){
@@ -167,7 +170,7 @@ public class TestState extends BasicGameState {
 		}
 		////////////////////////////////////////////////////////////////
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			container.exit();
+			SimpleSlickGame.exit();
 		}
 		////////////////////////////////////////////////////////////////
 	}

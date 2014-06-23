@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 
 public class Logger {
@@ -37,12 +36,12 @@ public class Logger {
     /**
      * Initializes the Logger with the given root.
      * 
-     * @param root - File representation of the program's root path
+     * @param logDir - File representation of the program's root path
      * @throws IOException when there are IO issues
      */
-	public static void init(File root, GameContainer container) throws IOException{
+	public static void init(File logDir, GameContainer container) throws IOException{
 		dateTime = Time.updateCal().fileDateTime();
-		logFolder = new File(root, "logs");
+		logFolder = logDir;
 		currentLog = new File(logFolder, dateTime + ".txt");
 		logFolder.mkdirs();
 		currentLog.createNewFile();
@@ -181,9 +180,14 @@ public class Logger {
 	 * Logs the given input.&nbsp; This method will never print out.
 	 * @param input
 	 */
-	public static void logInput(String input){
+	public static void logNote(String input){
 		writeOut.add(input);
 		printList.add(new PrintStruct(input));
+	}
+	
+	public static void streamLog(String input){
+		System.out.println(input);
+		writeOut.add(input);
 	}
 	
 	/**

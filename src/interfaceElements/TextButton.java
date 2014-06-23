@@ -11,6 +11,8 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
+
+import utils.Logger;
      
     public class TextButton extends MouseOverArea implements Button{
      
@@ -25,6 +27,8 @@ import org.newdawn.slick.state.StateBasedGame;
         private ButtonAction action;
         private boolean borderEnabled;
         private Color borderColor;
+        private String name;
+        private static int num = 0;
      
         public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
         	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
@@ -35,8 +39,8 @@ import org.newdawn.slick.state.StateBasedGame;
             this.stateID = stateID;
             this.action = action;
             borderColor = Color.darkGray;
-            biggerFont = new TrueTypeFont(new Font(font.getFontName(), font.BOLD, font.getSize()), false);
-            //this.biggerFont = FontManager.getInstance().getSameFontWithSize(font, text, font.getFont().getSize() + 4);
+            biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()), false);
+            name = "State"+stateID+"TextButton"+(num++);
         }
      
         public void setEnabled(boolean b) {
@@ -121,11 +125,22 @@ import org.newdawn.slick.state.StateBasedGame;
         		if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
 	                //SoundManager.getInstance().playSound(SoundManager.BUTTON_CLICK);
 	            	action.activate();
+	            	Logger.logLine(name + " pressed.");
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	} else{
         		//SoundManager.getInstance().play
         	}
         }
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public void setName(String s) {
+			name = s;
+		}
      
     }
