@@ -1,29 +1,30 @@
 package SetUp;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.File;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-import resourceManager.SoundManager;
+import utils.Logger;
 
 public class SimpleSlickGame extends StateBasedGame{
 	
 	private static AppGameContainer appgc;
 	
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
 		try{
 			appgc = new AppGameContainer(new SimpleSlickGame("This Is The Title"));
 			appgc.setDisplayMode(800, 480, false);
 			appgc.setShowFPS(true);
 			appgc.start();
 		}
-		catch (SlickException ex){
-			Logger.getLogger(SimpleSlickGame.class.getName()).log(Level.SEVERE, null, ex);
+		catch (Exception ex){
+			Logger.logInput("CRITICAL EXCEPTION THROWN: " + ex.getMessage());
+			throw ex;
+			
 		}
 	}
 	

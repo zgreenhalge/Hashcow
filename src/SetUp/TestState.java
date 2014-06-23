@@ -1,11 +1,13 @@
 package SetUp;
 
 import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import interfaceElements.Button;
+import interfaceElements.ButtonAction;
 import interfaceElements.TextButton;
-import interfaceElements.ToggleBordersAction;
 import interfaceElements.ToggleFPSAction;
 
 import org.newdawn.slick.GameContainer;
@@ -18,6 +20,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.SoundManager;
+import utils.Logger;
 
 
 
@@ -27,6 +30,8 @@ public class TestState extends BasicGameState {
 	private Input input;
 	private TextButton toggleFPSButton;
 	private TextButton toggleBordersButton;
+	private TextButton logExceptionButton;
+	private TextButton logMessageButton;
 	private ArrayList<Button> buttons;
 	private Font buttonFont;
 	private int Y;
@@ -36,15 +41,22 @@ public class TestState extends BasicGameState {
 	private int startY;
 	private int prevX;
 	private int prevY;
+	private boolean displayLog;
+	private long displayStart;
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame game) throws SlickException{
 		//first time set up goes here
+		try{
+			Logger.init(new File("logs"), gc);
+		}catch(IOException ioe){
+			Logger.loudLog(ioe);
+		}
 		buttons = new ArrayList<Button>();
 		mouseWasDown = false;
 		buttonFont = new Font("Verdana", Font.PLAIN, 12);
 		sm = new SoundManager(gc);
-		sm.setVolume(.25f);
+		sm.setVolume(0);
 		sm.loopSound(SoundManager.MAIN_MENU);
 		toggleFPSButton = new TextButton(gc,
 				buttonFont,
@@ -59,10 +71,41 @@ public class TestState extends BasicGameState {
 				790-new TrueTypeFont(buttonFont, false).getWidth("Toggle Borders"), 460-new TrueTypeFont(buttonFont, false).getHeight()*2,
 				game,
 				this.getID(), 
-				new ToggleBordersAction(buttons));
+				new ButtonAction(){
+					public void activate(){
+						for(Button b: buttons)
+							if(b instanceof TextButton)
+								((TextButton)b).setBorderEnabled(!((TextButton)b).isBorderEnabled());
+					}
+				});
+		logMessageButton = new TextButton(gc,
+				buttonFont,
+				"Log Message",
+				790-new TrueTypeFont(buttonFont, false).getWidth("Log Message"), 450-new TrueTypeFont(buttonFont, false).getHeight()*3,
+				game,
+				this.getID(), 
+				new ButtonAction(){
+					public void activate(){
+						Logger.loudLogLine("Message Print Requested");
+					}
+				});
+		logExceptionButton = new TextButton(gc,
+				buttonFont,
+				"Log Exception",
+				790-new TrueTypeFont(buttonFont, false).getWidth("Log Exception"), 440-new TrueTypeFont(buttonFont, false).getHeight()*4,
+				game,
+				this.getID(), 
+				new ButtonAction(){
+					public void activate(){
+						Logger.loudLog(new SlickException("Exception Print Request"));
+					}
+				});
 		buttons.add(toggleBordersButton);
 		buttons.add(toggleFPSButton);
+		buttons.add(logMessageButton);
+		buttons.add(logExceptionButton);
 		input = gc.getInput();
+		displayLog = false;
 		X = Y = 0;
 	}
 	
@@ -71,8 +114,14 @@ public class TestState extends BasicGameState {
 			throws SlickException {
 		g.drawString("Everything is working fine... for now", X+220, Y+220);
 		g.drawString("X: " + X + " Y: " + Y, 650, 0);
-		toggleFPSButton.render((GUIContext)container, g);
-		toggleBordersButton.render((GUIContext)container, g);
+		for(Button b: buttons)
+			b.render((GUIContext)container, g);
+		if(displayLog){
+			if(container.getTime() - displayStart > 10000)
+				displayLog = false;
+			Logger.render();
+		}
+		
 	}
 
 	@Override
@@ -92,6 +141,10 @@ public class TestState extends BasicGameState {
 			}
 		}else{
 			mouseWasDown = false;
+		}
+		if(input.isKeyPressed(Input.KEY_GRAVE)){
+			displayLog = !displayLog;
+			displayStart = container.getTime();
 		}
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			X -= 1;

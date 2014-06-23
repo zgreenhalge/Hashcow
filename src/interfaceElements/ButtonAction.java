@@ -1,7 +1,9 @@
 package interfaceElements;
 
-public abstract class ButtonAction {
+public class ButtonAction {
 
-	public abstract void activate();
+	public void activate(){
+		//implemented in sub classes or at instantiation
+	}
 	
 }

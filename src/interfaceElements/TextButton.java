@@ -124,7 +124,7 @@ import org.newdawn.slick.state.StateBasedGame;
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
         	} else{
-        		//SoundManager.getInstance().playSound(SoundManager.BUTTON_DISABLED)
+        		//SoundManager.getInstance().play
         	}
         }
      
