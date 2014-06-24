@@ -11,6 +11,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import utils.Logger;
+import utils.Observer;
 
 public class HCGameState extends BasicGameState{
 
@@ -42,11 +43,11 @@ public class HCGameState extends BasicGameState{
 		if(container.getInput().isKeyPressed(Input.KEY_GRAVE))
 			displayLog = !displayLog;
 	}
-	
-	
 
-	///MUST BE OVERRIDDEN IN EACH SUB CLASS///
-	public int getID(){	return -1;}			//
-	//////////////////////////////////////////
-	
+	//MUST BE OVERRIDDEN IN EACH SUB CLASS
+	@Override
+	public int getID(){
+		return -1;
+	}
+
 }

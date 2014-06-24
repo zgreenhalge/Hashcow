@@ -1,0 +1,3 @@
+
+[06/24/2014 13:12:25]: (NOTE) State 2 is initializing
+[06/24/2014 13:12:30]: State1TextButton3 pressed.

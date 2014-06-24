@@ -13,8 +13,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
-import resourceManager.FontManager;
-
 public class Logger{
 
 	
@@ -57,15 +55,15 @@ public class Logger{
 		writeOut = new ArrayList<String>();
 		writeOut.add("");
 		gc = container;
-		font = FontManager.getManager().getFont(FontManager.LOGGER);
+		font = new Font("Times New Roman", Font.PLAIN, 12);
 		ttfont = new TrueTypeFont(font, false);
 		printList = new ArrayList<PrintStruct>();
 		lineHeight = ttfont.getLineHeight();
 		PRINT_LENGTH = container.getHeight()/lineHeight;
 		X = 0;	//left boundary of print area
 		Y = container.getHeight()-(lineHeight*PRINT_LENGTH); //top boundary of print area
-		init = true;
 		writeAllowed = write;
+		init = true;
 	}
 	
 	public static boolean isInit(){
@@ -162,9 +160,9 @@ public class Logger{
            else{
 	           writeOut.add("["+Time.updateCal().dateTime()+"]: " + e.getMessage());
 	           if(!e.getLocalizedMessage().equals(e.getMessage()))
-	        	   writeOut.add("    " + e.getLocalizedMessage());
+	        	   writeOut.add(" " + e.getLocalizedMessage());
 	           for(StackTraceElement ste: e.getStackTrace()){
-	               writeOut.add("     " + ste.toString());
+	               writeOut.add("   " + ste.toString());
 	           };
 	           printList.add(new PrintStruct(e));
 		}
@@ -184,7 +182,7 @@ public class Logger{
 		if(dev) 
 			loudLogLine(input);
 		else{
-			writeOut.add("["+Time.updateCal().dateTime()+"]: " + input);
+			writeOut.add(input);
 			printList.add(new PrintStruct(input));
 		}
 	}
@@ -198,19 +196,18 @@ public class Logger{
 	}
 
 	public static void logNote(String input){
-		writeOut.add("["+Time.updateCal().dateTime()+"]: (NOTE) " + input);
+		writeOut.add(input);
 		printList.add(new PrintStruct(input));
 	}
 	
 	public static void streamLog(String input){
-		input = "["+Time.updateCal().dateTime()+"]: " + input;
 		System.out.println(input);
 		writeOut.add(input);
 	}
 	
 	public static void loudLogLine(String input){
-		System.out.println("["+Time.updateCal().dateTime()+"]: " + input);
-		writeOut.add("["+Time.updateCal().dateTime()+"]: " + input);
+		System.out.println(input);
+		writeOut.add(input);
 		printList.add(new PrintStruct(input));
 		age = 0;
 	}
@@ -219,12 +216,12 @@ public class Logger{
 		System.out.flush();
 		System.err.flush();
 		writeOut.add("["+Time.updateCal().dateTime()+"]:" + e.getMessage());
-		writeOut.add("  " + e.getLocalizedMessage());
+		writeOut.add(" " + e.getLocalizedMessage());
 		for(StackTraceElement ste: e.getStackTrace()){
-			writeOut.add("  " + ste.toString());
+			writeOut.add(ste.toString());
 		}
 		PrintStruct temp = new PrintStruct(e);
-		System.out.println("["+Time.updateCal().dateTime()+"]: " + temp.getMessage());
+		System.out.println(temp.getMessage());
 		printList.add(temp);
 		age = 0;
 	}
