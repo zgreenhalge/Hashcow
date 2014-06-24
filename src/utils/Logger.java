@@ -51,7 +51,8 @@ public class Logger{
 		logFolder = logDir;
 		currentLog = new File(logFolder, dateTime + ".txt");
 		logFolder.mkdirs();
-		currentLog.createNewFile();
+		if(write)
+			currentLog.createNewFile();
 		writeOut = new ArrayList<String>();
 		writeOut.add("");
 		gc = container;
