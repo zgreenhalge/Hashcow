@@ -36,6 +36,8 @@ public class Logger{
 	private static int lineHeight;
 	private static ArrayList<Observer> obs;
 	private static boolean init = false;
+	private static int timeout = 0;
+	private static int age = 0;
 
     /**
      * Initializes the Logger with the given root.
@@ -66,6 +68,14 @@ public class Logger{
 	
 	public static boolean isInit(){
 		return init;
+	}
+	
+	public static void setTimeout(int i){
+		timeout = i;
+	}
+	
+	public static int getTimeout(){
+		return timeout;
 	}
 	
 	/**
@@ -109,16 +119,24 @@ public class Logger{
 		writeOut.add("");
 	}
 	
+	public static void update(int delta){
+		for(PrintStruct ps: printList)
+			ps.tick(delta);
+		age += delta;
+	}
+	
 	public static void render(){
 		Graphics g = gc.getGraphics();
 		Color prevColor = g.getColor();
 		org.newdawn.slick.Font prevFont = g.getFont();
 		g.setFont(ttfont);
+		
 		//g.setColor(Color.darkGray);
 		//g.fillRect(X, Y, (float)300, (float)(lineHeight*PRINT_LENGTH)); //paint background
-		int y = 0;
+		
+		int linesPrinted = 0;
 		int i = printList.size();
-		while(y < PRINT_LENGTH && i > 0){
+		while(linesPrinted < PRINT_LENGTH && i > 0){
 			PrintStruct temp = printList.get(--i);
 			if(temp.isException()){
 				g.setColor(Color.red);
@@ -128,7 +146,7 @@ public class Logger{
 				else
 					g.setColor(Color.white);
 			}
-			y += temp.render(g, (int)X, (int)(Y+(lineHeight*(PRINT_LENGTH-1))-(lineHeight*y)));
+			linesPrinted += temp.render(g, (int)X, (int)(Y+(lineHeight*(PRINT_LENGTH-1))-(lineHeight*linesPrinted)));				
 		}
 		g.setColor(prevColor);
 		g.setFont(prevFont);
@@ -172,7 +190,7 @@ public class Logger{
 		System.out.print(input);
 		writeOut.get(writeOut.size()-1).concat(input);
 		printList.add(new PrintStruct(input));
-		alertObservers();
+		age = 0;
 	}
 
 	public static void logNote(String input){
@@ -189,7 +207,7 @@ public class Logger{
 		System.out.println(input);
 		writeOut.add(input);
 		printList.add(new PrintStruct(input));
-		alertObservers();
+		age = 0;
 	}
 	
 	public static void loudLog(Exception e) {
@@ -203,24 +221,11 @@ public class Logger{
 		PrintStruct temp = new PrintStruct(e);
 		System.out.println(temp.getMessage());
 		printList.add(temp);
-		alertObservers();
+		age = 0;
 	}
-
-	public static void registerObserver(Observer o) {
-		obs.add(o);
-	}
-
-	public static void unregisterObserver(Observer o) {
-		obs.remove(o);
-	}
-
-	public static void alertObservers() {
-		for(Observer o: obs)
-			o.alert(ID);
-	}
-
-	public static int getID() {
-		return ID;
+	
+	public static int getAge() {
+		return age;
 	}
 
 }
