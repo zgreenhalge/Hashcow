@@ -8,11 +8,13 @@ public class PrintStruct implements Comparable<PrintStruct>{
 	private long timeRecorded;
 	private Exception exception;
 	private boolean isException;
+	private int timeAlive;
 	
 	public PrintStruct(String s){
 		message = s;
 		timeRecorded = System.currentTimeMillis();
 		isException = false;
+		timeAlive = 0;
 	}
 	
 	public PrintStruct(Exception e){
@@ -21,6 +23,7 @@ public class PrintStruct implements Comparable<PrintStruct>{
 		timeRecorded = System.currentTimeMillis();
 		exception = e;
 		isException = true;
+		timeAlive = 0;
 	}
 	
 	public String getMessage(){
@@ -35,6 +38,14 @@ public class PrintStruct implements Comparable<PrintStruct>{
 		return isException;
 	}
 
+	public void tick(int delta){
+		timeAlive += delta;
+	}
+	
+	public int getAge(){
+		return timeAlive;
+	}
+	
 	@Override
 	public int compareTo(PrintStruct other) {
 		return (int) (this.timeRecorded - other.getTime());
@@ -46,14 +57,14 @@ public class PrintStruct implements Comparable<PrintStruct>{
 			int lh = g.getFont().getLineHeight();
 			int num = 0;
 			int topY = y-st.length*lh;
-			g.drawString(Time.setDate(timeRecorded).currentTime() + ": " + exception.getMessage(), x, topY);
+			g.drawString("["+Time.setDate(timeRecorded).currentTime() + "]: " + exception.getMessage(), x, topY);
 			for(StackTraceElement ste: st){
 				num++;
 				g.drawString("      " + ste.getFileName()+":"+ste.getLineNumber() + " " + ste.getMethodName(), x, topY+(num*lh));
 			}
 			return st.length+1;
 		}else{
-			g.drawString(Time.setDate(timeRecorded).currentTime() + ": " + message, x, y);
+			g.drawString("["+Time.setDate(timeRecorded).currentTime() + "]: " + message, x, y);
 			return 1;
 		}
 	}

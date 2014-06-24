@@ -99,10 +99,11 @@ import utils.Logger;
 
         @Override
         public void render(GUIContext guic, Graphics g) {
+        	org.newdawn.slick.Font prevFont = g.getFont();
             g.setFont(ttfont);
             Color standard = g.getColor();
             if (isEnabled) {
-                g.setColor(Color.orange);
+                g.setColor(Color.orange.brighter(.5f));
                 if (isMouseOver()) {
                     g.setFont(biggerFont);
                     g.setColor(new Color(200, 50, 30));
@@ -124,17 +125,18 @@ import utils.Logger;
             	}else{
 	            	width = ttfont.getWidth(text);
             	}
-            	Color prev = g.getColor();
+            	Color prevCol = g.getColor();
             	g.setColor(borderColor);
             	g.drawLine(getX()-pad, getY()-pad, getX()+width+pad, getY()-pad);//top left to top right
             	g.drawLine(getX()-pad, getY()-pad, getX()-pad, getY()+height+pad);//top left to bottom left
             	g.drawLine(getX()-pad, getY()+height+pad, getX()+width+pad, getY()+height+pad);//bottom left to bottom right
             	g.drawLine(getX()+width+pad, getY()+height+pad, getX()+width+pad, getY()-pad);//bottom right to top right
-            	g.setColor(prev);
+            	g.setColor(prevCol);
             }
             g.drawString(text, getX(), getY());
             super.render(guic, g);
             g.setColor(standard);
+            g.setFont(prevFont);
         }
         
         private void renderClick(){

@@ -19,8 +19,8 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
+import resourceManager.FontManager;
 import resourceManager.SoundManager;
-import utils.Logger;
 
 public class MainMenu extends HCGameState {
 
@@ -36,16 +36,8 @@ public class MainMenu extends HCGameState {
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
-		super.init(container, game);
-		try{Logger.init(new File("logs"), container);}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-		sm = SoundManager.getManager();
-		SoundManager.setVolume(.5f);
-		sm.loopSound(SoundManager.MAIN_MENU);
-		Font buttonFont = new Font("Times New Roman", Font.ITALIC, 18);
-		TrueTypeFont ttfont = new TrueTypeFont(buttonFont, false);
+		Font buttonFont = FontManager.getManager().getFont(FontManager.BUTTON_FONT);
+		TrueTypeFont ttfont = FontManager.getManager().getFontAsTrueType(FontManager.BUTTON_FONT);
 		NEW = new TextButton(container, buttonFont, "New Game",
 				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
 				game, this.getID(), 
@@ -69,6 +61,7 @@ public class MainMenu extends HCGameState {
 		buttons.add(EXIT);
 		for(Button b: buttons)
 			b.setReport(true);
+		super.init(container, game);
 	}
 
 	@Override
@@ -95,6 +88,14 @@ public class MainMenu extends HCGameState {
 	public int getID() {
 		// TODO Auto-generated method stub
 		return ID;
+	}
+	
+	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		sm = SoundManager.getManager();
+		SoundManager.setVolume(.25f);
+		sm.loopSound(SoundManager.MAIN_MENU);
+		super.enter(container, game);
 	}
 
 }

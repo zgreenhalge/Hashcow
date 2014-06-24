@@ -13,6 +13,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
+import resourceManager.FontManager;
+
 public class Logger{
 
 	
@@ -34,8 +36,10 @@ public class Logger{
 	private static float X;
 	private static float Y;
 	private static int lineHeight;
-	private static ArrayList<Observer> obs;
 	private static boolean init = false;
+	private static int timeout = 0;
+	private static int age = 0;
+	private static boolean writeAllowed;
 
     /**
      * Initializes the Logger with the given root.
@@ -43,7 +47,7 @@ public class Logger{
      * @param logDir - File representation of the program's root path
      * @throws IOException when there are IO issues
      */
-	public static void init(File logDir, GameContainer container) throws IOException{
+	public static void init(File logDir, GameContainer container, boolean write) throws IOException{
 		dateTime = Time.updateCal().fileDateTime();
 		logDir.mkdirs();
 		logFolder = logDir;
@@ -53,19 +57,27 @@ public class Logger{
 		writeOut = new ArrayList<String>();
 		writeOut.add("");
 		gc = container;
-		font = new Font("Times New Roman", Font.PLAIN, 12);
+		font = FontManager.getManager().getFont(FontManager.LOGGER);
 		ttfont = new TrueTypeFont(font, false);
 		printList = new ArrayList<PrintStruct>();
 		lineHeight = ttfont.getLineHeight();
 		PRINT_LENGTH = container.getHeight()/lineHeight;
 		X = 0;	//left boundary of print area
 		Y = container.getHeight()-(lineHeight*PRINT_LENGTH); //top boundary of print area
-		obs = new ArrayList<Observer>();
 		init = true;
+		writeAllowed = write;
 	}
 	
 	public static boolean isInit(){
 		return init;
+	}
+	
+	public static void setTimeout(int i){
+		timeout = i;
+	}
+	
+	public static int getTimeout(){
+		return timeout;
 	}
 	
 	/**
@@ -101,12 +113,20 @@ public class Logger{
 	 * @throws IOException when there is a write error
 	 */
 	public static void writeOut() throws IOException{
-		out = new PrintWriter(new BufferedWriter(new FileWriter(currentLog, true)));
-		for(String s: writeOut)
-			out.println(s);
-		out.close();
-		writeOut = new ArrayList<String>();
-		writeOut.add("");
+		if(writeAllowed){
+			out = new PrintWriter(new BufferedWriter(new FileWriter(currentLog, true)));
+			for(String s: writeOut)
+				out.println(s);
+			out.close();
+			writeOut = new ArrayList<String>();
+			writeOut.add("");
+		}
+	}
+	
+	public static void update(int delta){
+		for(PrintStruct ps: printList)
+			ps.tick(delta);
+		age += delta;
 	}
 	
 	public static void render(){
@@ -114,11 +134,13 @@ public class Logger{
 		Color prevColor = g.getColor();
 		org.newdawn.slick.Font prevFont = g.getFont();
 		g.setFont(ttfont);
+		
 		//g.setColor(Color.darkGray);
 		//g.fillRect(X, Y, (float)300, (float)(lineHeight*PRINT_LENGTH)); //paint background
-		int y = 0;
+		
+		int linesPrinted = 0;
 		int i = printList.size();
-		while(y < PRINT_LENGTH && i > 0){
+		while(linesPrinted < PRINT_LENGTH && i > 0){
 			PrintStruct temp = printList.get(--i);
 			if(temp.isException()){
 				g.setColor(Color.red);
@@ -128,7 +150,7 @@ public class Logger{
 				else
 					g.setColor(Color.white);
 			}
-			y += temp.render(g, (int)X, (int)(Y+(lineHeight*(PRINT_LENGTH-1))-(lineHeight*y)));
+			linesPrinted += temp.render(g, (int)X, (int)(Y+(lineHeight*(PRINT_LENGTH-1))-(lineHeight*linesPrinted)));				
 		}
 		g.setColor(prevColor);
 		g.setFont(prevFont);
@@ -140,9 +162,9 @@ public class Logger{
            else{
 	           writeOut.add("["+Time.updateCal().dateTime()+"]: " + e.getMessage());
 	           if(!e.getLocalizedMessage().equals(e.getMessage()))
-	        	   writeOut.add(" " + e.getLocalizedMessage());
+	        	   writeOut.add("    " + e.getLocalizedMessage());
 	           for(StackTraceElement ste: e.getStackTrace()){
-	               writeOut.add("   " + ste.toString());
+	               writeOut.add("     " + ste.toString());
 	           };
 	           printList.add(new PrintStruct(e));
 		}
@@ -162,7 +184,7 @@ public class Logger{
 		if(dev) 
 			loudLogLine(input);
 		else{
-			writeOut.add(input);
+			writeOut.add("["+Time.updateCal().dateTime()+"]: " + input);
 			printList.add(new PrintStruct(input));
 		}
 	}
@@ -172,55 +194,43 @@ public class Logger{
 		System.out.print(input);
 		writeOut.get(writeOut.size()-1).concat(input);
 		printList.add(new PrintStruct(input));
-		alertObservers();
+		age = 0;
 	}
 
 	public static void logNote(String input){
-		writeOut.add(input);
+		writeOut.add("["+Time.updateCal().dateTime()+"]: (NOTE) " + input);
 		printList.add(new PrintStruct(input));
 	}
 	
 	public static void streamLog(String input){
+		input = "["+Time.updateCal().dateTime()+"]: " + input;
 		System.out.println(input);
 		writeOut.add(input);
 	}
 	
 	public static void loudLogLine(String input){
-		System.out.println(input);
-		writeOut.add(input);
+		System.out.println("["+Time.updateCal().dateTime()+"]: " + input);
+		writeOut.add("["+Time.updateCal().dateTime()+"]: " + input);
 		printList.add(new PrintStruct(input));
-		alertObservers();
+		age = 0;
 	}
 	
 	public static void loudLog(Exception e) {
 		System.out.flush();
 		System.err.flush();
 		writeOut.add("["+Time.updateCal().dateTime()+"]:" + e.getMessage());
-		writeOut.add(" " + e.getLocalizedMessage());
+		writeOut.add("  " + e.getLocalizedMessage());
 		for(StackTraceElement ste: e.getStackTrace()){
-			writeOut.add(ste.toString());
+			writeOut.add("  " + ste.toString());
 		}
 		PrintStruct temp = new PrintStruct(e);
-		System.out.println(temp.getMessage());
+		System.out.println("["+Time.updateCal().dateTime()+"]: " + temp.getMessage());
 		printList.add(temp);
-		alertObservers();
+		age = 0;
 	}
-
-	public static void registerObserver(Observer o) {
-		obs.add(o);
-	}
-
-	public static void unregisterObserver(Observer o) {
-		obs.remove(o);
-	}
-
-	public static void alertObservers() {
-		for(Observer o: obs)
-			o.alert(ID);
-	}
-
-	public static int getID() {
-		return ID;
+	
+	public static int getAge() {
+		return age;
 	}
 
 }

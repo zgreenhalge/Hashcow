@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package resourceManager;
 
 import org.newdawn.slick.SlickException;
@@ -37,10 +31,10 @@ public class SoundManager {
     private SoundManager() throws SlickException{
     	volume = 1.0f;
     	pitch = 1.0f;
-        menuMusic = new Sound("res/MainMenu.wav");
-        buttonOver = new Sound("res/buttonOver.wav");
-        buttonClick = new Sound("res/buttonClick.wav");
-        buttonDisabled = new Sound("res/buttonDisabled.wav");
+        menuMusic = new Sound("res/sounds/MainMenu.wav");
+        buttonOver = new Sound("res/sounds/buttonOver.wav");
+        buttonClick = new Sound("res/sounds/buttonClick.wav");
+        buttonDisabled = new Sound("res/sounds/buttonDisabled.wav");
         muted = false;
         INSTANCE = this;
     }

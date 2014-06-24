@@ -49,7 +49,7 @@ public class TestState extends BasicGameState {
 	public void init(GameContainer gc, StateBasedGame game) throws SlickException{
 		//first time set up goes here
 		try{
-			Logger.init(new File("logs"), gc);
+			Logger.init(new File("logs"), gc, true);
 			Logger.setDev(true);
 		}catch(IOException ioe){
 			Logger.loudLog(ioe);

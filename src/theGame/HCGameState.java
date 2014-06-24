@@ -11,54 +11,42 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import utils.Logger;
-import utils.Observer;
 
-public class HCGameState extends BasicGameState implements Observer {
+public class HCGameState extends BasicGameState{
 
-	private boolean displayLog;
-	private final Object displayLock = new Object();
-	private int logDelta;
-	private static final int DISPLAY_LENGTH = 3000; //how long to display the log 
+	private static boolean displayLog;
+	private static final int DISPLAY_LENGTH = 3500; //how long to display the log 
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException{
 		if(!Logger.isInit()){
 			try {
-				Logger.init(new File("logs"), arg0);
+				Logger.init(new File("logs"), arg0, false);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		Logger.logNote("State " + getID() + " is initializing");
-		Logger.registerObserver(this);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		Logger.setContainer(container);
-		if(displayLog || logDelta < DISPLAY_LENGTH)
+		if(displayLog || Logger.getAge() <= DISPLAY_LENGTH)
 			Logger.render();
-		g.drawString("logDelta: " + logDelta, 0, 40);
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		synchronized(displayLock){logDelta += delta;}
+		Logger.update(delta);
 		if(container.getInput().isKeyPressed(Input.KEY_GRAVE))
 			displayLog = !displayLog;
 	}
-
-	public void alert(int caller_id){
-		if(caller_id == Logger.ID){
-			Logger.logLine("Alert recieved from Logger");
-			synchronized(displayLock){logDelta = 0;}
-		}
-	}
 	
-	//MUST BE OVERRIDDEN IN EACH SUB CLASS
-	@Override
-	public int getID(){
-		return -1;
-	}
+	
 
+	///MUST BE OVERRIDDEN IN EACH SUB CLASS///
+	public int getID(){	return -1;}			//
+	//////////////////////////////////////////
+	
 }
