@@ -4,6 +4,9 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import utils.Logger;
 
@@ -27,28 +30,50 @@ public class UnitImage {
 	private Animation rightAni;
 	
 	
-	public UnitImage(String unitDir) throws SlickException{
-		idle = new SpriteSheet(unitDir+"/idle.jpg", 32, 32, Color.white, 1); //if this file won't load, don't bother loading the rest of them
-		
-		try {moveUp = new SpriteSheet(unitDir+"/moveUp.jpg", 32, 32, Color.white, 1);}
-		catch (Exception e) {
-			Logger.log(e);
-			moveUp = new SpriteSheet(idle, 32, 32);
+	public UnitImage(String unitDir) throws Exception{
+		idle = new SpriteSheet(unitDir+"/idle.png", 32, 32, null, 1); //if this file won't load, don't bother loading the rest of them
+		Texture tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/idle.png"));
+		//tx.bind();
+		idle.setTexture(tx);
+		try {
+			moveUp = new SpriteSheet(unitDir+"/moveUp.png", 32, 32, null, 1);
+			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveUp.png"));
+			tx.bind();
+			moveUp.setTexture(tx);
 		}
-		try {moveDown = new SpriteSheet(unitDir+"/moveDown.jpg", 32, 32, Color.white, 1);}
 		catch (Exception e) {
 			Logger.log(e);
-			moveDown = new SpriteSheet(idle, 32, 32);
+			moveUp = idle;
 		}
-		try {moveLeft = new SpriteSheet(unitDir+"/moveLeft.jpg", 32, 32, Color.white, 1);}
-		catch (Exception e) {
-			Logger.log(e);
-			moveLeft = new SpriteSheet(idle, 32, 32);
+		try {
+			moveDown = new SpriteSheet(unitDir+"/moveDown.png", 32, 32, null, 1);
+			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveDown.png"));
+			tx.bind();
+			moveDown.setTexture(tx);
 		}
-		try {moveRight = new SpriteSheet(unitDir+"/moveRight.jpg", 32, 32, Color.white, 1);}
 		catch (Exception e) {
 			Logger.log(e);
-			moveRight = new SpriteSheet(idle, 32, 32);
+			moveDown = idle;
+		}
+		try {
+			moveLeft = new SpriteSheet(unitDir+"/moveLeft.png", 32, 32, null, 1);
+			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveLeft.png"));
+			tx.bind();
+			moveLeft.setTexture(tx);
+		}
+		catch (Exception e) {
+			Logger.log(e);
+			moveLeft = idle;
+		}
+		try {
+			moveRight = new SpriteSheet(unitDir+"/moveRight.png", 32, 32, null, 1);
+			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveRight.png"));
+			tx.bind();
+			moveRight.setTexture(tx);
+		}
+		catch (Exception e) {
+			Logger.log(e);
+			moveRight = idle;
 		}
 	}
 	
@@ -75,7 +100,7 @@ public class UnitImage {
 	}
 	
 	private Animation buildAnimation(SpriteSheet spr){
-		return new Animation(spr, 0, 0, 0, spr.getVerticalCount()-1, false, 300, true);
+		return new Animation(spr, 0, 0, 0, spr.getVerticalCount()-1, false, 500, true);
 	}
 	
 }

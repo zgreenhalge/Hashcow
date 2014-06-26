@@ -35,13 +35,16 @@ public class InGame extends HCGameState {
 		sprite = mechLight.getAnimation(UnitImage.IDLE);
 		sprite.start();
 		mouseWasDown = false;
+		
 		super.init(container, game);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		sprite.draw(X+220, Y+220);
+		g.setDrawMode(Graphics.MODE_NORMAL);
+		sprite.draw(X+container.getWidth()/2, Y+container.getHeight()/2);
+		g.drawString("X: " + (X+container.getWidth()/2) + "  Y: " + (Y+container.getHeight()/2), 650, 10);
 		// TODO Auto-generated method stub
 		super.render(container, game, g);
 	}

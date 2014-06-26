@@ -1,7 +1,5 @@
 package resourceManager;
 
-import org.newdawn.slick.SlickException;
-
 import utils.Logger;
 
 public class UnitImageLibrary{
@@ -13,7 +11,7 @@ public class UnitImageLibrary{
 	public UnitImageLibrary(){
 		try{
 			mechLight = new UnitImage("res/images/units/mechLight");
-		} catch(SlickException e){
+		} catch(Exception e){
 			Logger.loudLog(e);
 		}
 	}
