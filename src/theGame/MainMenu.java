@@ -3,7 +3,9 @@ package theGame;
 
 import interfaceElements.Button;
 import interfaceElements.TextButton;
+import interfaceElements.buttonActions.ButtonAction;
 import interfaceElements.buttonActions.ExitGameAction;
+import interfaceElements.buttonActions.StateTransitionAction;
 import interfaceElements.buttonActions.UnImplementedAction;
 
 import java.awt.Font;
@@ -41,7 +43,7 @@ public class MainMenu extends HCGameState {
 		NEW = new TextButton(container, buttonFont, "New Game",
 				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
 				game, this.getID(), 
-				new UnImplementedAction());
+				new StateTransitionAction(game, InGame.ID));
 		LOAD = new TextButton(container, buttonFont, "Load Game",
 				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
 				game, this.getID(), 
