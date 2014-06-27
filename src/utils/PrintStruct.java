@@ -53,18 +53,24 @@ public class PrintStruct implements Comparable<PrintStruct>{
 	
 	public int render(Graphics g, int x, int y){
 		if(isException){
-			StackTraceElement[] st = exception.getStackTrace();
-			int lh = g.getFont().getLineHeight();
-			int num = 0;
-			int topY = y-st.length*lh;
-			g.drawString(Time.setDate(timeRecorded).currentTime() + ": " + exception.getMessage(), x, topY);
-			for(StackTraceElement ste: st){
-				num++;
-				g.drawString("      " + ste.getFileName()+":"+ste.getLineNumber() + " " + ste.getMethodName(), x, topY+(num*lh));
+			if(Logger.isVerboseEnabled()){
+				StackTraceElement[] st = exception.getStackTrace();
+				int lh = g.getFont().getLineHeight();
+				int num = 0;
+				int topY = y-st.length*lh;
+				g.drawString("["+Time.setDate(timeRecorded).currentTime() + "]: " + exception.getMessage(), x, topY);
+				for(StackTraceElement ste: st){
+					num++;
+					g.drawString("      " + ste.getFileName()+":"+ste.getLineNumber() + " " + ste.getMethodName(), x, topY+(num*lh));
+				}
+				return st.length+1;
+			}else{
+				g.drawString("["+Time.setDate(timeRecorded).currentTime() + "]: " + exception.getMessage(), x, y);
+				return 1;
+				
 			}
-			return st.length+1;
 		}else{
-			g.drawString(Time.setDate(timeRecorded).currentTime() + ": " + message, x, y);
+			g.drawString("["+Time.setDate(timeRecorded).currentTime() + "]: " + message, x, y);
 			return 1;
 		}
 	}

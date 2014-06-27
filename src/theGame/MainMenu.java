@@ -3,14 +3,11 @@ package theGame;
 
 import interfaceElements.Button;
 import interfaceElements.TextButton;
-import interfaceElements.buttonActions.ButtonAction;
 import interfaceElements.buttonActions.ExitGameAction;
 import interfaceElements.buttonActions.StateTransitionAction;
 import interfaceElements.buttonActions.UnImplementedAction;
 
 import java.awt.Font;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.newdawn.slick.GameContainer;
@@ -43,7 +40,7 @@ public class MainMenu extends HCGameState {
 		NEW = new TextButton(container, buttonFont, "New Game",
 				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
 				game, this.getID(), 
-				new StateTransitionAction(game, InGame.ID));
+				new StateTransitionAction(game, 2));
 		LOAD = new TextButton(container, buttonFont, "Load Game",
 				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
 				game, this.getID(), 
@@ -70,9 +67,10 @@ public class MainMenu extends HCGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
 		g.setAntiAlias(true);
-	    for(Button b: buttons){
-	    	b.render((GUIContext)container, g);
-	    }
+		if(buttons != null)
+			for(Button b: buttons){
+				b.render((GUIContext)container, g);
+			}
 	    super.render(container, game, g);
 	}
 
@@ -82,7 +80,7 @@ public class MainMenu extends HCGameState {
 		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			container.exit();
 		if(container.getInput().isKeyPressed(Input.KEY_ENTER))
-			game.enterState(InGame.ID);
+			game.enterState(2);
 		super.update(container, game, delta);
 	}
 	

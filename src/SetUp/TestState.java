@@ -50,7 +50,7 @@ public class TestState extends BasicGameState {
 		//first time set up goes here
 		try{
 			Logger.init(new File("logs"), gc, true);
-			Logger.setDev(true);
+			Logger.setVerboseEnabled(true);
 		}catch(IOException ioe){
 			Logger.loudLog(ioe);
 		}

@@ -1,62 +1,65 @@
 package theGame;
 
-import org.newdawn.slick.Animation;
-import org.newdawn.slick.Color;
+import gamePieces.MapInfo;
+import gamePieces.Unit;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-import resourceManager.UnitImage;
-import resourceManager.UnitImageLibrary;
-
 public class InGame extends HCGameState {
 
-	public static final int ID = 002;
+	private int ID;
+	private static int lastId = 1;
 	
-	private UnitImage mechLight;
-	private Animation sprite;
-	private int Y;
-	private int X;
+	private boolean playing = true;
+	private MapInfo map;
+	private Unit[][] units;
+	private int players;
+	private int curPlayer;
+
+	//variables for moving map with mouse
 	private boolean mouseWasDown;
+	private int X;
+	private int Y;
 	private int startX;
 	private int startY;
 	private int prevX;
 	private int prevY;
-	
 	private Input input;
+	
+	public InGame(MapInfo board){
+		ID = ++lastId;
+		map = board;
+		players = map.getNumPlayers();
+		curPlayer = 0;
+		
+	}
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException{
-		UnitImageLibrary lib = new UnitImageLibrary();
-		mechLight = lib.getUnitImage(UnitImageLibrary.MECH_LIGHT);
-		sprite = mechLight.getAnimation(UnitImage.IDLE);
-		sprite.start();
 		mouseWasDown = false;
-		
+		//TODO change this so that we render the center of the map on the center of the screen - will keep 
+		X = (container.getWidth() - map.getWidth())/2;
+		Y = (container.getHeight() - map.getHeight())/2;
 		super.init(container, game);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		g.setDrawMode(Graphics.MODE_NORMAL);
-		sprite.draw(X+container.getWidth()/2, Y+container.getHeight()/2);
-		g.drawString("X: " + (X+container.getWidth()/2) + "  Y: " + (Y+container.getHeight()/2), 650, 10);
-		// TODO Auto-generated method stub
+		map.render(X, Y);
 		super.render(container, game, g);
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
+		map.update(delta);
 		input = container.getInput();
-		sprite.update(delta);
-		if(input.isKeyPressed(Input.KEY_ENTER)){
-			container.getGraphics().setBackground(Color.white);
-		}
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
 			game.enterState(MainMenu.ID);
 		}
@@ -74,26 +77,7 @@ public class InGame extends HCGameState {
 		}else{
 			mouseWasDown = false;
 		}
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			X -= 1;
-			sprite = mechLight.getAnimation(UnitImage.LEFT);
-		}
-		if(input.isKeyDown(Input.KEY_RIGHT)){
-			X += 1;
-			sprite = mechLight.getAnimation(UnitImage.RIGHT);
-		}
-		if(input.isKeyDown(Input.KEY_UP)){
-			Y -= 1;
-			sprite = mechLight.getAnimation(UnitImage.UP);
-		}
-		if(input.isKeyDown(Input.KEY_DOWN)){
-			Y += 1;
-			sprite = mechLight.getAnimation(UnitImage.DOWN);
-		}
-		if(input.isKeyDown(Input.KEY_SPACE)){
-			X = Y = 0;
-			sprite = mechLight.getAnimation(UnitImage.IDLE);
-		}
+		
 		super.update(container, game, delta);
 
 	}

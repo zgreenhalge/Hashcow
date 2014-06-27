@@ -1,5 +1,7 @@
 package theGame;
 
+import gamePieces.MapInfo;
+
 import java.io.IOException;
 
 import org.newdawn.slick.AppGameContainer;
@@ -45,7 +47,7 @@ public class Main extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenu());
-		addState(new InGame());
+		addState(new InGame(MapInfo.TEST_MAP));
 	}
 
 	/**
@@ -57,6 +59,7 @@ public class Main extends StateBasedGame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Logger.streamLog("Clean exit achieved.");
 		appgc.exit();
 	}
 	

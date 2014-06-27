@@ -25,7 +25,7 @@ public class Logger{
     private static File currentLog;
     private static PrintWriter out;
     private static ArrayList<String> writeOut;
-    private static boolean dev = false;
+    private static boolean verbose = false;
     private static GameContainer gc;
     private static ArrayList<PrintStruct> printList;
     private static Font font;
@@ -83,16 +83,16 @@ public class Logger{
 	 * Swaps the devMode, either enabling or disabling verbose output through the Logger.
 	 * @return boolean value of the current status of dev mode
 	 */
-	public static boolean isDevEnabled(){
-		return dev;
+	public static boolean isVerboseEnabled(){
+		return verbose;
 	}
 	
 	/**
 	 * Set the dev mode to a specific value.
 	 * @param enabled - true for dev mode on, false for dev mode off
 	 */
-	public static void setDev(boolean enabled){
-		dev = enabled;
+	public static void setVerboseEnabled(boolean enabled){
+		verbose = enabled;
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class Logger{
 	}
 
 	public static void log(Exception e) {
-           if(dev)
+           if(verbose)
                    loudLog(e);
            else{
 	           writeOut.add("["+Time.updateCal().dateTime()+"]: " + e.getMessage());
@@ -171,7 +171,7 @@ public class Logger{
 
 	@Deprecated
 	public static void log(String input) {
-		if(dev) 
+		if(verbose) 
             loudLog(input);
 		else{
 			writeOut.get(writeOut.size()-1).concat(input);
@@ -180,7 +180,7 @@ public class Logger{
 	}
 	
 	public static void logLine(String input){
-		if(dev) 
+		if(verbose) 
 			loudLogLine(input);
 		else{
 			writeOut.add(input);

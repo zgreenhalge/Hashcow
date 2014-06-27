@@ -11,7 +11,6 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import utils.Logger;
-import utils.Observer;
 
 public class HCGameState extends BasicGameState{
 
@@ -27,7 +26,7 @@ public class HCGameState extends BasicGameState{
 				e.printStackTrace();
 			}
 		}
-		Logger.logNote("State " + getID() + " is initializing");
+		Logger.streamLog("State " + getID() + " is initializing");
 	}
 
 	@Override

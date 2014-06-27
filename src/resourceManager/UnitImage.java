@@ -1,79 +1,84 @@
 package resourceManager;
 
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 import utils.Logger;
 
 public class UnitImage {
 
 	public static final int IDLE = 0;
-	public static final int UP = 1;
-	public static final int DOWN = 2;
-	public static final int LEFT = 3;
-	public static final int RIGHT = 4;
+	public static final int MOVE_UP = 1;
+	public static final int MOVE_DOWN = 2;
+	public static final int MOVE_LEFT = 3;
+	public static final int MOVE_RIGHT = 4;
+	public static final int ATTACK_RIGHT = 5;
+	public static final int ATTACK_LEFT = 6;
+	public static final int ATTACK_UP = 7;
+	public static final int ATTACK_DOWN = 8;
 	
 	private SpriteSheet idle;
 	private SpriteSheet moveUp;
 	private SpriteSheet moveDown;
 	private SpriteSheet moveLeft;
 	private SpriteSheet moveRight;
+	private SpriteSheet attackRight;
+	private SpriteSheet attackLeft;
+	private SpriteSheet attackUp;
+	private SpriteSheet attackDown;
 	private Animation idleAni;
 	private Animation upAni;
 	private Animation downAni;
 	private Animation leftAni;
 	private Animation rightAni;
+	private Animation attR;
+	private Animation attL;
+	private Animation attU;
+	private Animation attD;
 	
 	
 	public UnitImage(String unitDir) throws Exception{
 		idle = new SpriteSheet(unitDir+"/idle.png", 32, 32, null, 1); //if this file won't load, don't bother loading the rest of them
-		Texture tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/idle.png"));
-		//tx.bind();
-		idle.setTexture(tx);
-		try {
-			moveUp = new SpriteSheet(unitDir+"/moveUp.png", 32, 32, null, 1);
-			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveUp.png"));
-			tx.bind();
-			moveUp.setTexture(tx);
-		}
+
+		try {moveUp = new SpriteSheet(unitDir+"/moveUp.png", 32, 32, null, 1);}
 		catch (Exception e) {
 			Logger.log(e);
 			moveUp = idle;
 		}
-		try {
-			moveDown = new SpriteSheet(unitDir+"/moveDown.png", 32, 32, null, 1);
-			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveDown.png"));
-			tx.bind();
-			moveDown.setTexture(tx);
-		}
+		try {moveDown = new SpriteSheet(unitDir+"/moveDown.png", 32, 32, null, 1);}
 		catch (Exception e) {
 			Logger.log(e);
 			moveDown = idle;
 		}
-		try {
-			moveLeft = new SpriteSheet(unitDir+"/moveLeft.png", 32, 32, null, 1);
-			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveLeft.png"));
-			tx.bind();
-			moveLeft.setTexture(tx);
-		}
+		try {moveLeft = new SpriteSheet(unitDir+"/moveLeft.png", 32, 32, null, 1);}
 		catch (Exception e) {
 			Logger.log(e);
 			moveLeft = idle;
 		}
-		try {
-			moveRight = new SpriteSheet(unitDir+"/moveRight.png", 32, 32, null, 1);
-			tx = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(unitDir+"/moveRight.png"));
-			tx.bind();
-			moveRight.setTexture(tx);
-		}
+		try {moveRight = new SpriteSheet(unitDir+"/moveRight.png", 32, 32, null, 1);}
 		catch (Exception e) {
 			Logger.log(e);
 			moveRight = idle;
+		}
+		try{attackRight = new SpriteSheet(unitDir+"/attackRight.png", 32, 32, null, 1);}
+		catch(Exception e){
+			Logger.log(e);
+			attackRight = idle;
+		}
+		try{attackLeft = new SpriteSheet(unitDir+"/attackLeft.png", 32, 32, null, 1);}
+		catch(Exception e){
+			Logger.log(e);
+			attackLeft = idle;
+		}
+		try{attackUp = new SpriteSheet(unitDir+"/attackUp.png", 32, 32, null, 1);}
+		catch(Exception e){
+			Logger.log(e);
+			attackUp = idle;
+		}
+		try{attackDown = new SpriteSheet(unitDir+"/attackDown.png", 32, 32, null, 1);}
+		catch(Exception e){
+			Logger.log(e);
+			attackDown = idle;
 		}
 	}
 	
@@ -82,18 +87,30 @@ public class UnitImage {
 			case IDLE: if(idleAni == null)
 						idleAni = buildAnimation(idle);
 					return idleAni;
-			case UP: if(upAni == null)
+			case MOVE_UP: if(upAni == null)
 						upAni = buildAnimation(moveUp);
 					return upAni;
-			case DOWN: if(downAni == null)
+			case MOVE_DOWN: if(downAni == null)
 						downAni = buildAnimation(moveDown);
 					return downAni;
-			case LEFT: if(leftAni == null)
+			case MOVE_LEFT: if(leftAni == null)
 						leftAni = buildAnimation(moveLeft);
 					return leftAni;
-			case RIGHT: if(rightAni == null)
+			case MOVE_RIGHT: if(rightAni == null)
 							rightAni = buildAnimation(moveRight);
 					return rightAni;
+			case ATTACK_RIGHT: if(attR == null)
+									attR = buildAnimation(attackRight);
+					return attR;
+			case ATTACK_LEFT: if(attL == null)
+								attL = buildAnimation(attackLeft);
+					return attL;
+			case ATTACK_UP: if(attU == null)
+								attU = buildAnimation(attackUp);
+					return attU;
+			case ATTACK_DOWN: if(attD == null)
+				attD = buildAnimation(attackDown);
+					return attD;
 			default: return getAnimation(IDLE);
 		}
 		
