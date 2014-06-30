@@ -1,14 +1,16 @@
 package gamePieces;
 
+import org.newdawn.slick.Graphics;
+
 public class MapInfo {
 
 	private MapTile[][] board;
 	private int MAX_PLAYERS;
-	private int NUM_PLAYERS;
 	private int[][] positions;
+	private boolean displayGrid;
 	
 	public static final MapInfo TEST_MAP = new MapInfo(
-			new MapTile[][] {new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}},
+			new MapTile[][] {new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}},
 			new int[1][1],
 			1, 1);
 	
@@ -16,7 +18,6 @@ public class MapInfo {
 		board = map;
 		positions = start;
 		MAX_PLAYERS = max;
-		NUM_PLAYERS = num;
 	}
 	
 	public void update(int delta){
@@ -26,11 +27,14 @@ public class MapInfo {
 			}
 	}
 	
-	public void render(int X, int Y){
+	public void render(Graphics g, int X, int Y){
 		int row=0, column=0;
-		while(column<board[0].length){
-			while(row<board.length){
+		while(column<board.length){
+			while(row<board[column].length){
 				board[column][row].getAnimation().draw(X+column*32, Y+row*32);
+				if(displayGrid){
+					
+				}
 				row++;
 			}
 			column++;
@@ -45,10 +49,6 @@ public class MapInfo {
 		else
 			ret = board[x][y];
 		return ret;
-	}
-	
-	public int getNumPlayers(){
-		return NUM_PLAYERS;
 	}
 	
 	public int getMaxPlayers(){

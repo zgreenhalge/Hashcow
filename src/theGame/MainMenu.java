@@ -35,8 +35,8 @@ public class MainMenu extends HCGameState {
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
-		Font buttonFont = FontManager.getManager().getFont(FontManager.BUTTON_FONT);
-		TrueTypeFont ttfont = FontManager.getManager().getFontAsTrueType(FontManager.BUTTON_FONT);
+		Font buttonFont = FontManager.BUTTON_FONT;
+		TrueTypeFont ttfont = FontManager.BUTTON_TRUETYPE;
 		NEW = new TextButton(container, buttonFont, "New Game",
 				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
 				game, this.getID(), 
@@ -94,7 +94,7 @@ public class MainMenu extends HCGameState {
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		sm = SoundManager.getManager();
 		SoundManager.setVolume(.25f);
-		sm.loopSound(SoundManager.MAIN_MENU);
+		//sm.loopSound(SoundManager.MAIN_MENU);
 		super.enter(container, game);
 	}
 

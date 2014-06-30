@@ -42,12 +42,12 @@ import utils.Logger;
             this.stateID = stateID;
             this.action = action;
             borderColor = Color.darkGray;
-            biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()*(11/10)), false);
+            biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()*(12/10)), false);
             name = "State"+stateID+"TextButton"+(num++);
             oldX = x;
             oldY = y;
-            bigX = x - (biggerFont.getWidth(text) - ttfont.getWidth(text));
-            bigY = y - (biggerFont.getLineHeight() - ttfont.getLineHeight());
+            bigX = x - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;
+            bigY = y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
         }
      
         public void setEnabled(boolean b) {

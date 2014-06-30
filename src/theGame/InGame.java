@@ -9,12 +9,14 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import utils.Logger;
+
 public class InGame extends HCGameState {
 
 	private int ID;
 	private static int lastId = 1;
 	
-	private boolean playing = true;
+	private boolean playing = false;
 	private MapInfo map;
 	private Unit[][] units;
 	private int players;
@@ -28,12 +30,13 @@ public class InGame extends HCGameState {
 	private int startY;
 	private int prevX;
 	private int prevY;
+	private float scale;
 	private Input input;
 	
-	public InGame(MapInfo board){
+	public InGame(MapInfo board, int players){
 		ID = ++lastId;
 		map = board;
-		players = map.getNumPlayers();
+		this.players = players;
 		curPlayer = 0;
 		
 	}
@@ -45,13 +48,16 @@ public class InGame extends HCGameState {
 		//TODO change this so that we render the center of the map on the center of the screen - will keep 
 		X = (container.getWidth() - map.getWidth())/2;
 		Y = (container.getHeight() - map.getHeight())/2;
+		scale = 1.0f;
 		super.init(container, game);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		map.render(X, Y);
+		g.scale(scale, scale); 	//scale block to allow zooming
+		map.render(g, X, Y);
+		g.resetTransform();		//end scale block
 		super.render(container, game, g);
 	}
 
@@ -61,7 +67,7 @@ public class InGame extends HCGameState {
 		map.update(delta);
 		input = container.getInput();
 		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			game.enterState(MainMenu.ID);
+			Main.exit();
 		}
 		if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 			if(mouseWasDown){
@@ -81,10 +87,22 @@ public class InGame extends HCGameState {
 		super.update(container, game, delta);
 
 	}
+	
+	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		
+	}
 
 	@Override
+	public void mouseWheelMoved(int change){
+		if(change > 0 && scale < 1.5f)
+			scale = scale*1.1f;
+		if(change < 0 && scale > 0.5f)
+			scale = scale*.9f;
+	}
+	
+	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
 		return ID;
 	}
 
