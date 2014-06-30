@@ -26,6 +26,8 @@ public class InGame extends HCGameState {
 	private boolean mouseWasDown;
 	private int X;
 	private int Y;
+	private int centerX;
+	private int centerY;
 	private int startX;
 	private int startY;
 	private int prevX;
@@ -46,8 +48,8 @@ public class InGame extends HCGameState {
 			throws SlickException{
 		mouseWasDown = false;
 		//TODO change this so that we render the center of the map on the center of the screen - will keep 
-		X = (container.getWidth() - map.getWidth())/2;
-		Y = (container.getHeight() - map.getHeight())/2;
+		X = centerX = (container.getWidth() - map.getWidth()*32)/2;
+		Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
 		super.init(container, game);
 	}
@@ -96,14 +98,25 @@ public class InGame extends HCGameState {
 			Main.exit();
 		if(i == Input.KEY_TAB)
 			map.cycleDisplayMode();
+		if(i == Input.KEY_SPACE){
+			scale = 1.0f;
+			X = centerX;
+			Y = centerY;
+		}
 	}
 
 	@Override
 	public void mouseWheelMoved(int change){
-		if(change > 0 && scale < 1.5f)
+		if(change > 0 && scale < 1.5f){
 			scale = scale*1.1f;
-		if(change < 0 && scale > 0.5f)
+			X *= .9f;
+			Y *= .9f;
+		}
+		if(change < 0 && scale > 0.5f){
 			scale = scale*.9f;
+			X *= 1.15f;
+			Y *= 1.15f;
+		}
 	}
 	
 	@Override
