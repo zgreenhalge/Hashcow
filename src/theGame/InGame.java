@@ -66,9 +66,6 @@ public class InGame extends HCGameState {
 			throws SlickException {
 		map.update(delta);
 		input = container.getInput();
-		if(input.isKeyPressed(Input.KEY_ESCAPE)){
-			Main.exit();
-		}
 		if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 			if(mouseWasDown){
 				X = prevX + input.getMouseX() - startX;
@@ -91,6 +88,14 @@ public class InGame extends HCGameState {
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		
+	}
+	
+	@Override
+	public void keyPressed(int i, char c){
+		if(i == Input.KEY_ESCAPE)
+			Main.exit();
+		if(i == Input.KEY_TAB)
+			map.cycleDisplayMode();
 	}
 
 	@Override
