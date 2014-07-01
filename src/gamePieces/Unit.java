@@ -51,11 +51,11 @@ public abstract class Unit {
 		//current
 	}
 	
-	public int getCurrentX(){
+	public int getX(){
 		return column;
 	}
 	
-	public int getCurrentY(){
+	public int getY(){
 		return row;
 	}
 	

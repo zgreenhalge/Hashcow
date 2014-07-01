@@ -4,11 +4,13 @@ import interfaceElements.Menu;
 
 import java.util.HashMap;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
+import resourceManager.ImageManager;
 
 public class MapInfo {
 
@@ -16,6 +18,9 @@ public class MapInfo {
 	private HashMap<int[], Unit> units;
 	private int MAX_PLAYERS;
 	private int[][] positions;
+	private int selectedX;
+	private int selectedY;
+	private Animation cursor;
 	private int displayMode = 0;
 	private String pos;
 	private Color prev;
@@ -27,10 +32,12 @@ public class MapInfo {
 			1, 1);
 	
 	public MapInfo(MapTile[][] map, int[][] start, int max, int num){
+		selectedX = selectedY = -1;
 		board = map;
 		positions = start;
 		MAX_PLAYERS = max;
 		units = new HashMap<int[], Unit>();
+		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
 	public void update(int delta){
@@ -71,8 +78,24 @@ public class MapInfo {
 			g.setColor(prev);
 		}
 		
+		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[0].length){
+			cursor.draw(X+selectedX*32, Y+selectedY*32);
+		}
+			
+		
 		for(Unit u: units.values())
 			u.render(g, X, Y);
+	}
+	
+	public Menu select(int X, int Y){
+		selectedX = X;
+		selectedY = Y;
+		Menu ret = new Menu(X, Y);
+		if(isOccupied(X, Y)){
+			//for(Ability a: units.get(new int[] {X, Y}))
+				//ret.addButton(a.getButton());
+		}
+		return ret;
 	}
 	
 	public void cycleDisplayMode(){
@@ -117,11 +140,6 @@ public class MapInfo {
 		return board[0].length;
 	}
 
-	public Menu select(int X, int Y){
-		Menu ret = new Menu(X, Y);
-		if(isOccupied(X, Y));
-		return ret;
-	}
 	
 	public int[] getStartingPosition(int playerNum){
 		return positions[playerNum];

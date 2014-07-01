@@ -120,7 +120,6 @@ public class InGame extends HCGameState {
 			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
 				mouseX = (int)(mouseX/scale-X)/32;
 				mouseY = (int)(mouseY/scale-Y)/32;
-				//Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
 				selected = map.select((int)mouseX, (int)mouseY);
 			}
 		}
@@ -130,9 +129,13 @@ public class InGame extends HCGameState {
 	public void mouseWheelMoved(int change){
 		if(change > 0 && scale < 1.5f){
 			scale *= 1.1;
+			X *= .9;
+			Y *= .9;
 		}
-		if(change < 0 && scale > 0.5f){
+		if(change < 0 && scale > 0.75f){
 			scale *= 0.9;
+			X *= 1.125;
+			Y *= 1.125;
 		}
 	}
 	

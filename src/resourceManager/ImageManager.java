@@ -1,5 +1,6 @@
 package resourceManager;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 
@@ -10,6 +11,10 @@ public class ImageManager {
 	
 	public static Image getImage(String path){
 		return null;
+	}
+	
+	public static Animation getAnimation(SpriteSheet ss, int duration){
+		return new Animation(ss, duration);
 	}
 	
 	public static SpriteSheet getSpriteSheet(String path, int frameWidth, int frameHeight, int spacing){
