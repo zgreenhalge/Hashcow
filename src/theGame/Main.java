@@ -15,11 +15,13 @@ import utils.Logger;
 public class Main extends StateBasedGame {
 
 	private static AppGameContainer appgc;
+	private static StateBasedGame currentGame;
 	
 	public static void main(String[] args){
 		//entry point of program
 		try{
-			appgc = new AppGameContainer(new Main("This Is The Title"));
+			currentGame = new Main("This Is The Title");
+			appgc = new AppGameContainer(currentGame);
 			appgc.setDisplayMode(800, 480, false);
 			appgc.setShowFPS(true);
 			appgc.setTargetFrameRate(119);
@@ -48,6 +50,10 @@ public class Main extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenu());
 		addState(new InGame(MapInfo.TEST_MAP, 0));
+	}
+	
+	public static StateBasedGame getGame(){
+		return currentGame;
 	}
 
 	/**

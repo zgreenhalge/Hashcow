@@ -1,16 +1,22 @@
 package gamePieces;
 
 import interfaceElements.Menu;
+import interfaceElements.TextButton;
+import interfaceElements.buttonActions.UnImplementedAction;
 
 import java.util.HashMap;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.FontManager;
 import resourceManager.ImageManager;
+import theGame.Main;
+import utils.Logger;
 
 public class MapInfo {
 
@@ -87,7 +93,8 @@ public class MapInfo {
 			u.render(g, X, Y);
 	}
 	
-	public Menu select(int X, int Y){
+	public Menu select(GameContainer container, StateBasedGame game, int X, int Y){
+		Logger.loudLogLine("Selected: " + X + "," + Y);
 		selectedX = X;
 		selectedY = Y;
 		Menu ret = new Menu(X, Y);
@@ -95,6 +102,10 @@ public class MapInfo {
 			//for(Ability a: units.get(new int[] {X, Y}))
 				//ret.addButton(a.getButton());
 		}
+		try{
+			ret.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Button",
+					0, 0, game, 2, new UnImplementedAction()));
+		}catch(Exception e){Logger.loudLog(e);}
 		return ret;
 	}
 	

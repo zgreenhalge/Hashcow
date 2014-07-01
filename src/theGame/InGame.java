@@ -87,8 +87,15 @@ public class InGame extends HCGameState {
 		}else{
 			mouseWasDown = false;
 		}
-		
-		
+		if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
+			double mouseX = input.getMouseX();
+			double mouseY = input.getMouseY();
+			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
+				mouseX = (int)(mouseX/scale-X)/32;
+				mouseY = (int)(mouseY/scale-Y)/32;
+				selected = map.select(container, game, (int)mouseX, (int)mouseY);
+			}
+		}
 		
 		super.update(container, game, delta);
 
@@ -109,19 +116,6 @@ public class InGame extends HCGameState {
 			scale = 1.0f;
 			X = centerX;
 			Y = centerY;
-		}
-	}
-
-	@Override
-	public void mouseClicked(int button, int mX, int mY, int clickCount){
-		double mouseX = input.getMouseX();
-		double mouseY = input.getMouseY();
-		if(button == Input.MOUSE_LEFT_BUTTON){
-			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
-				mouseX = (int)(mouseX/scale-X)/32;
-				mouseY = (int)(mouseY/scale-Y)/32;
-				selected = map.select((int)mouseX, (int)mouseY);
-			}
 		}
 	}
 	
