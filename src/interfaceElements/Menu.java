@@ -37,7 +37,7 @@ public class Menu {
 		
 		for(int i=0; i<buttons.size(); i++){
 			b = buttons.get(i);
-			b.setLocation(X, Y+buttonHeight*i);
+			b.setLocation(X, Y+(buttonHeight+1)*i);
 			b.render((GUIContext)container, g);
 		}
 	}
@@ -55,5 +55,11 @@ public class Menu {
 		if(buttons.remove(b)){
 			height -= b.getHeight();
 		}
+		if(!buttons.isEmpty()){
+			width = buttons.get(0).getWidth();
+			for(Button t: buttons)
+				if(t.getWidth() > width)
+					width = t.getWidth();
+		}else width = 0;
 	}
 }

@@ -1,5 +1,7 @@
 package gamePieces;
 
+import interfaceElements.Menu;
+
 import java.util.HashMap;
 
 import org.newdawn.slick.Color;
@@ -110,8 +112,15 @@ public class MapInfo {
 		return board.length;
 	}
 	
+	
 	public int getHeight(){
 		return board[0].length;
+	}
+
+	public Menu select(int X, int Y){
+		Menu ret = new Menu(X, Y);
+		if(isOccupied(X, Y));
+		return ret;
 	}
 	
 	public int[] getStartingPosition(int playerNum){

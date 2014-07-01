@@ -10,6 +10,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import utils.Logger;
+
 public class InGame extends HCGameState {
 
 	private int ID;
@@ -32,7 +34,7 @@ public class InGame extends HCGameState {
 	private int startY;
 	private int prevX;
 	private int prevY;
-	private float scale;
+	private double scale;
 	private Input input;
 	
 	public InGame(MapInfo board, int players){
@@ -57,11 +59,11 @@ public class InGame extends HCGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		g.scale(scale, scale); 	//scale block to allow zooming
+		g.scale((float)scale, (float)scale); 	//scale block to allow zooming
 		map.render(g, X, Y);
 		g.resetTransform();		//end scale block
 		if(selected != null)
-			selected.render(container, g, X, Y);
+			selected.render(container, g);
 		super.render(container, game, g);
 	}
 
@@ -85,6 +87,8 @@ public class InGame extends HCGameState {
 			mouseWasDown = false;
 		}
 		
+		
+		
 		super.update(container, game, delta);
 
 	}
@@ -105,13 +109,23 @@ public class InGame extends HCGameState {
 			X = centerX;
 			Y = centerY;
 		}
-		if(i == Input.MOUSE_LEFT_BUTTON){
-			int mouseX = input.getMouseX();
-			int mouseY = input.getMouseY();
-			mapInfo.select()
-		}
 	}
 
+	@Override
+	public void mouseClicked(int button, int mX, int mY, int clickCount){
+		double mouseX = input.getMouseX()/scale;
+		double mouseY = input.getMouseY()/ scale;
+		if(button == Input.MOUSE_LEFT_BUTTON){
+			Logger.loudLogLine("X:  "+ mouseX + " Y: " + mouseY + " Scale: " + scale);
+			Logger.loudLogLine("Region: " + X + "-" + (int)(X+(map.getWidth()*32*scale)) + "," + Y + "-" + (int)(Y+(map.getHeight()*32*scale)));
+			if(mouseX > X && mouseX < ((int) X+map.getWidth()*32*scale) && mouseY > Y && mouseY < ((int) Y+map.getHeight()*32*scale)){
+				mouseX = (int)((mouseX-X)/(double)scale/32);
+				mouseY = (int)((mouseY-Y)/(double)scale/32);
+				Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
+			}
+		}
+	}
+	
 	@Override
 	public void mouseWheelMoved(int change){
 		if(change > 0 && scale < 1.5f){
