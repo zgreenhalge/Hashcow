@@ -35,7 +35,7 @@ public class InGame extends HCGameState {
 	private int startY;
 	private int prevX;
 	private int prevY;
-	private double scale;
+	private float scale;
 	private Input input;
 	
 	public InGame(MapInfo board, int players){
@@ -63,12 +63,8 @@ public class InGame extends HCGameState {
 		g.scale((float)scale, (float)scale); 	//scale block to allow zooming
 		map.render(g, X, Y);
 		g.resetTransform();		//end scale block
-		g.setColor(Color.red);
-		g.drawLine(X*(float)scale, Y*(float)scale, (X+map.getWidth()*32)*(float)scale, (Y+map.getHeight()*32)*(float)scale);
-		g.drawString("X:" + input.getMouseX() + " Y:" + input.getMouseY(), 680, 10);
 		if(selected != null)
 			selected.render(container, g);
-		g.setColor(Color.white);
 		super.render(container, game, g);
 	}
 
@@ -121,12 +117,11 @@ public class InGame extends HCGameState {
 		double mouseX = input.getMouseX();
 		double mouseY = input.getMouseY();
 		if(button == Input.MOUSE_LEFT_BUTTON){
-			Logger.loudLogLine("X:  "+ mouseX + " Y: " + mouseY + " Scale: " + scale);
-			Logger.loudLogLine("Region: " + X*(float)scale + "-" + (X+map.getWidth()*32)*(float)scale + "," + Y*(float)scale + "-" + (Y+map.getHeight()*32)*(float)scale);
-			if(mouseX > X*(float)scale && mouseX < (X+map.getWidth()*32)*(float)scale && mouseY > Y*(float)scale && mouseY < (Y+map.getHeight()*32)*scale){
-				mouseX = (int)((mouseX-X/(float)scale)/(float)scale/32);
-				mouseY = (int)((mouseY-Y/(float)scale)/(float)scale/32);
-				Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
+			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
+				mouseX = (int)(mouseX/scale-X)/32;
+				mouseY = (int)(mouseY/scale-Y)/32;
+				//Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
+				selected = map.select((int)mouseX, (int)mouseY);
 			}
 		}
 	}
