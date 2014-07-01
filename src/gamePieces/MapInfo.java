@@ -28,13 +28,19 @@ public class MapInfo {
 		board = map;
 		positions = start;
 		MAX_PLAYERS = max;
+		units = new HashMap<int[], Unit>();
 	}
 	
 	public void update(int delta){
+		//update 
 		for(MapTile[] arr: board)
 			for(MapTile tile: arr){
 				tile.getAnimation().update(delta);
 			}
+		
+		for(Unit u: units.values()){
+			u.update(delta);
+		}
 	}
 	
 	public void render(Graphics g, int X, int Y){
@@ -62,6 +68,9 @@ public class MapInfo {
 				g.drawLine(X, Y+i*32, X+board.length*32, Y+i*32);
 			g.setColor(prev);
 		}
+		
+		for(Unit u: units.values())
+			u.render(g, X, Y);
 	}
 	
 	public void cycleDisplayMode(){
@@ -75,6 +84,18 @@ public class MapInfo {
 		else
 			ret = board[x][y];
 		return ret;
+	}
+	
+	public void addUnit(Unit u, int X, int Y){
+		units.put(new int[] {X, Y}, u);
+	}
+	
+	public void removeUnit(int X, int Y){
+		units.remove(new int[] {X, Y});
+	}
+	
+	public Unit getUnit(int X, int Y){
+		return units.get(new int[]{X, Y});
 	}
 	
 	public boolean isOccupied(int X, int Y){

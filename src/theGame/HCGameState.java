@@ -26,7 +26,7 @@ public class HCGameState extends BasicGameState{
 				e.printStackTrace();
 			}
 		}
-		Logger.streamLog("State " + getID() + " is initializing");
+		Logger.logLine("State " + getID() + " is initializing");
 	}
 
 	@Override

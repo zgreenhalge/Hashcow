@@ -1,5 +1,6 @@
 package theGame;
 
+import interfaceElements.Menu;
 import gamePieces.MapInfo;
 import gamePieces.Unit;
 
@@ -8,8 +9,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-
-import utils.Logger;
 
 public class InGame extends HCGameState {
 
@@ -21,6 +20,7 @@ public class InGame extends HCGameState {
 	private Unit[][] units;
 	private int players;
 	private int curPlayer;
+	private Menu selected;
 
 	//variables for moving map with mouse
 	private boolean mouseWasDown;
@@ -60,6 +60,8 @@ public class InGame extends HCGameState {
 		g.scale(scale, scale); 	//scale block to allow zooming
 		map.render(g, X, Y);
 		g.resetTransform();		//end scale block
+		if(selected != null)
+			selected.render(container, g, X, Y);
 		super.render(container, game, g);
 	}
 
@@ -103,6 +105,11 @@ public class InGame extends HCGameState {
 			X = centerX;
 			Y = centerY;
 		}
+		if(i == Input.MOUSE_LEFT_BUTTON){
+			int mouseX = input.getMouseX();
+			int mouseY = input.getMouseY();
+			mapInfo.select()
+		}
 	}
 
 	@Override
@@ -114,8 +121,8 @@ public class InGame extends HCGameState {
 		}
 		if(change < 0 && scale > 0.5f){
 			scale = scale*.9f;
-			X *= 1.15f;
-			Y *= 1.15f;
+			X *= 1.125f;
+			Y *= 1.125f;
 		}
 	}
 	

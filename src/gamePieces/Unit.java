@@ -35,11 +35,20 @@ public abstract class Unit {
 	
 	//movementType
 	//attackType
+	//abilities
 	
 	public Unit(){}
 	
 	public UnitImage getImage(){
 		return image;
+	}
+	
+	public void kill(){
+		current = image.getAnimation(UnitImage.DEATH);
+		current.stopAt(current.getFrameCount()-1);
+		current.setLooping(false);
+		current.start();
+		//current
 	}
 	
 	public int getCurrentX(){
@@ -80,14 +89,35 @@ public abstract class Unit {
 	
 	public void update(int delta){
 		current.update(delta);
+		if(currentHealth == 0){
+			kill();
+			return;
+		}
+		if(current.isStopped()){
+			map.removeUnit(column, row);
+			return;
+		}
 		//movement logic goes here?
 	}
 	
+	public void moveTo(int X, int Y){
+		if(Math.abs(X-column) + Math.abs(Y-row) <= moveRange){
+			targetX = X;
+			targetY = Y;
+		}
+	}
+	
+	public boolean isStopped(){
+		return current.isStopped();
+	}
+	
 	public void render(Graphics g, int X, int Y){
-		current.draw(X+column*32, Y+row*32);
-		g.setFont(f);
-		g.drawString(health, X+(column+1)*32-f.getWidth(health), Y+(row+1)*32-f.getLineHeight());
-		g.setFont(FontManager.DEFAULT_TRUETYPE);
+		if(currentHealth > 0){
+			current.draw(X+column*32, Y+row*32);
+			g.setFont(f);
+			g.drawString(health, X+(column+1)*32-f.getWidth(health), Y+(row+1)*32-f.getLineHeight());
+			g.setFont(FontManager.DEFAULT_TRUETYPE);
+		}
 	}
 	
 	public int takeDamage(Unit attacker){

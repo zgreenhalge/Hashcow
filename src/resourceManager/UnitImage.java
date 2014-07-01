@@ -16,6 +16,8 @@ public class UnitImage {
 	public static final int ATTACK_LEFT = 6;
 	public static final int ATTACK_UP = 7;
 	public static final int ATTACK_DOWN = 8;
+	public static final int SELECTED = 9;
+	public static final int DEATH = 10;
 	
 	private SpriteSheet idle;
 	private SpriteSheet moveUp;
@@ -26,6 +28,7 @@ public class UnitImage {
 	private SpriteSheet attackLeft;
 	private SpriteSheet attackUp;
 	private SpriteSheet attackDown;
+	private SpriteSheet death;
 	private Animation idleAni;
 	private Animation upAni;
 	private Animation downAni;
@@ -35,6 +38,8 @@ public class UnitImage {
 	private Animation attL;
 	private Animation attU;
 	private Animation attD;
+	private Animation select;
+	private Animation deathAni;
 	
 	
 	public UnitImage(String unitDir) throws Exception{
@@ -80,6 +85,11 @@ public class UnitImage {
 			Logger.log(e);
 			attackDown = idle;
 		}
+		try{death = new SpriteSheet(unitDir+"/death.png", 32, 32, null, 1);}
+		catch(Exception e){
+			Logger.log(e);
+			death = idle;
+		}
 	}
 	
 	public Animation getAnimation(int direction){
@@ -109,8 +119,14 @@ public class UnitImage {
 								attU = buildAnimation(attackUp);
 					return attU;
 			case ATTACK_DOWN: if(attD == null)
-				attD = buildAnimation(attackDown);
+							attD = buildAnimation(attackDown);
 					return attD;
+			case SELECTED: if(select == null)
+							select = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 300, true);
+					return select;
+			case DEATH: if(death == null)
+							deathAni = buildAnimation(death);
+					return deathAni;
 			default: return getAnimation(IDLE);
 		}
 		

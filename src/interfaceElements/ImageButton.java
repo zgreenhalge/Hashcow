@@ -48,7 +48,6 @@ import utils.Logger;
             this.stateID = stateID;
             this.action = action;
             name = "State"+stateID+"ImageButton"+(num++);
-            
         }
      
      
