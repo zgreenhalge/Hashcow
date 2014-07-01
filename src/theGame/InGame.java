@@ -4,6 +4,7 @@ import interfaceElements.Menu;
 import gamePieces.MapInfo;
 import gamePieces.Unit;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -62,8 +63,12 @@ public class InGame extends HCGameState {
 		g.scale((float)scale, (float)scale); 	//scale block to allow zooming
 		map.render(g, X, Y);
 		g.resetTransform();		//end scale block
+		g.setColor(Color.red);
+		g.drawLine(X*(float)scale, Y*(float)scale, (X+map.getWidth()*32)*(float)scale, (Y+map.getHeight()*32)*(float)scale);
+		g.drawString("X:" + input.getMouseX() + " Y:" + input.getMouseY(), 680, 10);
 		if(selected != null)
 			selected.render(container, g);
+		g.setColor(Color.white);
 		super.render(container, game, g);
 	}
 
@@ -117,10 +122,10 @@ public class InGame extends HCGameState {
 		double mouseY = input.getMouseY();
 		if(button == Input.MOUSE_LEFT_BUTTON){
 			Logger.loudLogLine("X:  "+ mouseX + " Y: " + mouseY + " Scale: " + scale);
-			Logger.loudLogLine("Region: " + X*scale + "-" + (int)(X+map.getWidth()*32)*scale + "," + Y*scale + "-" + (int)(Y+map.getHeight()*32)*scale);
-			if(mouseX > X*scale && mouseX < ((int) (X+map.getWidth()*32)*scale) && mouseY > Y && mouseY < ((int) (Y+map.getHeight()*32)*scale)){
-				mouseX = (int)((mouseX-X)/(double)scale/32);
-				mouseY = (int)((mouseY-Y)/(double)scale/32);
+			Logger.loudLogLine("Region: " + X*(float)scale + "-" + (X+map.getWidth()*32)*(float)scale + "," + Y*(float)scale + "-" + (Y+map.getHeight()*32)*(float)scale);
+			if(mouseX > X*(float)scale && mouseX < (X+map.getWidth()*32)*(float)scale && mouseY > Y*(float)scale && mouseY < (Y+map.getHeight()*32)*scale){
+				mouseX = (int)((mouseX-X/(float)scale)/(float)scale/32);
+				mouseY = (int)((mouseY-Y/(float)scale)/(float)scale/32);
 				Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
 			}
 		}
