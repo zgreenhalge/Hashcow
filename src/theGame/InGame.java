@@ -113,12 +113,12 @@ public class InGame extends HCGameState {
 
 	@Override
 	public void mouseClicked(int button, int mX, int mY, int clickCount){
-		double mouseX = input.getMouseX()/scale;
-		double mouseY = input.getMouseY()/ scale;
+		double mouseX = input.getMouseX();
+		double mouseY = input.getMouseY();
 		if(button == Input.MOUSE_LEFT_BUTTON){
 			Logger.loudLogLine("X:  "+ mouseX + " Y: " + mouseY + " Scale: " + scale);
-			Logger.loudLogLine("Region: " + X + "-" + (int)(X+(map.getWidth()*32*scale)) + "," + Y + "-" + (int)(Y+(map.getHeight()*32*scale)));
-			if(mouseX > X && mouseX < ((int) X+map.getWidth()*32*scale) && mouseY > Y && mouseY < ((int) Y+map.getHeight()*32*scale)){
+			Logger.loudLogLine("Region: " + X*scale + "-" + (int)(X+map.getWidth()*32)*scale + "," + Y*scale + "-" + (int)(Y+map.getHeight()*32)*scale);
+			if(mouseX > X*scale && mouseX < ((int) (X+map.getWidth()*32)*scale) && mouseY > Y && mouseY < ((int) (Y+map.getHeight()*32)*scale)){
 				mouseX = (int)((mouseX-X)/(double)scale/32);
 				mouseY = (int)((mouseY-Y)/(double)scale/32);
 				Logger.loudLogLine("Selected: " + mouseX + "," + mouseY);
@@ -129,14 +129,10 @@ public class InGame extends HCGameState {
 	@Override
 	public void mouseWheelMoved(int change){
 		if(change > 0 && scale < 1.5f){
-			scale = scale*1.1f;
-			X *= .9f;
-			Y *= .9f;
+			scale *= 1.1;
 		}
 		if(change < 0 && scale > 0.5f){
-			scale = scale*.9f;
-			X *= 1.125f;
-			Y *= 1.125f;
+			scale *= 0.9;
 		}
 	}
 	
