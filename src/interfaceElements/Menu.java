@@ -30,15 +30,19 @@ public class Menu {
 	}
 	
 	public void render(GameContainer container, Graphics g){
+		if(buttons.isEmpty())
+			return;
 		prev = g.getColor();
 		g.setColor(bg);
-		g.fillRect(X-10, Y+10, width, height);
+		g.fillRect(X-5, Y-2, width+5, height+5);
 		g.setColor(prev);
 		
 		for(int i=0; i<buttons.size(); i++){
 			b = buttons.get(i);
-			b.setLocation(X, Y+(buttonHeight+1)*i);
-			b.render((GUIContext)container, g);
+			if(b != null){
+				b.setLocation(X, Y+(buttonHeight+1)*i);
+				b.render((GUIContext)container, g);
+			}
 		}
 	}
 	

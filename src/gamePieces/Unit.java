@@ -6,12 +6,15 @@ import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
 import resourceManager.UnitImage;
+import resourceManager.UnitSound;
 
 public abstract class Unit {
 
 	private static final TrueTypeFont f = FontManager.TINY_TRUETYPE;
 	
 	private UnitImage image;
+	private UnitSound sound;
+	
 	private MapInfo map;
 	private Animation current;
 	private int column;
@@ -48,7 +51,17 @@ public abstract class Unit {
 		current.stopAt(current.getFrameCount()-1);
 		current.setLooping(false);
 		current.start();
+		sound.playSound(UnitSound.DEATH);
 		//current
+	}
+	
+	public void select(){
+		current = image.getAnimation(UnitImage.SELECTED);
+		sound.playSound(UnitSound.SELECT);
+	}
+	
+	public void deselect(){
+		current = image.getAnimation(UnitImage.IDLE);
 	}
 	
 	public int getX(){

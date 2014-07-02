@@ -1,6 +1,9 @@
 package theGame;
 
+import interfaceElements.Button;
+import interfaceElements.TextButton;
 import interfaceElements.Menu;
+import interfaceElements.buttonActions.UnImplementedAction;
 import gamePieces.MapInfo;
 import gamePieces.Unit;
 
@@ -11,6 +14,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import resourceManager.FontManager;
 import utils.Logger;
 
 public class InGame extends HCGameState {
@@ -23,7 +27,11 @@ public class InGame extends HCGameState {
 	private Unit[][] units;
 	private int players;
 	private int curPlayer;
+	private int selectedX;
+	private int selectedY;
 	private Menu selected;
+	
+	private Button endTurnButton;
 
 	//variables for moving map with mouse
 	private boolean mouseWasDown;
@@ -43,6 +51,7 @@ public class InGame extends HCGameState {
 		map = board;
 		this.players = players;
 		curPlayer = 0;
+		selectedX = selectedY = -1;
 		
 	}
 	
@@ -54,6 +63,9 @@ public class InGame extends HCGameState {
 		X = centerX = (container.getWidth() - map.getWidth()*32)/2;
 		Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
+		try{
+			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "Button", 0, 0, game, 2, new UnImplementedAction());
+		}catch(Exception e){Logger.loudLog(e);}
 		super.init(container, game);
 	}
 
@@ -90,10 +102,25 @@ public class InGame extends HCGameState {
 		if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
 			double mouseX = input.getMouseX();
 			double mouseY = input.getMouseY();
+			//map.select(-1, -1);
 			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
 				mouseX = (int)(mouseX/scale-X)/32;
 				mouseY = (int)(mouseY/scale-Y)/32;
-				selected = map.select(container, game, (int)mouseX, (int)mouseY);
+				if(mouseX != selectedX || mouseY != selectedY){
+					selectedX = (int)mouseX;
+					selectedY = (int)mouseY;
+					map.select(selectedX, selectedY); //handle animations
+					selected = new Menu(15, 40);
+					if(map.isBuilt(selectedX, selectedY)){
+						//for(Ability a: map.getBuilding(selectedX, selectedY).getAbilities())
+						//	selected.addButton(a.getButton());
+					}
+					if(map.isOccupied(selectedX, selectedY)){
+						//for(Ability a: map.getUnit(selectedX, selectedY).getAbilities())
+						//	selected.addButton(a.getButton());
+					}
+					selected.addButton(endTurnButton);
+				}
 			}
 		}
 		

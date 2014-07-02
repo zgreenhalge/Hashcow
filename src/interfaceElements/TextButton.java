@@ -96,6 +96,14 @@ import utils.Logger;
         public boolean isReporting(){
         	return report;
         }
+        
+        public int getWidth(){
+        	return biggerFont.getWidth(text);
+        }
+        
+        public int getHeight(){
+        	return biggerFont.getHeight();
+        }
 
         @Override
         public void render(GUIContext guic, Graphics g) {
@@ -138,10 +146,6 @@ import utils.Logger;
             g.setColor(standard);
             g.setFont(prevFont);
         }
-        
-        private void renderClick(){
-        	
-        }
      
         @Override
         public void mouseMoved(int oldx, int oldy, int newx, int newy) {
@@ -170,6 +174,18 @@ import utils.Logger;
         		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
-
-     
-    }
+    
+	    private void renderClick(){
+	    	
+	    }
+	    
+	    public void setLocation(int X, int Y){
+	    	try{
+		    	oldX = X;
+	            oldY = Y;
+	            bigX = X - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;
+	            bigY = Y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
+	    	}catch(Exception e){}
+            super.setLocation(X, Y);
+	    }
+}

@@ -1,27 +1,21 @@
 package gamePieces;
 
-import interfaceElements.Menu;
-import interfaceElements.TextButton;
-import interfaceElements.buttonActions.UnImplementedAction;
-
 import java.util.HashMap;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.FontManager;
 import resourceManager.ImageManager;
-import theGame.Main;
 import utils.Logger;
 
 public class MapInfo {
 
 	private MapTile[][] board;
 	private HashMap<int[], Unit> units;
+	private HashMap<int[], Building> buildings;
 	private int MAX_PLAYERS;
 	private int[][] positions;
 	private int selectedX;
@@ -43,6 +37,7 @@ public class MapInfo {
 		positions = start;
 		MAX_PLAYERS = max;
 		units = new HashMap<int[], Unit>();
+		buildings = new HashMap<int[], Building>();
 		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
@@ -93,22 +88,6 @@ public class MapInfo {
 			u.render(g, X, Y);
 	}
 	
-	public Menu select(GameContainer container, StateBasedGame game, int X, int Y){
-		Logger.loudLogLine("Selected: " + X + "," + Y);
-		selectedX = X;
-		selectedY = Y;
-		Menu ret = new Menu(X, Y);
-		if(isOccupied(X, Y)){
-			//for(Ability a: units.get(new int[] {X, Y}))
-				//ret.addButton(a.getButton());
-		}
-		try{
-			ret.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Button",
-					0, 0, game, 2, new UnImplementedAction()));
-		}catch(Exception e){Logger.loudLog(e);}
-		return ret;
-	}
-	
 	public void cycleDisplayMode(){
 		displayMode = (displayMode+1)%4;
 	}
@@ -120,6 +99,20 @@ public class MapInfo {
 		else
 			ret = board[x][y];
 		return ret;
+	}
+	
+	public void select(int X, int Y){
+		//Logger.loudLogLine(X + "," + Y);
+		if(isOccupied(selectedX, selectedY))
+			units.get(new int[] {selectedX, selectedY}).deselect();
+		if(isBuilt(selectedX, selectedY))
+			buildings.get(new int[] {selectedX, selectedY}).deselect();
+		selectedX = X;
+		selectedY = Y;
+		if(isOccupied(X, Y))
+			units.get(new int[] {X, Y}).select();
+		if(isBuilt(X, Y))
+			buildings.get(new int[] {X, Y}).select();
 	}
 	
 	public void addUnit(Unit u, int X, int Y){
@@ -138,6 +131,10 @@ public class MapInfo {
 		return units.containsKey(new int[] {X, Y});
 	}
 	
+	public boolean isBuilt(int X, int Y){
+		return buildings.containsKey(new int[] {X, Y});
+	}
+	
 	public int getMaxPlayers(){
 		return MAX_PLAYERS;
 	}
@@ -146,12 +143,10 @@ public class MapInfo {
 		return board.length;
 	}
 	
-	
 	public int getHeight(){
 		return board[0].length;
 	}
 
-	
 	public int[] getStartingPosition(int playerNum){
 		return positions[playerNum];
 	}
