@@ -30,6 +30,10 @@ public class MapTile {
 		ani = new Animation(image, 0, 0, 0, image.getVerticalCount()-1, false, 650, true);
 	}
 	
+	public static MapTile copy(MapTile tile){
+		return new MapTile(tile.name, tile.moveCost, tile.image, tile.buildable);
+	}
+	
 	public boolean isTraversable(){
 		return moveCost > 0;
 	}

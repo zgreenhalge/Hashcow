@@ -30,7 +30,7 @@ public class MapInfo {
 	private TrueTypeFont f = FontManager.TINY_TRUETYPE;
 	
 	public static final MapInfo TEST_MAP = new MapInfo(
-			new MapTile[][] {new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}, new MapTile[] {MapTile.GRASS, MapTile.GRASS, MapTile.GRASS, MapTile.GRASS}},
+			new MapTile[][] {new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}},
 			new int[1][1],
 			1, 1);
 	
@@ -109,9 +109,6 @@ public class MapInfo {
 	
 	public void select(int X, int Y){
 		//Logger.loudLogLine(X + "," + Y);
-		if(selectedX >= 0 && selectedY >= 0)
-			board[selectedX][selectedY].setVisible(false);
-		board[X][Y].setVisible(true);
 		if(isOccupied(selectedX, selectedY))
 			units.get(new int[] {selectedX, selectedY}).deselect();
 		if(isBuilt(selectedX, selectedY))
