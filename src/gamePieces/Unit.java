@@ -19,34 +19,41 @@ public abstract class Unit {
 	private Animation current;
 	private int column;
 	private int row;
-	private int nextX;
-	private int nextY;
-	private int targetX;
-	private int targetY;
-	private String health;
+	private int currentX;
+	private int currentY;
+	private String healthString;
 	
 	private int owner;
 	private boolean visible;
+	private boolean dead;
 	
-	private int moveRange;
-	private int sightRange;
-	private int attackRange;
-	private int attack;
-	private int defense;
-	private int maxHealth;
+	private int BASE_MOVE_RANGE;
+	private int BASE_SIGHT_RANGE;
+	private int BASE_ATTACK_RANGE;
+	private int BASE_ATTACK;
+	private int BASE_DEFENSE;
+	private int BASE_HEALTH;
 	private int currentHealth;
 	
 	//movementType
 	//attackType
 	//abilities
+	//upgrades
 	
-	public Unit(){}
+	public Unit(int X, int Y, int player){
+		column = X;
+		row = Y;
+		currentX = column*32;
+		currentY = row*32;
+		owner = player;
+	}
 	
 	public UnitImage getImage(){
 		return image;
 	}
 	
 	public void kill(){
+		dead = true;
 		current = image.getAnimation(UnitImage.DEATH);
 		current.stopAt(current.getFrameCount()-1);
 		current.setLooping(false);
@@ -64,36 +71,44 @@ public abstract class Unit {
 		current = image.getAnimation(UnitImage.IDLE);
 	}
 	
-	public int getX(){
+	public int getColumn(){
 		return column;
 	}
 	
-	public int getY(){
+	public int getRow(){
 		return row;
 	}
 	
+	public int getX(){
+		return currentX;
+	}
+	
+	public int getY(){
+		return currentY;
+	}
+	
 	public int getMoveRange(){
-		return moveRange;
+		return BASE_MOVE_RANGE;
 	}
 	
 	public int getSightRange(){
-		return sightRange;
+		return BASE_SIGHT_RANGE;
 	}
 	
 	public int getAttackRange(){
-		return attackRange;
+		return BASE_ATTACK_RANGE;
 	}
 	
 	public int getAttack(){
-		return attack;
+		return BASE_ATTACK;
 	}
 	
 	public int getDefense(){
-		return defense;
+		return BASE_DEFENSE;
 	}
 	
 	public int getMaxHealth(){
-		return maxHealth;
+		return BASE_HEALTH;
 	}
 	
 	public int getCurrentHealth(){
@@ -102,7 +117,7 @@ public abstract class Unit {
 	
 	public void update(int delta){
 		current.update(delta);
-		if(currentHealth == 0){
+		if(currentHealth == 0 && !dead){
 			kill();
 			return;
 		}
@@ -110,14 +125,15 @@ public abstract class Unit {
 			map.removeUnit(column, row);
 			return;
 		}
+		if(currentX < column*32)
+			currentX += 4;
+		else if(currentX > column*32)
+			currentX -= 4;
+		else if(currentY < row*32)
+			currentY += 4;
+		else if(currentY > row*32)
+			currentY -= 4;
 		//movement logic goes here?
-	}
-	
-	public void moveTo(int X, int Y){
-		if(Math.abs(X-column) + Math.abs(Y-row) <= moveRange){
-			targetX = X;
-			targetY = Y;
-		}
 	}
 	
 	public boolean isStopped(){
@@ -126,20 +142,40 @@ public abstract class Unit {
 	
 	public void render(Graphics g, int X, int Y){
 		if(currentHealth > 0){
-			current.draw(X+column*32, Y+row*32);
+			current.draw(X+currentX, Y+currentY);
 			g.setFont(f);
-			g.drawString(health, X+(column+1)*32-f.getWidth(health), Y+(row+1)*32-f.getLineHeight());
+			g.drawString(healthString, X+(column+1)*32-f.getWidth(healthString), Y+(row+1)*32-f.getLineHeight());
 			g.setFont(FontManager.DEFAULT_TRUETYPE);
 		}
 	}
 	
+	public boolean isAt(int X, int Y){
+		return column == X && row == Y; 
+	}
+	
+	public void moveUp(){
+		row += 1;
+	}
+	
+	public void moveDown(){
+		row -= 1;
+	}
+	
+	public void moveLeft(){
+		column -= 1;
+	}
+	
+	public void moveRight(){
+		column += 1;
+	}
+	
 	public int takeDamage(Unit attacker){
-		int damage = attacker.getAttack() - defense;
+		int damage = attacker.getAttack() - BASE_DEFENSE;
 		if(damage > 0)
 			currentHealth -= damage;
 		if(currentHealth < 0)
 			currentHealth = 0;
-		health = currentHealth + "/" + maxHealth;
+		healthString = currentHealth + "/" + BASE_HEALTH;
 		return currentHealth;
 	}
 }
