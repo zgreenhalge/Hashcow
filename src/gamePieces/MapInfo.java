@@ -10,12 +10,14 @@ import org.newdawn.slick.TrueTypeFont;
 import resourceManager.FontManager;
 import resourceManager.ImageManager;
 import utils.Logger;
+import utils.OneToOneMap;
 
 public class MapInfo {
 
 	private MapTile[][] board;
-	private HashMap<int[], Unit> units;
-	private HashMap<int[], Building> buildings;
+	private OneToOneMap<int[], Unit> units;
+	private OneToOneMap<int[], Building> buildings;
+	private SightMap currentSight;
 	private int MAX_PLAYERS;
 	private int[][] positions;
 	private int selectedX;
@@ -39,8 +41,8 @@ public class MapInfo {
 		board = map;
 		positions = start;
 		MAX_PLAYERS = max;
-		units = new HashMap<int[], Unit>();
-		buildings = new HashMap<int[], Building>();
+		units = new OneToOneMap<int[], Unit>();
+		buildings = new OneToOneMap<int[], Building>();
 		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
@@ -64,9 +66,9 @@ public class MapInfo {
 				temp.render(g, X+column*32, Y+row*32);
 				if(temp.isVisible()){
 					if(isOccupied(column, row))
-						units.get(new int[] {column, row}).render(g, X, Y);
+						units.getValue(new int[] {column, row}).render(g, X, Y);
 					if(isBuilt(column, row))
-						buildings.get(new int[] {column, row}).render(g, X, Y);
+						buildings.getValue(new int[] {column, row}).render(g, X, Y);
 				}
 				if(displayMode > 1){
 					g.setFont(f);
@@ -110,15 +112,15 @@ public class MapInfo {
 	public void select(int X, int Y){
 		//Logger.loudLogLine(X + "," + Y);
 		if(isOccupied(selectedX, selectedY))
-			units.get(new int[] {selectedX, selectedY}).deselect();
+			units.getValue(new int[] {selectedX, selectedY}).deselect();
 		if(isBuilt(selectedX, selectedY))
-			buildings.get(new int[] {selectedX, selectedY}).deselect();
+			buildings.getValue(new int[] {selectedX, selectedY}).deselect();
 		selectedX = X;
 		selectedY = Y;
 		if(isOccupied(X, Y))
-			units.get(new int[] {X, Y}).select();
+			units.getValue(new int[] {X, Y}).select();
 		if(isBuilt(X, Y))
-			buildings.get(new int[] {X, Y}).select();
+			buildings.getValue(new int[] {X, Y}).select();
 	}
 	
 	public void setVisible(int X, int Y){
@@ -130,7 +132,7 @@ public class MapInfo {
 	}
 	
 	public void addUnit(Unit u, int X, int Y){
-		units.put(new int[] {X, Y}, u);
+		units.add(new int[] {X, Y}, u);
 	}
 	
 	public void removeUnit(int X, int Y){
@@ -138,7 +140,7 @@ public class MapInfo {
 	}
 	
 	public Unit getUnit(int X, int Y){
-		return units.get(new int[]{X, Y});
+		return units.getValue(new int[]{X, Y});
 	}
 	
 	public boolean isOccupied(int X, int Y){
@@ -164,5 +166,24 @@ public class MapInfo {
 	public int[] getStartingPosition(int playerNum){
 		return positions[playerNum];
 	}
+
+	public void hideAll() {
+		for(int i=0; i<board.length; i++)
+			for(int j=0; j<board[j].length; i++)
+				board[i][j].setVisible(false);
+	}
 	
+	public void showAll(){
+		for(int i=0; i<board.length; i++)
+			for(int j=0; j<board[j].length; i++)
+				board[i][j].setVisible(true);
+	}
+
+	public OneToOneMap<int[], Unit> units() {
+		return units;
+	}
+	
+	public OneToOneMap<int[], Building> buildings() {
+		return buildings;
+	}
 }

@@ -24,7 +24,6 @@ public class InGame extends HCGameState {
 	
 	private boolean playing = false;
 	private MapInfo map;
-	private Unit[][] units;
 	private int players;
 	private int curPlayer;
 	private int selectedX;
@@ -52,12 +51,12 @@ public class InGame extends HCGameState {
 		this.players = players;
 		curPlayer = 0;
 		selectedX = selectedY = -1;
-		
 	}
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException{
+		super.init(container, game);
 		mouseWasDown = false;
 		//TODO change this so that we render the center of the map on the center of the screen - will keep 
 		X = centerX = (container.getWidth() - map.getWidth()*32)/2;
@@ -66,7 +65,6 @@ public class InGame extends HCGameState {
 		try{
 			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "Button", 0, 0, game, 2, new UnImplementedAction());
 		}catch(Exception e){Logger.loudLog(e);}
-		super.init(container, game);
 	}
 
 	@Override
@@ -158,6 +156,11 @@ public class InGame extends HCGameState {
 			X *= 1.125;
 			Y *= 1.125;
 		}
+	}
+	
+	public void endTurn(){
+		curPlayer++;
+		map.hideAll();
 	}
 	
 	@Override

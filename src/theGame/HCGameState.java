@@ -15,17 +15,20 @@ import utils.Logger;
 public class HCGameState extends BasicGameState{
 
 	private static boolean displayLog;
-	private static final int DISPLAY_LENGTH = 3500; //how long to display the log 
+	private static final int DISPLAY_LENGTH = 3500; //how long to display the log
+	
+	private Input in;
 	
 	@Override
-	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException{
+	public void init(GameContainer container, StateBasedGame game) throws SlickException{
 		if(!Logger.isInit()){
 			try {
-				Logger.init(new File("logs"), arg0, false);
+				Logger.init(new File("logs"), container, false);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		in = container.getInput();
 		Logger.logLine("State " + getID() + " is initializing");
 	}
 
@@ -39,8 +42,10 @@ public class HCGameState extends BasicGameState{
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		Logger.update(delta);
-		if(container.getInput().isKeyPressed(Input.KEY_GRAVE))
+		if(in.isKeyPressed(Input.KEY_F10))
 			displayLog = !displayLog;
+		if(in.isKeyPressed(Input.KEY_F) && in.isKeyDown(Input.KEY_LCONTROL) && in.isKeyDown(Input.KEY_LSHIFT))
+			container.setShowFPS(!container.isShowingFPS());
 	}
 
 	//MUST BE OVERRIDDEN IN EACH SUB CLASS
