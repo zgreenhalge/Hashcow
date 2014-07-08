@@ -18,7 +18,7 @@ import resourceManager.SoundManager;
 import utils.Logger;
      
     public class TextButton extends MouseOverArea implements Button{
-     
+    	     
         private TrueTypeFont ttfont;
         private String text;
         private boolean lastMouseOver = false;
@@ -30,7 +30,6 @@ import utils.Logger;
         private boolean borderEnabled;
         private Color borderColor;
         private String name;
-        private static int num = 0;
         private int oldX, oldY, bigX, bigY;
         private boolean report = false;
      
@@ -43,7 +42,7 @@ import utils.Logger;
             this.action = action;
             borderColor = Color.darkGray;
             biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()*(12/10)), false);
-            name = "State"+stateID+"TextButton"+(num++);
+            name = text.replaceAll(" ", "") + "Button";
             oldX = x;
             oldY = y;
             bigX = x - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;

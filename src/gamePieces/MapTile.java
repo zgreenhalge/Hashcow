@@ -15,7 +15,7 @@ public class MapTile {
 	private SpriteSheet image;
 	private Animation ani;
 	private boolean buildable;
-	private boolean visible;
+	private boolean visible = true;
 	private static Color pre;
 	
 	public static final MapTile GRASS = new MapTile("Grass", 1, ImageManager.getSpriteSheet("res/images/tiles/grass.png", 32, 32, 0), true);

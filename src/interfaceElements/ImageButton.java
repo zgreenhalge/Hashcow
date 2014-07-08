@@ -23,7 +23,6 @@ import utils.Logger;
         private int stateID;
         private ButtonAction action;
         private String name;
-        private static int num = 0;
         private boolean report;
      
         /**
@@ -47,7 +46,7 @@ import utils.Logger;
             this.sbg = sbg;
             this.stateID = stateID;
             this.action = action;
-            name = "State"+stateID+"ImageButton"+(num++);
+            name = animation.getImage(0).getName()+"Button";
         }
      
      
