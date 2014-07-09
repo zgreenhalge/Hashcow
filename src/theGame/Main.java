@@ -1,8 +1,10 @@
 package theGame;
 
 import gamePieces.MapInfo;
+import gamePieces.Player;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -48,7 +50,9 @@ public class Main extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenu());
-		addState(new InGame(MapInfo.TEST_MAP, 0));
+		ArrayList<Player> temp = new ArrayList<Player>();
+		temp.add(new Player(1));
+		addState(new InGame(MapInfo.TEST_MAP, temp));
 	}
 	
 	public static StateBasedGame getGame(){

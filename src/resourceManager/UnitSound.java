@@ -2,6 +2,8 @@ package resourceManager;
 
 import org.newdawn.slick.Sound;
 
+import utils.Logger;
+
 public class UnitSound {
 
 	public static final int SELECT = 0;
@@ -13,6 +15,29 @@ public class UnitSound {
 	private Sound selected;
 	private Sound movement;
 	private Sound death;
+	
+	public UnitSound(String path){
+		try{
+			attack = new Sound(path +"/attack.wav");
+		}catch(Exception e){
+			Logger.log(e);
+		}
+		try{
+			selected = new Sound(path +"/selected.wav");
+		}catch(Exception e){
+			Logger.log(e);
+		}
+		try{
+			movement = new Sound(path +"/movement.wav");
+		}catch(Exception e){
+			Logger.log(e);
+		}
+		try{
+			death = new Sound(path +"/death.wav");
+		}catch(Exception e){
+			Logger.log(e);
+		}
+	}
 	
 	public void playSound(int id){
 		float vol = SoundManager.getVolume();

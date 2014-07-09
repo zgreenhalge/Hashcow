@@ -1,5 +1,9 @@
 package gamePieces;
 
+import interfaceElements.Button;
+
+import java.util.ArrayList;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -22,16 +26,17 @@ public class MapInfo {
 	private int selectedY;
 	private int row;
 	private int column;
-	private MapTile temp;
 	private Animation cursor;
 	private int displayMode = 0;
 	private String pos;
 	private Color prev;
 	private TrueTypeFont f = FontManager.TINY_TRUETYPE;
+	private int[] tempArr;
+	private MapTile temp;
 	
 	public static final MapInfo TEST_MAP = new MapInfo(
 			new MapTile[][] {new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}},
-			new int[1][1],
+			new int[1][2], //[maxPlayers][2] ALWAYS
 			1, 1);
 	
 	public MapInfo(MapTile[][] map, int[][] start, int max, int num){
@@ -62,12 +67,10 @@ public class MapInfo {
 			while(row<board[column].length){
 				temp = board[column][row];
 				temp.render(g, X+column*32, Y+row*32);
-				if(temp.isVisible()){
-					if(isOccupied(column, row))
-						units.getValue(new int[] {column, row}).render(g, X, Y);
-					if(isBuilt(column, row))
-						buildings.getValue(new int[] {column, row}).render(g, X, Y);
-				}
+				if(isOccupied(column, row))
+					units.getValue(new int[] {column, row}).render(g, X, Y);
+				if(isBuilt(column, row))
+					buildings.getValue(new int[] {column, row}).render(g, X, Y);
 				if(displayMode > 1){
 					g.setFont(f);
 					pos = column + "," + row;
@@ -107,34 +110,44 @@ public class MapInfo {
 		return ret;
 	}
 	
-	public void select(int X, int Y){
+	public ArrayList<Button> select(int X, int Y, Player selector){
 		//Logger.loudLogLine(X + "," + Y);
+		ArrayList<Button> ret = new ArrayList<Button>();
+		tempArr = new int[] {selectedX, selectedY};
 		if(isOccupied(selectedX, selectedY))
-			units.getValue(new int[] {selectedX, selectedY}).deselect();
+			units.getValue(tempArr).deselect();
 		if(isBuilt(selectedX, selectedY))
-			buildings.getValue(new int[] {selectedX, selectedY}).deselect();
+			buildings.getValue(tempArr).deselect();
 		selectedX = X;
 		selectedY = Y;
+		tempArr = new int[] {X, Y};
 		if(isOccupied(X, Y))
-			units.getValue(new int[] {X, Y}).select();
+			ret.addAll(units.getValue(tempArr).select(selector));
 		if(isBuilt(X, Y))
-			buildings.getValue(new int[] {X, Y}).select();
+			buildings.getValue(tempArr).select(selector);
+		return ret;
 	}
 	
 	public void setVisible(int X, int Y){
 		board[X][Y].setVisible(true);
+		tempArr = new int[] {X, Y};
+		units.getValue(tempArr).setVisible(true);
+		buildings.getValue(tempArr).setVisible(true);
 	}
 	
 	public void setHidden(int X, int Y){
 		board[X][Y].setVisible(false);
+		tempArr = new int[] {X, Y};
+		units.getValue(tempArr).setVisible(false);
+		buildings.getValue(tempArr).setVisible(false);
 	}
 	
 	public void addUnit(Unit u, int X, int Y){
 		units.add(new int[] {X, Y}, u);
 	}
 	
-	public void removeUnit(int X, int Y){
-		units.remove(new int[] {X, Y});
+	public void removeUnit(Unit u){
+		units.remove(new int[] {u.getColumn(), u.getRow()});
 	}
 	
 	public Unit getUnit(int X, int Y){
@@ -171,7 +184,7 @@ public class MapInfo {
 	
 	public void applySightMap(){
 		for(int i=0; i<board.length; i++)
-			for(int j=0; j<board[j].length; i++)
+			for(int j=0; j<board[i].length; j++)
 				if(currentSight.isVisible(i, j))
 					board[i][j].setVisible(true);
 				else
@@ -180,13 +193,13 @@ public class MapInfo {
 
 	public void hideAll() {
 		for(int i=0; i<board.length; i++)
-			for(int j=0; j<board[j].length; i++)
+			for(int j=0; j<board[i].length; j++)
 				board[i][j].setVisible(false);
 	}
 	
 	public void showAll(){
 		for(int i=0; i<board.length; i++)
-			for(int j=0; j<board[j].length; i++)
+			for(int j=0; j<board[i].length; j++)
 				board[i][j].setVisible(true);
 	}
 

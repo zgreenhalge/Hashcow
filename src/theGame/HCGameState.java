@@ -42,7 +42,7 @@ public class HCGameState extends BasicGameState{
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		Logger.update(delta);
-		if(in.isKeyPressed(Input.KEY_F10))
+		if(in.isKeyPressed(Input.KEY_F1))
 			displayLog = !displayLog;
 		if(in.isKeyPressed(Input.KEY_F) && in.isKeyDown(Input.KEY_LCONTROL) && in.isKeyDown(Input.KEY_LSHIFT))
 			container.setShowFPS(!container.isShowingFPS());

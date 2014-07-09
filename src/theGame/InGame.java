@@ -1,10 +1,15 @@
 package theGame;
 
+import java.util.ArrayList;
+
 import interfaceElements.Button;
 import interfaceElements.TextButton;
 import interfaceElements.Menu;
 import interfaceElements.buttonActions.UnImplementedAction;
+import gamePieces.Building;
 import gamePieces.MapInfo;
+import gamePieces.Player;
+import gamePieces.TestUnit;
 import gamePieces.Unit;
 
 import org.newdawn.slick.Color;
@@ -23,9 +28,11 @@ public class InGame extends HCGameState {
 	private static int lastId = 1;
 	
 	private boolean playing = false;
+	private ArrayList<Player> players;
+	private int turnCount = 1;
+	
 	private MapInfo map;
-	private int players;
-	private int curPlayer;
+	private Player curPlayer;
 	private int selectedX;
 	private int selectedY;
 	private Menu selected;
@@ -45,11 +52,11 @@ public class InGame extends HCGameState {
 	private float scale;
 	private Input input;
 	
-	public InGame(MapInfo board, int players){
+	public InGame(MapInfo board, ArrayList<Player> players){
 		ID = ++lastId;
 		map = board;
 		this.players = players;
-		curPlayer = 0;
+		curPlayer = players.get(0);
 		selectedX = selectedY = -1;
 	}
 	
@@ -107,16 +114,9 @@ public class InGame extends HCGameState {
 				if(mouseX != selectedX || mouseY != selectedY){
 					selectedX = (int)mouseX;
 					selectedY = (int)mouseY;
-					map.select(selectedX, selectedY); //handle animations
 					selected = new Menu(15, 40);
-					if(map.isBuilt(selectedX, selectedY)){
-						//for(Ability a: map.getBuilding(selectedX, selectedY).getAbilities())
-						//	selected.addButton(a.getButton());
-					}
-					if(map.isOccupied(selectedX, selectedY)){
-						//for(Ability a: map.getUnit(selectedX, selectedY).getAbilities())
-						//	selected.addButton(a.getButton());
-					}
+					for(Button b: map.select(selectedX, selectedY, curPlayer))
+						selected.addButton(b);
 					selected.addButton(endTurnButton);
 				}
 			}
@@ -128,7 +128,16 @@ public class InGame extends HCGameState {
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
-		
+		if(!playing){
+			int[] start;
+			for(int n=0; n<players.size(); n++){
+				start = map.getStartingPosition(n);
+				map.addUnit(new TestUnit(start[0], start[1], curPlayer), start[0], start[1]);
+				Logger.loudLogLine("TestUnit placed at " + start[0] +"," + start[1]);
+			}
+			playing = true;
+		}
+		startTurn();
 	}
 	
 	@Override
@@ -158,9 +167,18 @@ public class InGame extends HCGameState {
 		}
 	}
 	
+	public void startTurn(){
+		curPlayer.age();
+		map.setSightMap(curPlayer.getSightMap());
+		map.applySightMap();
+	}
+	
 	public void endTurn(){
-		curPlayer++;
+		curPlayer = players.get(curPlayer.getId() % players.size()); //get the next player
 		map.hideAll();
+		if(playing)
+			startTurn();
+		turnCount++;
 	}
 	
 	@Override

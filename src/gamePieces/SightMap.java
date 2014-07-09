@@ -52,6 +52,11 @@ public class SightMap {
 		}
 	}
 	
+	public void removeUnit(Unit u){
+		for(ArrayList<Unit> list: map.values())
+			list.remove(u);
+	}
+	
 	private ArrayList<int[]> getSight(Unit u){
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		int rootX = u.getColumn();
