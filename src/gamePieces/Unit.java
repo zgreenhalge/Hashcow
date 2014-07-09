@@ -136,8 +136,14 @@ public abstract class Unit {
 		//movement logic goes here?
 	}
 	
-	public boolean isStopped(){
+	public boolean isAnimationStopped(){
 		return current.isStopped();
+	}
+	
+	public boolean isWalking(){
+		if(currentX != column*32 || currentY != row*32)
+			return true;
+		return false;
 	}
 	
 	public void render(Graphics g, int X, int Y){
@@ -154,19 +160,19 @@ public abstract class Unit {
 	}
 	
 	public void moveUp(){
-		row += 1;
+		map.getSightMap().updateUnit(this, row--, column);
 	}
 	
 	public void moveDown(){
-		row -= 1;
+		map.getSightMap().updateUnit(this, row++, column);
 	}
 	
 	public void moveLeft(){
-		column -= 1;
+		map.getSightMap().updateUnit(this, row, column--);
 	}
 	
 	public void moveRight(){
-		column += 1;
+		map.getSightMap().updateUnit(this, row, column++);
 	}
 	
 	public int takeDamage(Unit attacker){

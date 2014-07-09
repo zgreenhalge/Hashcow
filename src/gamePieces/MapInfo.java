@@ -1,7 +1,5 @@
 package gamePieces;
 
-import java.util.HashMap;
-
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -166,6 +164,19 @@ public class MapInfo {
 	public int[] getStartingPosition(int playerNum){
 		return positions[playerNum];
 	}
+	
+	public void setSightMap(SightMap sight){
+		currentSight = sight;
+	}
+	
+	public void applySightMap(){
+		for(int i=0; i<board.length; i++)
+			for(int j=0; j<board[j].length; i++)
+				if(currentSight.isVisible(i, j))
+					board[i][j].setVisible(true);
+				else
+					board[i][j].setVisible(false);
+	}
 
 	public void hideAll() {
 		for(int i=0; i<board.length; i++)
@@ -179,11 +190,8 @@ public class MapInfo {
 				board[i][j].setVisible(true);
 	}
 
-	public OneToOneMap<int[], Unit> units() {
-		return units;
+	public SightMap getSightMap() {
+		return currentSight;
 	}
 	
-	public OneToOneMap<int[], Building> buildings() {
-		return buildings;
-	}
 }
