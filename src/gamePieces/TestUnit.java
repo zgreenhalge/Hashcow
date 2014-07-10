@@ -13,8 +13,8 @@ public class TestUnit extends Unit {
 	private static final int BASE_HEALTH = 10;
 	private static final String name = "TestUnit";
 	
-	public TestUnit(int X, int Y, Player owner) {
-		super(X, Y, owner);
+	public TestUnit(Coordinate location, Player owner) {
+		super(location, owner);
 		super.image = TestUnitLibrary.getUnitImage(TestUnitLibrary.MECH_LIGHT);
 		super.sound = TestUnitLibrary.getUnitSound(TestUnitLibrary.MECH_LIGHT);
 		super.current = image.getAnimation(UnitImage.IDLE);

@@ -2,6 +2,8 @@ package gamePieces;
 
 import java.util.ArrayList;
 
+import utils.Logger;
+
 public class Player {
 
 	

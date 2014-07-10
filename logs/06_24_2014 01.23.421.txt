@@ -1,7 +1,0 @@
-
-[06/24/2014 13:23:44]: (NOTE) State 2 is initializing
-[06/24/2014 13:23:44]: Entered MainMenu state
-[06/24/2014 13:23:49]: (NOTE) Transitioning to state 2
-[06/24/2014 13:23:50]: (NOTE) Transitioning to state 1
-[06/24/2014 13:23:50]: Entered MainMenu state
-[06/24/2014 13:23:57]: State1TextButton3 pressed.

@@ -12,7 +12,7 @@ public class FontManager {
 	public static final TrueTypeFont BUTTON_TRUETYPE = new TrueTypeFont(BUTTON_FONT, false);
 	public static final Font DEFAULT_FONT = new Font("Verdana", Font.PLAIN, 12);
 	public static final TrueTypeFont DEFAULT_TRUETYPE = new TrueTypeFont(DEFAULT_FONT, false);
-	public static final Font TINY_FONT = new Font("Verdana", Font.PLAIN, 10);
+	public static final Font TINY_FONT = new Font("Kartika", Font.PLAIN, 8);
 	public static final TrueTypeFont TINY_TRUETYPE = new TrueTypeFont(TINY_FONT, false);
 	
 	private FontManager(){}

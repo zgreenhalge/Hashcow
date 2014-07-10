@@ -17,11 +17,11 @@ import utils.OneToOneMap;
 public class MapInfo {
 
 	private MapTile[][] board;
-	private OneToOneMap<int[], Unit> units;
-	private OneToOneMap<int[], Building> buildings;
+	private OneToOneMap<Coordinate, Unit> units;
+	private OneToOneMap<Coordinate, Building> buildings;
 	private SightMap currentSight;
 	private int MAX_PLAYERS;
-	private int[][] positions;
+	private Coordinate[] positions;
 	private int selectedX;
 	private int selectedY;
 	private int row;
@@ -31,21 +31,21 @@ public class MapInfo {
 	private String pos;
 	private Color prev;
 	private TrueTypeFont f = FontManager.TINY_TRUETYPE;
-	private int[] tempArr;
+	private Coordinate coords;
 	private MapTile temp;
 	
 	public static final MapInfo TEST_MAP = new MapInfo(
 			new MapTile[][] {new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}},
-			new int[1][2], //[maxPlayers][2] ALWAYS
+			new Coordinate[]{new Coordinate(0,0), new Coordinate(3,3)}, //define for max players
 			1, 1);
 	
-	public MapInfo(MapTile[][] map, int[][] start, int max, int num){
+	public MapInfo(MapTile[][] map, Coordinate[] start, int max, int num){
 		selectedX = selectedY = -1;
 		board = map;
 		positions = start;
 		MAX_PLAYERS = max;
-		units = new OneToOneMap<int[], Unit>();
-		buildings = new OneToOneMap<int[], Building>();
+		units = new OneToOneMap<Coordinate, Unit>();
+		buildings = new OneToOneMap<Coordinate, Building>();
 		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
@@ -63,14 +63,11 @@ public class MapInfo {
 	
 	public void render(Graphics g, int X, int Y){
 		row = column = 0;
+		//draw board
 		while(column<board.length){
 			while(row<board[column].length){
 				temp = board[column][row];
 				temp.render(g, X+column*32, Y+row*32);
-				if(isOccupied(column, row))
-					units.getValue(new int[] {column, row}).render(g, X, Y);
-				if(isBuilt(column, row))
-					buildings.getValue(new int[] {column, row}).render(g, X, Y);
 				if(displayMode > 1){
 					g.setFont(f);
 					pos = column + "," + row;
@@ -82,6 +79,16 @@ public class MapInfo {
 			column++;
 			row = 0;
 		}
+		//draw cursor
+		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[0].length)
+			cursor.draw(X+selectedX*32, Y+selectedY*32);
+		//draw buildings
+		for(Building b: buildings.values())
+			b.render(g, X, Y);
+		//draw units
+		for(Unit u: units.values())
+			u.render(g, X, Y);
+		//draw grid/coordinates
 		if(displayMode < 3 && displayMode > 0){
 			prev = g.getColor();
 			g.setColor(Color.black);
@@ -90,10 +97,6 @@ public class MapInfo {
 			for(int i=0; i<board[0].length; i++)
 				g.drawLine(X, Y+i*32, X+board.length*32, Y+i*32);
 			g.setColor(prev);
-		}
-		
-		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[0].length){
-			cursor.draw(X+selectedX*32, Y+selectedY*32);
 		}
 	}
 	
@@ -113,53 +116,53 @@ public class MapInfo {
 	public ArrayList<Button> select(int X, int Y, Player selector){
 		//Logger.loudLogLine(X + "," + Y);
 		ArrayList<Button> ret = new ArrayList<Button>();
-		tempArr = new int[] {selectedX, selectedY};
+		coords = new Coordinate(selectedX, selectedY);
 		if(isOccupied(selectedX, selectedY))
-			units.getValue(tempArr).deselect();
+			units.getValue(coords).deselect();
 		if(isBuilt(selectedX, selectedY))
-			buildings.getValue(tempArr).deselect();
+			buildings.getValue(coords).deselect();
 		selectedX = X;
 		selectedY = Y;
-		tempArr = new int[] {X, Y};
+		coords = new Coordinate(X, Y);
 		if(isOccupied(X, Y))
-			ret.addAll(units.getValue(tempArr).select(selector));
+			ret.addAll(units.getValue(coords).select(selector));
 		if(isBuilt(X, Y))
-			buildings.getValue(tempArr).select(selector);
+			buildings.getValue(coords).select(selector);
 		return ret;
 	}
 	
 	public void setVisible(int X, int Y){
 		board[X][Y].setVisible(true);
-		tempArr = new int[] {X, Y};
-		units.getValue(tempArr).setVisible(true);
-		buildings.getValue(tempArr).setVisible(true);
+		coords = new Coordinate(X, Y);
+		units.getValue(coords).setVisible(true);
+		buildings.getValue(coords).setVisible(true);
 	}
 	
 	public void setHidden(int X, int Y){
 		board[X][Y].setVisible(false);
-		tempArr = new int[] {X, Y};
-		units.getValue(tempArr).setVisible(false);
-		buildings.getValue(tempArr).setVisible(false);
+		coords = new Coordinate(X, Y);
+		units.getValue(coords).setVisible(false);
+		buildings.getValue(coords).setVisible(false);
 	}
 	
-	public void addUnit(Unit u, int X, int Y){
-		units.add(new int[] {X, Y}, u);
+	public void addUnit(Unit u){
+		units.add(u.getLocation(), u);
 	}
 	
 	public void removeUnit(Unit u){
-		units.remove(new int[] {u.getColumn(), u.getRow()});
+		units.remove(new Coordinate(u.getColumn(), u.getRow()));
 	}
 	
 	public Unit getUnit(int X, int Y){
-		return units.getValue(new int[]{X, Y});
+		return units.getValue(new Coordinate(X, Y));
 	}
 	
 	public boolean isOccupied(int X, int Y){
-		return units.containsKey(new int[] {X, Y});
+		return units.containsKey(new Coordinate(X, Y));
 	}
 	
 	public boolean isBuilt(int X, int Y){
-		return buildings.containsKey(new int[] {X, Y});
+		return buildings.containsKey(new Coordinate(X, Y));
 	}
 	
 	public int getMaxPlayers(){
@@ -174,7 +177,7 @@ public class MapInfo {
 		return board[0].length;
 	}
 
-	public int[] getStartingPosition(int playerNum){
+	public Coordinate getStartingPosition(int playerNum){
 		return positions[playerNum];
 	}
 	
@@ -184,27 +187,45 @@ public class MapInfo {
 	
 	public void applySightMap(){
 		for(int i=0; i<board.length; i++)
-			for(int j=0; j<board[i].length; j++)
-				if(currentSight.isVisible(i, j)){
+			for(int j=0; j<board[i].length; j++){
+				if(currentSight.isVisible(new Coordinate(i, j))){
 					board[i][j].setVisible(true);
-					Logger.logLine(i + "," + j + " is visible");
+					//Logger.logLine(i + "," + j + " is visible");
 				}
 				else{
 					board[i][j].setVisible(false);
-					Logger.logLine(i + "," + j + " is hidden");
+					//Logger.logLine(i + "," + j + " is hidden");
 				}
+			}
+	}
+	
+	public void applySightMap(ArrayList<Coordinate> changed){
+		for(Coordinate coords: changed){
+			if(currentSight.isVisible(coords))
+				board[coords.X()][coords.Y()].setVisible(true);
+			else
+				board[coords.X()][coords.Y()].setVisible(false);
+		}
 	}
 
 	public void hideAll() {
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++)
 				board[i][j].setVisible(false);
+		for(Unit u: units.values())
+			u.setVisible(false);
+		for(Building b: buildings.values())
+			b.setVisible(false);
 	}
 	
 	public void showAll(){
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++)
 				board[i][j].setVisible(true);
+		for(Unit u: units.values())
+			u.setVisible(true);
+		for(Building b: buildings.values())
+			b.setVisible(true);
 	}
 
 	public SightMap getSightMap() {

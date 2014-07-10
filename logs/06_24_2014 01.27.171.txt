@@ -1,4 +1,0 @@
-
-[06/24/2014 13:27:20]: (NOTE) State 1 is initializing
-[06/24/2014 13:27:20]: (NOTE) State 2 is initializing
-[06/24/2014 13:27:22]: State1TextButton3 pressed.

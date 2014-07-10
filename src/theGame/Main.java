@@ -52,6 +52,7 @@ public class Main extends StateBasedGame {
 		addState(new MainMenu());
 		ArrayList<Player> temp = new ArrayList<Player>();
 		temp.add(new Player(1));
+		temp.add(new Player(2));
 		addState(new InGame(MapInfo.TEST_MAP, temp));
 	}
 	

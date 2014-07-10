@@ -9,8 +9,8 @@ public class Building extends Unit {
 
 	private static final Color mask = new Color(0, 0, 0, 0.7f);
 	
-	public Building(int X, int Y, Player owner) {
-		super(X, Y, owner);
+	public Building(Coordinate location, Player owner) {
+		super(location, owner);
 		BASE_MOVE_RANGE = 0;
 		BASE_SIGHT_RANGE = 1;
 		BASE_ATTACK_RANGE = 0;

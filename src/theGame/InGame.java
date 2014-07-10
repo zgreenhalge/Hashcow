@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import interfaceElements.Button;
 import interfaceElements.TextButton;
 import interfaceElements.Menu;
-import interfaceElements.buttonActions.UnImplementedAction;
+import interfaceElements.buttonActions.ButtonAction;
 import gamePieces.Building;
+import gamePieces.Coordinate;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 import gamePieces.TestUnit;
@@ -69,9 +70,26 @@ public class InGame extends HCGameState {
 		X = centerX = (container.getWidth() - map.getWidth()*32)/2;
 		Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
+		input = container.getInput();
 		try{
-			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "Button", 0, 0, game, 2, new UnImplementedAction());
+			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, 2, new ButtonAction(){public void activate(){endTurn();}});
 		}catch(Exception e){Logger.loudLog(e);}
+	}
+	
+	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		if(!playing){
+			Coordinate start;
+			for(int n=0; n<players.size(); n++){
+				start = map.getStartingPosition(n);
+				map.addUnit(new TestUnit(start, players.get(n)));
+			}
+			map.addUnit(new TestUnit(new Coordinate(0, 1), curPlayer));
+			map.getUnit(0, 0).setCurrentHealth(4);
+			map.getUnit(3, 3).setCurrentHealth(1);
+			playing = true;
+		}
+		startTurn();
 	}
 
 	@Override
@@ -89,7 +107,6 @@ public class InGame extends HCGameState {
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		map.update(delta);
-		input = container.getInput();
 		if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON)){
 			if(mouseWasDown){
 				X = prevX + input.getMouseX() - startX;
@@ -107,36 +124,23 @@ public class InGame extends HCGameState {
 		if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
 			double mouseX = input.getMouseX();
 			double mouseY = input.getMouseY();
-			//map.select(-1, -1);
-			if(mouseX > X*scale && mouseX < (X+map.getWidth()*32)*scale && mouseY > Y*scale && mouseY < (Y+map.getHeight()*32)*scale){
 				mouseX = (int)(mouseX/scale-X)/32;
 				mouseY = (int)(mouseY/scale-Y)/32;
 				if(mouseX != selectedX || mouseY != selectedY){
 					selectedX = (int)mouseX;
 					selectedY = (int)mouseY;
-					selected = new Menu(15, 40);
-					for(Button b: map.select(selectedX, selectedY, curPlayer))
-						selected.addButton(b);
-					selected.addButton(endTurnButton);
-				}
-			}
+					if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
+						selected = new Menu(15, 40);
+						for(Button b: map.select(selectedX, selectedY, curPlayer))
+							selected.addButton(b);
+						selected.addButton(endTurnButton);
+					}else{
+						selected = null;
+						map.select(selectedX, selectedY, curPlayer);
+					}
+				}	
 		}
-		
 		super.update(container, game, delta);
-
-	}
-	
-	@Override
-	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
-		if(!playing){
-			int[] start;
-			for(int n=0; n<players.size(); n++){
-				start = map.getStartingPosition(n);
-				map.addUnit(new TestUnit(start[0], start[1], curPlayer), start[0], start[1]);
-			}
-			playing = true;
-		}
-		startTurn();
 	}
 	
 	@Override

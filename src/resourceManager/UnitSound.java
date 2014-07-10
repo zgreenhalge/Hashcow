@@ -43,10 +43,22 @@ public class UnitSound {
 		float vol = SoundManager.getVolume();
 		float pitch = SoundManager.getPitch();
 		switch(id){
-			case SELECT: selected.play(pitch, vol); return;
-			case ATTACK: attack.play(pitch, vol); return;
-			case MOVE: movement.play(pitch, vol); return;
-			case DEATH: death.play(pitch, vol); return;
+			case SELECT: 
+				if(selected != null) 
+					selected.play(pitch, vol);
+				return;
+			case ATTACK: 
+				if(attack != null) 
+					attack.play(pitch, vol); 
+				return;
+			case MOVE: 
+				if(movement != null)
+					movement.play(pitch, vol);
+				return;
+			case DEATH: 
+				if(death != null) 
+					death.play(pitch, vol); 
+				return;
 			default: return;
 		}
 	}

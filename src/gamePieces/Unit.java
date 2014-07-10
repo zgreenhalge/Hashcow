@@ -5,6 +5,7 @@ import interfaceElements.Button;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -15,6 +16,8 @@ import resourceManager.UnitSound;
 public abstract class Unit {
 
 	protected static final TrueTypeFont f = FontManager.TINY_TRUETYPE;
+	protected static final Color graveInjuryMask = Color.red;
+	protected static final Color injuryMask = Color.magenta; 
 	
 	protected UnitImage image;
 	protected UnitSound sound;
@@ -45,13 +48,13 @@ public abstract class Unit {
 	//abilities
 	//upgrades
 	
-	public Unit(int X, int Y, Player player){
-		column = X;
-		row = Y;
+	public Unit(Coordinate loc, Player player){
+		column = loc.X();
+		row = loc.Y();
 		currentX = column*32;
 		currentY = row*32;
 		owner = player;
-		visible = true;
+		visible = false;
 	}
 	
 	public UnitImage getImage(){
@@ -174,7 +177,7 @@ public abstract class Unit {
 	}
 	
 	public void refreshHealthString(){
-		healthString = currentHealth +"/" + BASE_HEALTH;
+		healthString = currentHealth + "";
 	}
 	
 	public void update(int delta){
@@ -211,10 +214,12 @@ public abstract class Unit {
 	
 	public void render(Graphics g, int X, int Y){
 		if(visible){
-			current.draw(X+currentX, Y+currentY);
-			g.setFont(f);
-			g.drawString(healthString, X+(column+1)*32-f.getWidth(healthString), Y+(row+1)*32-f.getLineHeight());
-			g.setFont(FontManager.DEFAULT_TRUETYPE);
+			if(currentHealth <= BASE_HEALTH/5)
+				current.draw(X+currentX, Y+currentY, graveInjuryMask);
+			else if(currentHealth <= BASE_HEALTH/2)
+				current.draw(X+currentX, Y+currentY, injuryMask);
+			else if(currentHealth > BASE_HEALTH/2)
+				current.draw(X+currentX, Y+currentY);
 		}
 	}
 	
@@ -223,23 +228,19 @@ public abstract class Unit {
 	}
 	
 	public void moveUp(){
-		map.getSightMap().updateUnit(this, row--, column);
-		map.applySightMap();
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row--, column)));
 	}
 	
 	public void moveDown(){
-		map.getSightMap().updateUnit(this, row++, column);
-		map.applySightMap();
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row++, column)));
 	}
 	
 	public void moveLeft(){
-		map.getSightMap().updateUnit(this, row, column--);
-		map.applySightMap();
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row, column--)));
 	}
 	
 	public void moveRight(){
-		map.getSightMap().updateUnit(this, row, column++);
-		map.applySightMap();
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row, column++)));
 	}
 	
 	public int takeDamage(Unit attacker){
@@ -263,5 +264,26 @@ public abstract class Unit {
 	
 	public boolean isVisible(){
 		return visible;
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(!(obj instanceof Unit))
+			return false;
+		Unit temp = (Unit) obj;
+		if(temp.row == this.row)
+			if(temp.column == this.column)
+				if(temp.name.equals(this.name))
+					return true;
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		return row ^ column ^ name.hashCode();
+	}
+
+	public Coordinate getLocation() {
+		return new Coordinate(column, row);
 	}
 }
