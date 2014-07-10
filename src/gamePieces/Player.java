@@ -21,7 +21,7 @@ public class Player {
 		units = new ArrayList<Unit>();
 		buildings = new ArrayList<Building>();
 		owned = new ArrayList<Unit>(units);
-		sight = new SightMap(owned); 
+		sight = new SightMap(); 
 	}
 	
 	public void age(){
@@ -33,22 +33,25 @@ public class Player {
 	public void addUnit(Unit u){
 		units.add(u);
 		owned.add(u);
-		//sight.addUnit(u); //might be unnecessary/cause duplicate units
+		sight.addUnit(u);
 	}
 	
 	public void addBuilding(Building b){
 		buildings.add(b);
 		owned.add(b);
+		sight.addUnit(b);
 	}
 	
 	public void removeUnit(Unit u){
 		units.remove(u);
 		owned.remove(u);
+		sight.removeUnit(u);
 	}
 	
 	public void removeBuilding(Building b){
 		buildings.remove(b);
 		owned.remove(b);
+		sight.removeUnit(b);
 	}
 	
 	public SightMap getSightMap(){
@@ -65,5 +68,9 @@ public class Player {
 	
 	public ArrayList<Building> getBuildings(){
 		return buildings;
+	}
+
+	public ArrayList<Unit> owned() {
+		return owned;
 	}
 }

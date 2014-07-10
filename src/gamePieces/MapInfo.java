@@ -185,10 +185,14 @@ public class MapInfo {
 	public void applySightMap(){
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++)
-				if(currentSight.isVisible(i, j))
+				if(currentSight.isVisible(i, j)){
 					board[i][j].setVisible(true);
-				else
+					Logger.logLine(i + "," + j + " is visible");
+				}
+				else{
 					board[i][j].setVisible(false);
+					Logger.logLine(i + "," + j + " is hidden");
+				}
 	}
 
 	public void hideAll() {

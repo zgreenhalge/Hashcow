@@ -133,7 +133,6 @@ public class InGame extends HCGameState {
 			for(int n=0; n<players.size(); n++){
 				start = map.getStartingPosition(n);
 				map.addUnit(new TestUnit(start[0], start[1], curPlayer), start[0], start[1]);
-				Logger.loudLogLine("TestUnit placed at " + start[0] +"," + start[1]);
 			}
 			playing = true;
 		}
@@ -169,6 +168,8 @@ public class InGame extends HCGameState {
 	
 	public void startTurn(){
 		curPlayer.age();
+		for(Unit u: curPlayer.owned())
+			u.setVisible(true);
 		map.setSightMap(curPlayer.getSightMap());
 		map.applySightMap();
 	}

@@ -25,12 +25,12 @@ public abstract class Unit {
 	protected int row;
 	protected int currentX;
 	protected int currentY;
-	protected String healthString;
 	
 	protected Player owner;
 	protected boolean visible;
 	protected boolean dead;
-	
+
+	protected String name = "Unknown";
 	protected int BASE_MOVE_RANGE;
 	protected int BASE_SIGHT_RANGE;
 	protected int BASE_ATTACK_RANGE;
@@ -38,6 +38,7 @@ public abstract class Unit {
 	protected int BASE_DEFENSE;
 	protected int BASE_HEALTH;
 	protected int currentHealth;
+	protected String healthString;
 	
 	//movementType
 	//attackType
@@ -50,10 +51,7 @@ public abstract class Unit {
 		currentX = column*32;
 		currentY = row*32;
 		owner = player;
-		if(this instanceof Building)
-			owner.addBuilding((Building)this);
-		else
-			owner.addUnit(this);
+		visible = true;
 	}
 	
 	public UnitImage getImage(){
@@ -106,6 +104,10 @@ public abstract class Unit {
 		return currentY;
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
 	public int getMoveRange(){
 		return BASE_MOVE_RANGE;
 	}
@@ -132,6 +134,47 @@ public abstract class Unit {
 	
 	public int getCurrentHealth(){
 		return currentHealth;
+	}
+	
+	public void setBaseMoveRange(int i){
+		BASE_MOVE_RANGE = i;
+	}
+	
+	public void setBaseSightRange(int i){
+		BASE_SIGHT_RANGE = i;
+	}
+	
+	public void setBaseAttackRange(int i){
+		BASE_ATTACK_RANGE = i;
+	}
+	
+	public void setBaseAttack(int i){
+		BASE_ATTACK = i;
+	}
+	
+	public void setBaseDefense(int i){
+		BASE_DEFENSE = i;
+	}
+	
+	public void setCurrentHealth(int i){
+		if(i>=BASE_HEALTH)
+			currentHealth = BASE_HEALTH;
+		else if(i<0)
+			currentHealth = 0;
+		else
+			currentHealth = i;
+	}
+	
+	public void setBaseHealth(int i){
+		BASE_HEALTH = i;
+	}
+	
+	public void setName(String s){
+		name = s;
+	}
+	
+	public void refreshHealthString(){
+		healthString = currentHealth +"/" + BASE_HEALTH;
 	}
 	
 	public void update(int delta){
@@ -206,7 +249,7 @@ public abstract class Unit {
 			currentHealth = 0;
 		else if(currentHealth > BASE_HEALTH)
 			currentHealth = BASE_HEALTH;
-		healthString = currentHealth + "/" + BASE_HEALTH;
+		refreshHealthString();
 		return currentHealth;
 	}
 	

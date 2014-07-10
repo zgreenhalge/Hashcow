@@ -3,6 +3,7 @@ package gamePieces;
 import java.util.ArrayList;
 import java.util.Set;
 
+import utils.Logger;
 import utils.OneToOneMap;
 
 public class SightMap {
@@ -10,8 +11,8 @@ public class SightMap {
 	private ArrayList<Unit> units;
 	private OneToOneMap<int[], ArrayList<Unit>> map;
 	
-	public SightMap(ArrayList<Unit> units){
-		this.units = units;
+	public SightMap(){
+		units = new ArrayList<Unit>();
 		map = new OneToOneMap<int[], ArrayList<Unit>>();
 		reset();
 	}
@@ -21,6 +22,10 @@ public class SightMap {
 	}
 	
 	public void addUnit(Unit u){
+		String print = u.getName() + " vision from " + u.getColumn() +"," + u.getRow() +": ";
+		for(int[] coords: getSight(u))
+			print += " " + coords[0] + "," + coords[1] + " ";
+		Logger.loudLogLine(print);
 		for(int[] coords: getSight(u)){
 				if(!map.containsKey(coords)){
 					map.add(coords, new ArrayList<Unit>());
@@ -29,6 +34,11 @@ public class SightMap {
 			}
 	}
 	
+	public void removeUnit(Unit u){
+		for(ArrayList<Unit> list: map.values())
+			list.remove(u);
+	}
+
 	public void updateUnit(Unit u, int oldX, int oldY){
 		int range = u.getSightRange();
 		int[] temp = new int[2];
@@ -52,10 +62,6 @@ public class SightMap {
 		}
 	}
 	
-	public void removeUnit(Unit u){
-		for(ArrayList<Unit> list: map.values())
-			list.remove(u);
-	}
 	
 	private ArrayList<int[]> getSight(Unit u){
 		ArrayList<int[]> temp = new ArrayList<int[]>();
@@ -63,7 +69,7 @@ public class SightMap {
 		int rootY = u .getRow();
 		int range = u.getSightRange();
 		for(int x = rootX-range; x <= rootX+range; x++)
-			for(int y = range-Math.abs(rootX-x); y <= rootY+Math.abs(rootX-x); y++)
+			for(int y = 0-(range-Math.abs(rootX-x)); y <= rootY+Math.abs(rootX-x)+range; y++)
 				//if(Math.abs(rootX-x) + Math.abs(rootY - y) <= range)
 					temp.add(new int[] {x,y});
 		return temp;
