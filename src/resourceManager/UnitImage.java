@@ -18,6 +18,8 @@ public class UnitImage {
 	public static final int ATTACK_DOWN = 8;
 	public static final int SELECTED = 9;
 	public static final int DEATH = 10;
+	public static final int INJURED = 11;
+	public static final int GRAVELY_INJURED = 12;
 	
 	private SpriteSheet idle;
 	private SpriteSheet moveUp;
@@ -40,11 +42,13 @@ public class UnitImage {
 	private Animation attD;
 	private Animation select;
 	private Animation deathAni;
+	private Animation injuryAni;
+	private Animation graveInjuryAni;
 	
 	
 	public UnitImage(String unitDir) throws Exception{
 		idle = new SpriteSheet(unitDir+"/idle.png", 32, 32, null, 1); //if this file won't load, don't bother loading the rest of them
-
+		
 		try {moveUp = new SpriteSheet(unitDir+"/moveUp.png", 32, 32, null, 1);}
 		catch (Exception e) {
 			Logger.log(e);
@@ -127,6 +131,12 @@ public class UnitImage {
 			case DEATH: if(death == null)
 							deathAni = buildAnimation(death);
 					return deathAni;
+			case INJURED: if(injuryAni == null)
+							injuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 650, true);
+					return injuryAni;
+			case GRAVELY_INJURED: if(graveInjuryAni == null)
+							graveInjuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 800, true);
+					return graveInjuryAni;
 			default: return getAnimation(IDLE);
 		}
 		

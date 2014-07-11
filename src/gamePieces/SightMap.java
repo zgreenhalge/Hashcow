@@ -31,11 +31,11 @@ public class SightMap {
 				}
 				map.getValue(coords).add(u);
 			}
-		String print = "Visible:";
+/*		String print = "Visible:";
 		for(Coordinate coords: ret)
 			print += " " + coords.toString();
 		print += "   ("+ret.size()+")";
-		Logger.loudLogLine(print);	
+		Logger.loudLogLine(print);	*/
 		return ret;
 	}
 	

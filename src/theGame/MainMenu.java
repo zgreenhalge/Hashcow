@@ -20,6 +20,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.FontManager;
 import resourceManager.SoundManager;
+import utils.Settings;
 
 public class MainMenu extends HCGameState {
 
@@ -93,8 +94,8 @@ public class MainMenu extends HCGameState {
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		sm = SoundManager.getManager();
-		SoundManager.setVolume(.25f);
-		//sm.loopSound(SoundManager.MAIN_MENU);
+		SoundManager.setVolume((Float)Settings.getSetting(Settings.VOLUME));
+		sm.loopSound(SoundManager.MAIN_MENU);
 		super.enter(container, game);
 	}
 

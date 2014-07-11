@@ -3,6 +3,7 @@ package theGame;
 import java.util.ArrayList;
 
 import interfaceElements.Button;
+import interfaceElements.HorizontalMenu;
 import interfaceElements.TextButton;
 import interfaceElements.Menu;
 import interfaceElements.buttonActions.ButtonAction;
@@ -13,7 +14,6 @@ import gamePieces.Player;
 import gamePieces.TestUnit;
 import gamePieces.Unit;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -37,6 +37,7 @@ public class InGame extends HCGameState {
 	private int selectedX;
 	private int selectedY;
 	private Menu selected;
+	private HorizontalMenu menuBar;
 	
 	private Button endTurnButton;
 
@@ -74,6 +75,9 @@ public class InGame extends HCGameState {
 		try{
 			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, 2, new ButtonAction(){public void activate(){endTurn();}});
 		}catch(Exception e){Logger.loudLog(e);}
+		selected = new Menu(15, 40);
+		menuBar = new HorizontalMenu(container.getWidth() - endTurnButton.getWidth(), 0);
+		menuBar.addButton(endTurnButton);
 	}
 	
 	@Override
@@ -95,11 +99,11 @@ public class InGame extends HCGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		g.scale((float)scale, (float)scale); 	//scale block to allow zooming
+		g.scale((float)scale, (float)scale); 	//scale map render to zoom level
 		map.render(g, X, Y);
-		g.resetTransform();		//end scale block
-		if(selected != null)
-			selected.render(container, g);
+		g.resetTransform();						//reset scale to draw HUD
+		selected.render(container, g);
+		menuBar.render(container, g);
 		super.render(container, game, g);
 	}
 
@@ -122,23 +126,22 @@ public class InGame extends HCGameState {
 			mouseWasDown = false;
 		}
 		if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
+			selected.clear();
 			double mouseX = input.getMouseX();
 			double mouseY = input.getMouseY();
-				mouseX = (int)(mouseX/scale-X)/32;
-				mouseY = (int)(mouseY/scale-Y)/32;
-				if(mouseX != selectedX || mouseY != selectedY){
-					selectedX = (int)mouseX;
-					selectedY = (int)mouseY;
-					if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
-						selected = new Menu(15, 40);
-						for(Button b: map.select(selectedX, selectedY, curPlayer))
-							selected.addButton(b);
-						selected.addButton(endTurnButton);
-					}else{
-						selected = null;
-						map.select(selectedX, selectedY, curPlayer);
-					}
-				}	
+			mouseX = (int)(mouseX/scale-X)/32;
+			mouseY = (int)(mouseY/scale-Y)/32;
+			if(mouseX != selectedX || mouseY != selectedY){
+				selectedX = (int)mouseX;
+				selectedY = (int)mouseY;
+				if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
+					for(Button b: map.select(selectedX, selectedY, curPlayer))
+						selected.addButton(b);
+					selected.init();
+				}else{
+					map.select(selectedX, selectedY, curPlayer);
+				}
+			}	
 		}
 		super.update(container, game, delta);
 	}

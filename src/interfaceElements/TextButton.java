@@ -32,6 +32,8 @@ import utils.Logger;
         private String name;
         private int oldX, oldY, bigX, bigY;
         private boolean report = false;
+        private boolean hidden;
+        private boolean noClick;
      
         public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
         	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
@@ -40,6 +42,7 @@ import utils.Logger;
             this.sbg = sbg;
             this.stateID = stateID;
             this.action = action;
+            hidden = false;
             borderColor = Color.darkGray;
             biggerFont = new TrueTypeFont(new Font(font.getFontName(), Font.BOLD, font.getSize()*(12/10)), false);
             name = text.replaceAll(" ", "") + "Button";
@@ -47,6 +50,20 @@ import utils.Logger;
             oldY = y;
             bigX = x - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;
             bigY = y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
+        }
+        
+        public void setUnclickable(boolean b){
+    		hidden = b;
+    		isEnabled = !b;
+    		noClick = b;
+        }
+        
+        public void setHidden(boolean b){
+        	hidden = b;
+        }
+        
+        public boolean isHidden(){
+        	return hidden;
         }
      
         public void setEnabled(boolean b) {
@@ -106,44 +123,46 @@ import utils.Logger;
 
         @Override
         public void render(GUIContext guic, Graphics g) {
-        	org.newdawn.slick.Font prevFont = g.getFont();
-            g.setFont(ttfont);
-            Color standard = g.getColor();
-            if (isEnabled) {
-                g.setColor(Color.orange.brighter(.5f));
-                if (isMouseOver()) {
-                    g.setFont(biggerFont);
-                    g.setColor(new Color(200, 50, 30));
-                    setX(bigX);
-                    setY(bigY);
-                }else { 
-                	setX(oldX);
-                    setY(oldY);
-                }
-            } else {
-                g.setColor(Color.gray);
-            }
-            if(borderEnabled){
-            	int pad= ttfont.getHeight() / 5;
-            	int height = ttfont.getLineHeight();
-            	int width;
-            	if(isMouseOver()){
-            		width = biggerFont.getWidth(text);
-            	}else{
-	            	width = ttfont.getWidth(text);
-            	}
-            	Color prevCol = g.getColor();
-            	g.setColor(borderColor);
-            	g.drawLine(getX()-pad, getY()-pad, getX()+width+pad, getY()-pad);//top left to top right
-            	g.drawLine(getX()-pad, getY()-pad, getX()-pad, getY()+height+pad);//top left to bottom left
-            	g.drawLine(getX()-pad, getY()+height+pad, getX()+width+pad, getY()+height+pad);//bottom left to bottom right
-            	g.drawLine(getX()+width+pad, getY()+height+pad, getX()+width+pad, getY()-pad);//bottom right to top right
-            	g.setColor(prevCol);
-            }
-            g.drawString(text, getX(), getY());
-            super.render(guic, g);
-            g.setColor(standard);
-            g.setFont(prevFont);
+        	if(!hidden){
+	        	org.newdawn.slick.Font prevFont = g.getFont();
+	            g.setFont(ttfont);
+	            Color standard = g.getColor();
+	            if (isEnabled) {
+	                g.setColor(Color.orange.brighter(.5f));
+	                if (isMouseOver()) {
+	                    g.setFont(biggerFont);
+	                    g.setColor(new Color(200, 50, 30));
+	                    setX(bigX);
+	                    setY(bigY);
+	                }else { 
+	                	setX(oldX);
+	                    setY(oldY);
+	                }
+	            } else {
+	                g.setColor(Color.gray);
+	            }
+	            if(borderEnabled){
+	            	int pad= ttfont.getHeight() / 5;
+	            	int height = ttfont.getLineHeight();
+	            	int width;
+	            	if(isMouseOver()){
+	            		width = biggerFont.getWidth(text);
+	            	}else{
+		            	width = ttfont.getWidth(text);
+	            	}
+	            	Color prevCol = g.getColor();
+	            	g.setColor(borderColor);
+	            	g.drawLine(getX()-pad, getY()-pad, getX()+width+pad, getY()-pad);//top left to top right
+	            	g.drawLine(getX()-pad, getY()-pad, getX()-pad, getY()+height+pad);//top left to bottom left
+	            	g.drawLine(getX()-pad, getY()+height+pad, getX()+width+pad, getY()+height+pad);//bottom left to bottom right
+	            	g.drawLine(getX()+width+pad, getY()+height+pad, getX()+width+pad, getY()-pad);//bottom right to top right
+	            	g.setColor(prevCol);
+	            }
+	            g.drawString(text, getX(), getY());
+	            super.render(guic, g);
+	            g.setColor(standard);
+	            g.setFont(prevFont);
+        	}
         }
      
         @Override
@@ -169,9 +188,10 @@ import utils.Logger;
 	                if(action != null) action.activate();
 	            }
 	            super.mouseClicked(button, x, y, clickCount);
-        	} else{
-        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         	}
+        	else
+        		if(!noClick) 
+        			SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         }
     
 	    private void renderClick(){
@@ -187,4 +207,9 @@ import utils.Logger;
 	    	}catch(Exception e){}
             super.setLocation(X, Y);
 	    }
+
+		@Override
+		public boolean isUnclickable() {
+			return noClick;
+		}
 }

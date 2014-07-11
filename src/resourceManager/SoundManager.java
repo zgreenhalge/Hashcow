@@ -4,6 +4,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 
 import utils.Logger;
+import utils.Settings;
 
 /**
  *
@@ -53,6 +54,7 @@ public class SoundManager {
     public static void setVolume(float f){
     	if(f <= 1.0f && f >= 0f)
     		volume = f;
+    	Settings.set(Settings.VOLUME, Float.toString(volume));
     }
     
     public static float getVolume(){

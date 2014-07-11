@@ -5,11 +5,13 @@ import interfaceElements.buttonActions.ButtonAction;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
      
+
 
 
 import resourceManager.SoundManager;
@@ -24,6 +26,8 @@ import utils.Logger;
         private ButtonAction action;
         private String name;
         private boolean report;
+        private boolean hidden;
+        private boolean noClick;
      
         /**
          * 
@@ -48,7 +52,14 @@ import utils.Logger;
             this.action = action;
             name = animation.getImage(0).getName()+"Button";
         }
-     
+        
+        public void setHidden(boolean b){
+        	hidden = b;
+        }
+        
+        public boolean isHidden(){
+        	return hidden;
+        }
      
         public boolean isEnabled() {
             return enabled;
@@ -78,6 +89,12 @@ import utils.Logger;
         }
         
         @Override
+        public void render(GUIContext guic, Graphics g){
+        	if(!hidden)
+        		super.render(guic, g);
+        }
+        
+        @Override
         public void mouseMoved(int oldx, int oldy, int newx, int newy) {
         	if (sbg.getCurrentStateID() == stateID) {
         		if (isMouseOver() && !lastMouseOver && !isEnabled()) {
@@ -101,8 +118,22 @@ import utils.Logger;
 	            super.mouseClicked(button, x, y, clickCount);
         	}
         	else{
-        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+        		if(!noClick)
+        			SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
         	}
         }
+
+		@Override
+		public void setUnclickable(boolean b) {
+			hidden = b;
+			enabled = !b;
+			noClick = b;
+			
+		}
+
+		@Override
+		public boolean isUnclickable() {
+			return noClick;
+		}
  
     }

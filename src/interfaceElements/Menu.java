@@ -41,7 +41,7 @@ public class Menu {
 			b = buttons.get(i);
 			if(b != null){
 				b.setLocation(X, Y+(buttonHeight+1)*i);
-				b.render((GUIContext)container, g);
+				b.render(container, g);
 			}
 		}
 	}
@@ -66,4 +66,16 @@ public class Menu {
 					width = t.getWidth();
 		}else width = 0;
 	}
+	
+	public void clear(){
+		for(Button b: buttons)
+			b.setUnclickable(true);
+		buttons.clear();
+	}
+
+	public void init() {
+		for(Button b: buttons)
+			b.setUnclickable(false);
+	}
+	
 }

@@ -3,6 +3,8 @@ package theGame;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.SoundManager;
 import utils.Logger;
+import utils.Settings;
 
 public class Main extends StateBasedGame {
 
@@ -21,14 +24,19 @@ public class Main extends StateBasedGame {
 	
 	public static void main(String[] args){
 		//entry point of program
+		try {
+			Settings.loadSettings("config.txt");
+		} catch (FileNotFoundException e){
+			Settings.setToDefaults();
+		}
 		try{
 			currentGame = new Main("This Is The Title");
 			appgc = new AppGameContainer(currentGame);
 			appgc.setDisplayMode(800, 480, false);
-			appgc.setShowFPS(true);
+			appgc.setShowFPS(true);			
 			appgc.start();			
 		}catch(SlickException se){
-			//Logger.logException(se)
+			se.printStackTrace();
 		}
 	}
 	
@@ -66,7 +74,14 @@ public class Main extends StateBasedGame {
 	public static void exit(){
 		try {
 			Logger.writeOut();
+			System.out.println("Log written to file.");
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try{
+			Settings.save("config.txt");
+			System.out.println("Settings saved");
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 		Logger.streamLog("Clean exit achieved.");
