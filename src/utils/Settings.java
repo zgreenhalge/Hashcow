@@ -1,6 +1,6 @@
 package utils;
+
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 
 public class Settings {
@@ -17,18 +18,18 @@ public class Settings {
 	
 	public static final String VOLUME = "volume";
 	
-	private static float volume;
+	private static String volume;
 	
 	private Settings(){}
 	
 	public static void setToDefaults(){
-		volume = .25f;
+		volume = "0.25f";
 	}
 	
 	public static void loadSettings(String path) throws FileNotFoundException{
 		File file = new File(path);
 		scan = new Scanner(new BufferedReader(new FileReader(file)));
-		scan.useDelimiter("[;\r\n]");
+		scan.useDelimiter(Pattern.compile("[;\\v]"));
 		if(file.exists() && file.isFile()){
 			while(scan.hasNext()){
 				set(scan.next(), scan.next());
@@ -47,7 +48,7 @@ public class Settings {
 	
 	public static Object getSetting(String name){
 		switch(name){
-			case VOLUME: return new Float(volume);
+			case VOLUME: return Float.parseFloat(volume);
 			default: return null;
 		}
 	}
@@ -55,7 +56,7 @@ public class Settings {
 	
 	public static void set(String name, String value){
 		switch(name){
-			case VOLUME: volume = Float.parseFloat(value); break;
+			case VOLUME: volume = value; break;
 			default: break;
 		}
 	}

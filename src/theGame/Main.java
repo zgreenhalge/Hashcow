@@ -33,7 +33,9 @@ public class Main extends StateBasedGame {
 			currentGame = new Main("This Is The Title");
 			appgc = new AppGameContainer(currentGame);
 			appgc.setDisplayMode(800, 480, false);
-			appgc.setShowFPS(true);			
+			appgc.setAlwaysRender(true);
+			GameContainer.enableSharedContext();
+			appgc.setShowFPS(true);
 			appgc.start();			
 		}catch(SlickException se){
 			se.printStackTrace();
