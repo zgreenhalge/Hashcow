@@ -48,13 +48,14 @@ public abstract class Unit {
 	//abilities
 	//upgrades
 	
-	public Unit(Coordinate loc, Player player){
+	public Unit(Coordinate loc, Player player, MapInfo map){
 		column = loc.X();
 		row = loc.Y();
 		currentX = column*32;
 		currentY = row*32;
 		owner = player;
 		visible = false;
+		this.map = map;
 	}
 	
 	public UnitImage getImage(){

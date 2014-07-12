@@ -44,7 +44,7 @@ public class HCGameState extends BasicGameState{
 		Logger.update(delta);
 		if(in.isKeyPressed(Input.KEY_F1))
 			displayLog = !displayLog;
-		if(in.isKeyPressed(Input.KEY_F) && in.isKeyDown(Input.KEY_LCONTROL) && in.isKeyDown(Input.KEY_LSHIFT))
+		if(in.isKeyPressed(Input.KEY_F10))
 			container.setShowFPS(!container.isShowingFPS());
 	}
 

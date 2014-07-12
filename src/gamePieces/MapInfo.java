@@ -117,30 +117,28 @@ public class MapInfo {
 		//Logger.loudLogLine(X + "," + Y);
 		ArrayList<Button> ret = new ArrayList<Button>();
 		coords = new Coordinate(selectedX, selectedY);
-		if(isOccupied(selectedX, selectedY))
+		if(isOccupied(coords))
 			units.getValue(coords).deselect();
-		if(isBuilt(selectedX, selectedY))
+		if(isBuilt(coords))
 			buildings.getValue(coords).deselect();
 		selectedX = X;
 		selectedY = Y;
 		coords = new Coordinate(X, Y);
-		if(isOccupied(X, Y))
+		if(isOccupied(coords))
 			ret.addAll(units.getValue(coords).select(selector));
-		if(isBuilt(X, Y))
+		if(isBuilt(coords))
 			buildings.getValue(coords).select(selector);
 		return ret;
 	}
 	
-	public void setVisible(int X, int Y){
-		board[X][Y].setVisible(true);
-		coords = new Coordinate(X, Y);
+	public void setVisible(Coordinate coord){
+		board[coord.X()][coord.Y()].setVisible(true);
 		units.getValue(coords).setVisible(true);
 		buildings.getValue(coords).setVisible(true);
 	}
 	
-	public void setHidden(int X, int Y){
-		board[X][Y].setVisible(false);
-		coords = new Coordinate(X, Y);
+	public void setHidden(Coordinate coord){
+		board[coord.X()][coord.Y()].setVisible(false);
 		units.getValue(coords).setVisible(false);
 		buildings.getValue(coords).setVisible(false);
 	}
@@ -149,20 +147,52 @@ public class MapInfo {
 		units.add(u.getLocation(), u);
 	}
 	
+	public void addBuilding(Building b){
+		Coordinate root = b.getLocation();
+		int height = b.getHeight();
+		int width = b.getWidth();
+		for(int x=0; x<width; x++){
+			for(int y=0; y<height; y++){
+				coords = new Coordinate(root.X()+x, root.Y()+y);
+				buildings.add(coords, b);
+			}
+		}
+	}
+	
+	public void removeBuilding(Building b){
+		Coordinate root = b.getLocation();
+		int height = b.getHeight();
+		int width = b.getWidth();
+		for(int x=0; x<width; x++){
+			for(int y=0; y<height; y++){
+				coords = new Coordinate(root.X()+x, root.Y()+y);
+				buildings.remove(coords);
+			}
+		}
+	}
+	
+	public Building getBuilding(Coordinate coord){
+		return buildings.getValue(coord);
+	}
+	
 	public void removeUnit(Unit u){
 		units.remove(new Coordinate(u.getColumn(), u.getRow()));
 	}
 	
-	public Unit getUnit(int X, int Y){
-		return units.getValue(new Coordinate(X, Y));
+	public Unit getUnit(Coordinate coord){
+		return units.getValue(coord);
 	}
 	
-	public boolean isOccupied(int X, int Y){
-		return units.containsKey(new Coordinate(X, Y));
+	public boolean isOccupied(Coordinate coord){
+		return units.containsKey(coord);
 	}
 	
-	public boolean isBuilt(int X, int Y){
-		return buildings.containsKey(new Coordinate(X, Y));
+	public boolean isBuilt(Coordinate coord){
+		return buildings.containsKey(coord);
+	}
+	
+	public boolean isPathable(Coordinate coord){
+		return !isOccupied(coord) && !isBuilt(coord);
 	}
 	
 	public int getMaxPlayers(){

@@ -86,9 +86,9 @@ public class InGame extends HCGameState {
 			Coordinate start;
 			for(int n=0; n<players.size(); n++){
 				start = map.getStartingPosition(n);
-				map.addUnit(new TestUnit(start, players.get(n)));
+				map.addUnit(new TestUnit(start, players.get(n), map));
 			}
-			map.addUnit(new TestUnit(new Coordinate(0, 1), curPlayer));
+			map.addUnit(new TestUnit(new Coordinate(0, 1), curPlayer, map));
 			map.getUnit(0, 0).setCurrentHealth(4);
 			map.getUnit(3, 3).setCurrentHealth(1);
 			playing = true;

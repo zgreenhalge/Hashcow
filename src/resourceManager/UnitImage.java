@@ -126,16 +126,16 @@ public class UnitImage {
 							attD = buildAnimation(attackDown);
 					return attD;
 			case SELECTED: if(select == null)
-							select = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 300, true);
+							select = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 250, true);
 					return select;
 			case DEATH: if(death == null)
 							deathAni = buildAnimation(death);
 					return deathAni;
 			case INJURED: if(injuryAni == null)
-							injuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 650, true);
+							injuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 800, true);
 					return injuryAni;
 			case GRAVELY_INJURED: if(graveInjuryAni == null)
-							graveInjuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 800, true);
+							graveInjuryAni = new Animation(idle, 0, 0, 0, idle.getVerticalCount()-1, false, 950, true);
 					return graveInjuryAni;
 			default: return getAnimation(IDLE);
 		}
@@ -143,7 +143,7 @@ public class UnitImage {
 	}
 	
 	private Animation buildAnimation(SpriteSheet spr){
-		return new Animation(spr, 0, 0, 0, spr.getVerticalCount()-1, false, 500, true);
+		return new Animation(spr, 0, 0, 0, spr.getVerticalCount()-1, false, 650, true);
 	}
 	
 }

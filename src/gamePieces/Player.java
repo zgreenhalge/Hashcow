@@ -23,7 +23,7 @@ public class Player {
 		units = new ArrayList<Unit>();
 		buildings = new ArrayList<Building>();
 		owned = new ArrayList<Unit>(units);
-		sight = new SightMap(); 
+		sight = new SightMap(id); 
 	}
 	
 	public void age(){

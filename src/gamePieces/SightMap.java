@@ -11,10 +11,12 @@ public class SightMap {
 
 	private ArrayList<Unit> units;
 	private OneToOneMap<Coordinate, ArrayList<Unit>> map;
+	private int playerId;
 	
-	public SightMap(){
+	public SightMap(int id){
 		units = new ArrayList<Unit>();
 		map = new OneToOneMap<Coordinate, ArrayList<Unit>>();
+		playerId = id;
 		reset();
 	}
 	
@@ -102,5 +104,9 @@ public class SightMap {
 	
 	public Set<Coordinate> visibleSet(){
 		return map.keySet();
+	}
+	
+	public int getId(){
+		return playerId;
 	}
 }

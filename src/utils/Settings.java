@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-
 
 public class Settings {
 
@@ -28,11 +26,13 @@ public class Settings {
 	
 	public static void loadSettings(String path) throws FileNotFoundException{
 		File file = new File(path);
+		String[] temp;
 		scan = new Scanner(new BufferedReader(new FileReader(file)));
-		scan.useDelimiter(Pattern.compile("[;\\v]"));
 		if(file.exists() && file.isFile()){
 			while(scan.hasNext()){
-				set(scan.next(), scan.next());
+				temp = scan.nextLine().split(":");
+				if(temp.length == 2)
+					set(temp[0], temp[1]);
 			}
 			scan.close();
 		}
