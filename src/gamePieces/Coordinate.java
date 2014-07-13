@@ -18,6 +18,18 @@ public class Coordinate {
 		return Y;
 	}
 	
+	//returns value before change
+	public int X(int n){
+		X += n;
+		return X - n;
+	}
+	
+	//returns value before change
+	public int Y(int n){
+		Y += n;
+		return Y - n;
+	}
+	
 	@Override
 	public boolean equals(Object obj){
 		if(!(obj instanceof Coordinate))

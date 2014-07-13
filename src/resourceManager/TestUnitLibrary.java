@@ -6,7 +6,11 @@ public class TestUnitLibrary{
 
 	private static UnitImage mechLightImage;
 	private static UnitSound mechLightSound;
+	private static UnitImage testBuildingImage;
+	private static UnitSound testBuildingSound;
+	
 	public static final int MECH_LIGHT = 0;
+	public static final int TEST_HQ = 1;
 	
 	private TestUnitLibrary(){}
 	
@@ -21,6 +25,15 @@ public class TestUnitLibrary{
 					}
 				}
 				return mechLightImage;
+			case TEST_HQ:
+				if(testBuildingImage == null){
+					try{
+						testBuildingImage = new UnitImage("res/images/buildings/mech.HQ");
+					} catch(Exception e){
+						Logger.loudLog(e);
+					}
+				}
+				return testBuildingImage;
 			default: return null;
 		}
 	}
@@ -36,7 +49,16 @@ public class TestUnitLibrary{
 				}
 			}
 			return mechLightSound;
-			default: return null;
+		case TEST_HQ:
+			if(testBuildingSound == null){
+				try{
+					testBuildingSound = new UnitSound("res/sounds/buildings/mech.HQ");
+				} catch(Exception e){
+					Logger.loudLog(e);
+				}
+			}
+			return testBuildingSound;
+		default: return null;
 		}
 	}
 	

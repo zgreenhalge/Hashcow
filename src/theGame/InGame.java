@@ -11,6 +11,7 @@ import gamePieces.Building;
 import gamePieces.Coordinate;
 import gamePieces.MapInfo;
 import gamePieces.Player;
+import gamePieces.TestHQ;
 import gamePieces.TestUnit;
 import gamePieces.Unit;
 
@@ -88,9 +89,10 @@ public class InGame extends HCGameState {
 				start = map.getStartingPosition(n);
 				map.addUnit(new TestUnit(start, players.get(n), map));
 			}
+			map.addBuilding(new TestHQ(new Coordinate(3, 2), players.get(1), map));
 			map.addUnit(new TestUnit(new Coordinate(0, 1), curPlayer, map));
-			map.getUnit(0, 0).setCurrentHealth(4);
-			map.getUnit(3, 3).setCurrentHealth(1);
+			map.getUnit(new Coordinate(0,0)).setCurrentHealth(4);
+			map.getUnit(new Coordinate(3,3)).setCurrentHealth(1);
 			playing = true;
 		}
 		startTurn();

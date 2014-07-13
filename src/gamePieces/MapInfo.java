@@ -46,13 +46,12 @@ public class MapInfo {
 		MAX_PLAYERS = max;
 		units = new OneToOneMap<Coordinate, Unit>();
 		buildings = new OneToOneMap<Coordinate, Building>();
-		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
 	public void update(int delta){
 		for(MapTile[] arr: board)
 			for(MapTile tile: arr){
-				tile.getAnimation().update(delta);
+				tile.update(delta);
 			}	
 		for(Unit u: units.values()){
 			u.update(delta);
@@ -79,9 +78,6 @@ public class MapInfo {
 			column++;
 			row = 0;
 		}
-		//draw cursor
-		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[0].length)
-			cursor.draw(X+selectedX*32, Y+selectedY*32);
 		//draw buildings
 		for(Building b: buildings.values())
 			b.render(g, X, Y);
@@ -114,9 +110,12 @@ public class MapInfo {
 	}
 	
 	public ArrayList<Button> select(int X, int Y, Player selector){
+		//turn on for selection feedback: should probably get a dev switch later on
 		//Logger.loudLogLine(X + "," + Y);
 		ArrayList<Button> ret = new ArrayList<Button>();
 		coords = new Coordinate(selectedX, selectedY);
+		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
+			board[selectedX][selectedY].deselect();
 		if(isOccupied(coords))
 			units.getValue(coords).deselect();
 		if(isBuilt(coords))
@@ -126,8 +125,11 @@ public class MapInfo {
 		coords = new Coordinate(X, Y);
 		if(isOccupied(coords))
 			ret.addAll(units.getValue(coords).select(selector));
-		if(isBuilt(coords))
-			buildings.getValue(coords).select(selector);
+		else if(isBuilt(coords))
+			ret.addAll(buildings.getValue(coords).select(selector));
+		else
+			if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
+				board[selectedX][selectedY].select();
 		return ret;
 	}
 	
@@ -192,7 +194,11 @@ public class MapInfo {
 	}
 	
 	public boolean isPathable(Coordinate coord){
-		return !isOccupied(coord) && !isBuilt(coord);
+		if(!board[coord.X()][coord.Y()].isTraversable())
+			return false;
+		else if(isBuilt(coord))
+			return buildings.getValue(coord).isPathable(coord);
+		else return true;
 	}
 	
 	public int getMaxPlayers(){
@@ -218,23 +224,40 @@ public class MapInfo {
 	public void applySightMap(){
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++){
-				if(currentSight.isVisible(new Coordinate(i, j))){
-					board[i][j].setVisible(true);
-					//Logger.logLine(i + "," + j + " is visible");
+				coords = new Coordinate(i, j);
+				if(currentSight.isVisible(coords)){
+					board[coords.X()][coords.Y()].setVisible(true);
+					if(isOccupied(coords))
+						units.getValue(coords).setVisible(true);
+					if(isBuilt(coords))
+						buildings.getValue(coords).setVisible(true);
 				}
 				else{
-					board[i][j].setVisible(false);
-					//Logger.logLine(i + "," + j + " is hidden");
+					board[coords.X()][coords.Y()].setVisible(false);
+					if(isOccupied(coords))
+						units.getValue(coords).setVisible(false);
+					if(isBuilt(coords))
+						buildings.getValue(coords).setVisible(false);
 				}
 			}
 	}
 	
 	public void applySightMap(ArrayList<Coordinate> changed){
 		for(Coordinate coords: changed){
-			if(currentSight.isVisible(coords))
+			if(currentSight.isVisible(coords)){
 				board[coords.X()][coords.Y()].setVisible(true);
-			else
+				if(isOccupied(coords))
+					units.getValue(coords).setVisible(true);
+				if(isBuilt(coords))
+					buildings.getValue(coords).setVisible(true);
+			}
+			else{
 				board[coords.X()][coords.Y()].setVisible(false);
+				if(isOccupied(coords))
+					units.getValue(coords).setVisible(false);
+				if(isBuilt(coords))
+					buildings.getValue(coords).setVisible(false);
+			}
 		}
 	}
 

@@ -12,15 +12,15 @@ public class MapTile {
 
 	private String name;
 	private int moveCost;
-	private SpriteSheet image;
-	private Animation ani;
 	private boolean buildable;
 	private boolean visible = true;
-	private static Color pre;
+	private boolean selected;
+	private SpriteSheet image;
+	private Animation ani;
+	private Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
 	public static final MapTile GRASS = new MapTile("Grass", 1, ImageManager.getSpriteSheet("res/images/tiles/grass.png", 32, 32, 0), true);
-	private static final Rectangle mask = new Rectangle(0, 0, 32, 32);
-	private static final Color maskFill = new Color(0, 0, 0, 0.7f);
+	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	
 	private MapTile(String n, int cost, SpriteSheet ss, boolean build){
 		name = n;
@@ -65,19 +65,32 @@ public class MapTile {
 	public void setVisible(boolean b){
 		visible = b;
 	}
-
-	public void render(Graphics g, int X, int Y) {
-		ani.draw(X, Y);
-		if(!visible){
-			mask.setX(X);
-			mask.setY(Y);
-			pre = g.getColor();
-			g.setColor(maskFill);
-			g.fill(mask);
-			g.setColor(pre);
-		}
+	
+	public boolean isSelected(){
+		return selected;
 	}
 	
+	public void select(){
+		selected = true;
+	}
 	
+	public void deselect(){
+		selected = false;
+	}
+	
+	public void update(int delta){
+		ani.update(delta);
+		cursor.update(delta);
+	}
+
+	public void render(Graphics g, int X, int Y) {
+		if(visible){
+			ani.draw(X, Y);
+			if(selected)
+				cursor.draw(X, Y);
+		}
+		else
+			ani.draw(X, Y, maskFill);
+	}
 	
 }

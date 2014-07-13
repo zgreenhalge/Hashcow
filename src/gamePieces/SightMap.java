@@ -26,7 +26,7 @@ public class SightMap {
 	
 	public ArrayList<Coordinate> addUnit(Unit u){
 		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
-		for(Coordinate coords: getSight(u)){
+		for(Coordinate coords: u.getSight()){
 				if(!map.containsKey(coords)){
 					map.add(coords, new ArrayList<Unit>());
 					ret.add(coords);
@@ -40,7 +40,7 @@ public class SightMap {
 		Logger.loudLogLine(print);	*/
 		return ret;
 	}
-	
+
 	public ArrayList<Coordinate> removeUnit(Unit u){
 		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
 		for(Entry<Coordinate, ArrayList<Unit>> entry: map.entrySet()){
@@ -70,7 +70,7 @@ public class SightMap {
 					}
 				}
 			}
-		for(Coordinate coords: getSight(u)){
+		for(Coordinate coords: u.getSight()){
 			arr = map.getValue(coords);
 			if(arr == null){
 				arr = new ArrayList<Unit>();
@@ -81,9 +81,8 @@ public class SightMap {
 		
 		return ret;
 	}
-	
-	
-	private ArrayList<Coordinate> getSight(Unit u){
+		
+	/*private ArrayList<Coordinate> getSight(Unit u){
 		ArrayList<Coordinate> temp = new ArrayList<Coordinate>();
 		int rootX = u.getColumn();
 		int rootY = u .getRow();
@@ -94,7 +93,7 @@ public class SightMap {
 					temp.add(new Coordinate(x,y));
 			}
 		return temp;
-	}
+	}*/
 	
 	public void reset(){
 		map.clear();

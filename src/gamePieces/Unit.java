@@ -10,6 +10,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
+import resourceManager.ImageManager;
 import resourceManager.UnitImage;
 import resourceManager.UnitSound;
 
@@ -22,14 +23,15 @@ public abstract class Unit {
 	protected UnitImage image;
 	protected UnitSound sound;
 	protected Animation current;
+	protected Animation cursor;
 	
 	protected MapInfo map;
-	protected int column;
-	protected int row;
+	protected Coordinate location;
 	protected int currentX;
 	protected int currentY;
 	
 	protected Player owner;
+	protected boolean selected;
 	protected boolean visible;
 	protected boolean dead;
 
@@ -49,13 +51,13 @@ public abstract class Unit {
 	//upgrades
 	
 	public Unit(Coordinate loc, Player player, MapInfo map){
-		column = loc.X();
-		row = loc.Y();
-		currentX = column*32;
-		currentY = row*32;
+		location = loc;
+		currentX = location.X()*32;
+		currentY = location.Y()*32;
 		owner = player;
 		visible = false;
 		this.map = map;
+		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
 	public UnitImage getImage(){
@@ -74,6 +76,7 @@ public abstract class Unit {
 	
 	public ArrayList<Button> select(Player selector){
 		ArrayList<Button> ret = new ArrayList<Button>();
+		selected = true;
 		if(visible){
 			current = image.getAnimation(UnitImage.SELECTED);
 			sound.playSound(UnitSound.SELECT);
@@ -89,15 +92,16 @@ public abstract class Unit {
 	}
 	
 	public void deselect(){
+		selected = false;
 		current = image.getAnimation(UnitImage.IDLE);
 	}
 	
 	public int getColumn(){
-		return column;
+		return location.X();
 	}
 	
 	public int getRow(){
-		return row;
+		return location.Y();
 	}
 	
 	public int getX(){
@@ -183,6 +187,7 @@ public abstract class Unit {
 	
 	public void update(int delta){
 		current.update(delta);
+		cursor.update(delta);
 		if(currentHealth == 0 && !dead){
 			kill();
 			return;
@@ -192,13 +197,13 @@ public abstract class Unit {
 			owner.removeUnit(this);
 			return;
 		}
-		else if(currentX < column*32)
+		else if(currentX < location.X()*32)
 			currentX += 4;
-		else if(currentX > column*32)
+		else if(currentX > location.X()*32)
 			currentX -= 4;
-		else if(currentY < row*32)
+		else if(currentY < location.Y()*32)
 			currentY += 4;
-		else if(currentY > row*32)
+		else if(currentY > location.Y()*32)
 			currentY -= 4;
 		//movement logic goes here?
 	}
@@ -208,40 +213,46 @@ public abstract class Unit {
 	}
 	
 	public boolean isWalking(){
-		if(currentX != column*32 || currentY != row*32)
+		if(currentX != location.X()*32 || currentY != location.Y()*32)
 			return true;
 		return false;
 	}
 	
 	public void render(Graphics g, int X, int Y){
 		if(visible){
+			if(map.isBuilt(location))
+				current.getCurrentFrame().setAlpha(0.1f);
+			else
+				current.getCurrentFrame().setAlpha(1.0f);
 			if(currentHealth <= BASE_HEALTH/5)
 				current.draw(X+currentX, Y+currentY, graveInjuryMask);
 			else if(currentHealth <= BASE_HEALTH/2)
 				current.draw(X+currentX, Y+currentY, injuryMask);
 			else if(currentHealth > BASE_HEALTH/2)
 				current.draw(X+currentX, Y+currentY);
+			if(selected)
+				cursor.draw(X+currentX, Y+currentY);
 		}
 	}
 	
 	public boolean isAt(int X, int Y){
-		return column == X && row == Y; 
+		return location.X() == X && location.Y() == Y; 
 	}
 	
 	public void moveUp(){
-		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row--, column)));
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(location.Y(-1), location.X())));
 	}
 	
 	public void moveDown(){
-		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row++, column)));
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(location.Y(1), location.X())));
 	}
 	
 	public void moveLeft(){
-		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row, column--)));
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(location.Y(), location.X(-1))));
 	}
 	
 	public void moveRight(){
-		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(row, column++)));
+		map.applySightMap(map.getSightMap().updateUnit(this, new Coordinate(location.Y(), location.X(1))));
 	}
 	
 	public int takeDamage(Unit attacker){
@@ -272,8 +283,8 @@ public abstract class Unit {
 		if(!(obj instanceof Unit))
 			return false;
 		Unit temp = (Unit) obj;
-		if(temp.row == this.row)
-			if(temp.column == this.column)
+		if(temp.location.Y() == this.location.Y())
+			if(temp.location.X() == this.location.X())
 				if(temp.name.equals(this.name))
 					return true;
 		return false;
@@ -281,10 +292,22 @@ public abstract class Unit {
 	
 	@Override
 	public int hashCode(){
-		return row ^ column ^ name.hashCode();
+		return location.Y() ^ location.X() ^ name.hashCode();
 	}
 
 	public Coordinate getLocation() {
-		return new Coordinate(column, row);
+		return new Coordinate(location.X(), location.Y());
 	}
+	
+	public ArrayList<Coordinate> getSight(){
+		ArrayList<Coordinate> temp = new ArrayList<Coordinate>();
+		int range = getSightRange();
+		for(int x = location.X()-range; x <= location.X()+range; x++)
+			for(int y = location.Y()-(range-Math.abs(location.X()-x)); y <= location.Y()+(range-Math.abs(location.X()-x)); y++){
+				if(y >= 0 && x >= 0)
+					temp.add(new Coordinate(x,y));
+			}
+		return temp;
+	}
+	
 }
