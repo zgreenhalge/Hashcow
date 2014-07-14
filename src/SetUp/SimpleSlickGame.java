@@ -21,7 +21,7 @@ public class SimpleSlickGame extends StateBasedGame{
 			appgc.start();
 		}
 		catch (Exception ex){
-			Logger.streamLog("CRITICAL EXCEPTION THROWN: " + ex.getMessage());
+			Logger.println("CRITICAL EXCEPTION THROWN: " + ex.getMessage());
 			Logger.writeOut();
 			throw ex;
 		}

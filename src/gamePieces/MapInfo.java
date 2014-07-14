@@ -4,19 +4,24 @@ import interfaceElements.Button;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
-import resourceManager.ImageManager;
 import utils.Logger;
 import utils.OneToOneMap;
 
+/**
+ * Holds all relevant information about a game board including the Tile values,
+ * a list of all Units and Buildings, the current SightMap, the starting locations for every player,
+ * and the number of players active in the game. Provides the interface for the SightMap to
+ * influence the rendering of Units, Buildings, and Tiles.
+ *
+ */
 public class MapInfo {
 
-	private MapTile[][] board;
+	private Tile[][] board;
 	private OneToOneMap<Coordinate, Unit> units;
 	private OneToOneMap<Coordinate, Building> buildings;
 	private SightMap currentSight;
@@ -26,20 +31,20 @@ public class MapInfo {
 	private int selectedY;
 	private int row;
 	private int column;
-	private Animation cursor;
 	private int displayMode = 0;
 	private String pos;
 	private Color prev;
 	private TrueTypeFont f = FontManager.TINY_TRUETYPE;
 	private Coordinate coords;
-	private MapTile temp;
+	private Tile temp;
 	
+	//STATIC TEST MAP INFORMATION, a way to load this better should happen
 	public static final MapInfo TEST_MAP = new MapInfo(
-			new MapTile[][] {new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}, new MapTile[] {MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS), MapTile.copy(MapTile.GRASS)}},
+			new Tile[][] {new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}},
 			new Coordinate[]{new Coordinate(0,0), new Coordinate(3,3)}, //define for max players
-			1, 1);
+			1);
 	
-	public MapInfo(MapTile[][] map, Coordinate[] start, int max, int num){
+	public MapInfo(Tile[][] map, Coordinate[] start, int max){
 		selectedX = selectedY = -1;
 		board = map;
 		positions = start;
@@ -48,9 +53,13 @@ public class MapInfo {
 		buildings = new OneToOneMap<Coordinate, Building>();
 	}
 	
+	/**
+	 * Update the entire map - Tiles, Units, Buildings
+	 * @param delta - the time since the last update call
+	 */
 	public void update(int delta){
-		for(MapTile[] arr: board)
-			for(MapTile tile: arr){
+		for(Tile[] arr: board)
+			for(Tile tile: arr){
 				tile.update(delta);
 			}	
 		for(Unit u: units.values()){
@@ -60,6 +69,12 @@ public class MapInfo {
 			b.update(delta);
 	}
 	
+	/**
+	 * Render the entire map - Tiles, Units, Buildings
+	 * @param g - the current Graphics object being used
+	 * @param X - the X offset of the map
+	 * @param Y - the Y offset of the map
+	 */
 	public void render(Graphics g, int X, int Y){
 		row = column = 0;
 		//draw board
@@ -96,19 +111,39 @@ public class MapInfo {
 		}
 	}
 	
+	/**
+	 * Cycles the display mode. 
+	 * 0 = no lines or coordinates
+	 * 1 = grid lines only
+	 * 2 = grid lines and coordinates
+	 * 3 = coordinates only
+	 */
 	public void cycleDisplayMode(){
 		displayMode = (displayMode+1)%4;
 	}
 	
-	public MapTile getTile(int x, int y){
-		MapTile ret;
-		if(x >= board.length || y >= board[0].length)
+	/**
+	 * Retrieve the tile at the given position on the board.
+	 * @param x - the column of the Tile to be retrieved
+	 * @param y - the row of the tile to be retrieved
+	 * @return the Tile at x,y or null if the Coordinate is outside of the map 
+	 */
+	public Tile getTile(Coordinate coord){
+		Tile ret;
+		if(coord.X() >= board.length | coord.X() < 0 | coord.Y() < 0 | coord.Y() >= board[0].length)
 			ret = null;
 		else
-			ret = board[x][y];
+			ret = board[coord.X()][coord.Y()];
 		return ret;
 	}
 	
+	/**
+	 * Select a given location on the map.
+	 * Will first deselect the last location selected before selecting the appropriate layer at the Coordinate given
+	 * @param coord - the Coordinate selected
+	 * @param selector - the Player who is doing the selecting
+	 * @return ArrayList<Button> - the Buttons return by the selected Unit or Building
+	 */
 	public ArrayList<Button> select(int X, int Y, Player selector){
 		//turn on for selection feedback: should probably get a dev switch later on
 		//Logger.loudLogLine(X + "," + Y);
@@ -122,7 +157,7 @@ public class MapInfo {
 			buildings.getValue(coords).deselect();
 		selectedX = X;
 		selectedY = Y;
-		coords = new Coordinate(X, Y);
+		coords= new Coordinate(X, Y);
 		if(isOccupied(coords))
 			ret.addAll(units.getValue(coords).select(selector));
 		else if(isBuilt(coords))
@@ -133,22 +168,38 @@ public class MapInfo {
 		return ret;
 	}
 	
+	/**
+	 * Set the given location to visible
+	 * @param coord - the location that should be visible
+	 */
 	public void setVisible(Coordinate coord){
 		board[coord.X()][coord.Y()].setVisible(true);
 		units.getValue(coords).setVisible(true);
 		buildings.getValue(coords).setVisible(true);
 	}
 	
+	/**
+	 * Set the given location to hidden
+	 * @param coord - the location that should be hidden
+	 */
 	public void setHidden(Coordinate coord){
 		board[coord.X()][coord.Y()].setVisible(false);
 		units.getValue(coords).setVisible(false);
 		buildings.getValue(coords).setVisible(false);
 	}
 	
+	/**
+	 * Register a Unit on the map
+	 * @param u - the Unit to register
+	 */
 	public void addUnit(Unit u){
 		units.add(u.getLocation(), u);
 	}
 	
+	/**
+	 * Register a Building on the map
+	 * @param b - the Building to register
+	 */
 	public void addBuilding(Building b){
 		Coordinate root = b.getLocation();
 		int height = b.getHeight();
@@ -161,6 +212,10 @@ public class MapInfo {
 		}
 	}
 	
+	/**
+	 * Remove a Building from the map
+	 * @param b - the Building to be removed
+	 */
 	public void removeBuilding(Building b){
 		Coordinate root = b.getLocation();
 		int height = b.getHeight();
@@ -173,26 +228,55 @@ public class MapInfo {
 		}
 	}
 	
+	/**
+	 * Retrieve a Building from a specified Coordinate
+	 * @param coord - the Coordinate of the Building to be retrieved
+	 * @return the Building at coord.X, coord.Y or null if no such building exists
+	 */
 	public Building getBuilding(Coordinate coord){
 		return buildings.getValue(coord);
 	}
 	
+	/**
+	 * Remove a Unit from the map
+	 * @param u - the Unit to be removed
+	 */
 	public void removeUnit(Unit u){
 		units.remove(new Coordinate(u.getColumn(), u.getRow()));
 	}
 	
+	/**
+	 * Retrieve a Unit from a specified Coordinate
+	 * @param coord - the Coordinate of the Unit to be retrieved
+	 * @return the Unit at coord.X, coord.Y or null if no such thing exists
+	 */
 	public Unit getUnit(Coordinate coord){
 		return units.getValue(coord);
 	}
 	
+	/**
+	 * Check if the given Coordinate is occupied by a Unit
+	 * @param coord - the Corrdinate to check
+	 * @return true if the Coordinate is occupied by a Unit
+	 */
 	public boolean isOccupied(Coordinate coord){
 		return units.containsKey(coord);
 	}
 	
+	/**
+	 * Check if the given Coordinate is occupied by a Building
+	 * @param coord - the Coordinate to check
+	 * @return true if the Coordinate is occupied by a Building
+	 */
 	public boolean isBuilt(Coordinate coord){
 		return buildings.containsKey(coord);
 	}
 	
+	/**
+	 * Check if the given Coordinate is pathable
+	 * @param coord - the Coordinate to check
+	 * @return true if coord is traversable terrain and not blocked by a Building
+	 */
 	public boolean isPathable(Coordinate coord){
 		if(!board[coord.X()][coord.Y()].isTraversable())
 			return false;
@@ -201,26 +285,50 @@ public class MapInfo {
 		else return true;
 	}
 	
+	/**
+	 * Get the maximum number of player allowed on this map
+	 * @return the max players this map supports
+	 */
 	public int getMaxPlayers(){
 		return MAX_PLAYERS;
 	}
 	
+	/**
+	 * Get the number of columns in the map
+	 * @return the width of the map in Tiles
+	 */
 	public int getWidth(){
 		return board.length;
 	}
 	
+	/**
+	 * Get the number of rows in the map
+	 * @return the height of the map in Tiles
+	 */
 	public int getHeight(){
 		return board[0].length;
 	}
 
+	/**
+	 * Retrieve the Coordinate of the starting position for the given player
+	 * @param playerNum - the player number
+	 * @return the Coordinate starting position associated with the playerNum-th player
+	 */
 	public Coordinate getStartingPosition(int playerNum){
 		return positions[playerNum];
 	}
 	
+	/**
+	 * Sets the given SightMap as the SightMap in use
+	 * @param sight - the SightMap to be used by ths map
+	 */
 	public void setSightMap(SightMap sight){
 		currentSight = sight;
 	}
 	
+	/**
+	 * Applies the current SightMap to the entire board.
+	 */
 	public void applySightMap(){
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++){
@@ -242,6 +350,10 @@ public class MapInfo {
 			}
 	}
 	
+	/**
+	 * Applies the current SightMap to only the given Coordinates
+	 * @param changed - the Coordinates the SightMap should be applied to
+	 */
 	public void applySightMap(ArrayList<Coordinate> changed){
 		for(Coordinate coords: changed){
 			if(currentSight.isVisible(coords)){
@@ -261,6 +373,9 @@ public class MapInfo {
 		}
 	}
 
+	/**
+	 * Set the entire map to hidden, overriding the active SightMap
+	 */
 	public void hideAll() {
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++)
@@ -271,6 +386,9 @@ public class MapInfo {
 			b.setVisible(false);
 	}
 	
+	/**
+	 * Set the entire map to visible, overriding the active SightMap
+	 */
 	public void showAll(){
 		for(int i=0; i<board.length; i++)
 			for(int j=0; j<board[i].length; j++)
@@ -281,6 +399,10 @@ public class MapInfo {
 			b.setVisible(true);
 	}
 
+	/**
+	 * Get the current SightMap being used
+	 * @return the SightMap in use
+	 */
 	public SightMap getSightMap() {
 		return currentSight;
 	}

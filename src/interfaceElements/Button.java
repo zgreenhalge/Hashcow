@@ -3,6 +3,10 @@ package interfaceElements;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.GUIContext;
 
+/**
+ * An common interface so both TextButton and ImageButton can be grouped together and addressed equally 
+ *
+ */
 public interface Button {
 	
 	public int getHeight();

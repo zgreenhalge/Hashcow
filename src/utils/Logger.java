@@ -141,9 +141,11 @@ public class Logger{
 		int i = printList.size();
 		while(linesPrinted < PRINT_LENGTH && i > 0){
 			PrintStruct temp = printList.get(--i);
-			if(temp.isException()){
+			if(temp.isException())
 				g.setColor(Color.red);
-			}else{
+			else if(temp.isNote())
+				g.setColor(Color.yellow);
+			else{
 				if(g.getBackground().equals(Color.white))
 					g.setColor(Color.black);
 				else
@@ -168,16 +170,6 @@ public class Logger{
 	           printList.add(new PrintStruct(e));
 		}
 	}
-
-	@Deprecated
-	public static void log(String input) {
-		if(verbose) 
-            loudLog(input);
-		else{
-			writeOut.get(writeOut.size()-1).concat(input);
-			printList.add(new PrintStruct(input));
-		}
-	}
 	
 	public static void logLine(String input){
 		if(verbose) 
@@ -187,30 +179,32 @@ public class Logger{
 			printList.add(new PrintStruct(input));
 		}
 	}
-
-	@Deprecated
-	public static void loudLog(String input){
-		System.out.print(input);
-		writeOut.get(writeOut.size()-1).concat(input);
-		printList.add(new PrintStruct(input));
-		age = 0;
-	}
-
-	public static void logNote(String input){
-		writeOut.add(input);
-		printList.add(new PrintStruct(input));
-	}
-	
-	public static void streamLog(String input){
-		System.out.println(input);
-		writeOut.add(input);
-	}
 	
 	public static void loudLogLine(String input){
 		System.out.println(input);
 		writeOut.add(input);
 		printList.add(new PrintStruct(input));
 		age = 0;
+	}
+
+	public static void logNote(String input){
+		if(verbose)
+			loudLogNote(input);
+		else{
+			writeOut.add(input);
+			printList.add(new PrintStruct(input).setNote());
+		}
+	}
+	
+	public static void loudLogNote(String input){
+		System.out.println(input);
+		writeOut.add(input);
+		printList.add(new PrintStruct(input).setNote());
+		age = 0;
+	}
+	
+	public static void println(String input){
+		System.out.println(input);
 	}
 	
 	public static void loudLog(Exception e) {

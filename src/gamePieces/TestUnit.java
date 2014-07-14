@@ -3,6 +3,10 @@ package gamePieces;
 import resourceManager.TestUnitLibrary;
 import resourceManager.UnitImage;
 
+/**
+ * A test implementation of a Unit
+ *
+ */
 public class TestUnit extends Unit {
 	
 	//move these to a unit database?				//
@@ -27,7 +31,6 @@ public class TestUnit extends Unit {
 		setBaseDefense(BASE_DEFENSE);
 		setBaseHealth(BASE_HEALTH);
 		setCurrentHealth(BASE_HEALTH);
-		refreshHealthString();
 		setName(name);
 		owner.addUnit(this);
 	}

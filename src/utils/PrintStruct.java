@@ -8,6 +8,7 @@ public class PrintStruct implements Comparable<PrintStruct>{
 	private long timeRecorded;
 	private Exception exception;
 	private boolean isException;
+	private boolean isNote;
 	private int timeAlive;
 	
 	public PrintStruct(String s){
@@ -32,6 +33,15 @@ public class PrintStruct implements Comparable<PrintStruct>{
 	
 	public long getTime(){
 		return timeRecorded;
+	}
+	
+	public PrintStruct setNote(){
+		isNote = true;
+		return this;
+	}
+	
+	public boolean isNote(){
+		return isNote;
 	}
 	
 	public boolean isException(){

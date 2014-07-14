@@ -7,6 +7,10 @@ import java.util.Set;
 import utils.Logger;
 import utils.OneToOneMap;
 
+/**
+ * Contains information about a particular view of the board.
+ * 
+ */
 public class SightMap {
 
 	private ArrayList<Unit> units;
@@ -20,10 +24,20 @@ public class SightMap {
 		reset();
 	}
 	
+	/**
+	 * Check if a specific Coordinate is visible
+	 * @param c - the Coordinate to check
+	 * @return true if the Coordinate is visible
+	 */
 	public boolean isVisible(Coordinate c){
 		return map.containsKey(c);
 	}
 	
+	/**
+	 * Add a Unit to the SightMap
+	 * @param u - the Unit to add
+	 * @return ArrayList<Coordinate> - Coordinate locations of everywhere the visibility has changed
+	 */
 	public ArrayList<Coordinate> addUnit(Unit u){
 		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
 		for(Coordinate coords: u.getSight()){
@@ -41,6 +55,11 @@ public class SightMap {
 		return ret;
 	}
 
+	/**
+	 * Remove a Unit from the SightMap
+	 * @param u - the Unit to remove
+	 * @return ArrayList<Coordinate> - Coordinate locations of everywhere the visibility has changed
+	 */
 	public ArrayList<Coordinate> removeUnit(Unit u){
 		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
 		for(Entry<Coordinate, ArrayList<Unit>> entry: map.entrySet()){
@@ -53,8 +72,14 @@ public class SightMap {
 		return ret;			
 	}
 
+	/**
+	 * Alert the SightMap to a Unit's change in location
+	 * @param u - the Unit that has moved
+	 * @param oldLoc - the previous Coordinate location of the given Unit
+	 * @return ArrayList<Coordinate> - Coordinate locations of everywhere the visibility has changed
+	 */
 	public ArrayList<Coordinate> updateUnit(Unit u, Coordinate oldLoc){
-		int range = u.getSightRange();
+		int range = u.getBaseSightRange();
 		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
 		Coordinate temp;
 		ArrayList<Unit> arr;
@@ -81,30 +106,28 @@ public class SightMap {
 		
 		return ret;
 	}
-		
-	/*private ArrayList<Coordinate> getSight(Unit u){
-		ArrayList<Coordinate> temp = new ArrayList<Coordinate>();
-		int rootX = u.getColumn();
-		int rootY = u .getRow();
-		int range = u.getSightRange();
-		for(int x = rootX-range; x <= rootX+range; x++)
-			for(int y = rootY-(range-Math.abs(rootX-x)); y <= rootY+(range-Math.abs(rootX-x)); y++){
-				if(y >= 0 && x >= 0)
-					temp.add(new Coordinate(x,y));
-			}
-		return temp;
-	}*/
 	
+	/**
+	 * Rewrite the SightMap from scratch
+	 */
 	public void reset(){
 		map.clear();
 		for(Unit u: units)
 			addUnit(u);
 	}
 	
+	/**
+	 * The set of visible Coordinates
+	 * @return
+	 */
 	public Set<Coordinate> visibleSet(){
 		return map.keySet();
 	}
 	
+	/**
+	 * Get the ID of the Player who owns this SightMap
+	 * @return the id of the owning Player
+	 */
 	public int getId(){
 		return playerId;
 	}

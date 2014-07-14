@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.gui.GUIContext;
 
-import resourceManager.FontManager;
-
+/**
+ * A horizontal menu that will scale dynamically as Buttons are added and removed
+ *
+ */
 public class Menu {
 
 	

@@ -86,7 +86,7 @@ public class Main extends StateBasedGame {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		Logger.streamLog("Clean exit achieved.");
+		Logger.println("Clean exit achieved.");
 		appgc.exit();
 	}
 	
