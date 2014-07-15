@@ -6,6 +6,7 @@ import java.util.Set;
 
 import utils.Logger;
 import utils.OneToOneMap;
+import utils.Settings;
 
 /**
  * Contains information about a particular view of the board.
@@ -47,11 +48,13 @@ public class SightMap {
 				}
 				map.getValue(coords).add(u);
 			}
-/*		String print = "Visible:";
-		for(Coordinate coords: ret)
-			print += " " + coords.toString();
-		print += "   ("+ret.size()+")";
-		Logger.loudLogLine(print);	*/
+		if((boolean)Settings.getSetting(Settings.DEV_MODE)){
+			String print = "Visible from " + u.getLocation().toString() + ":";
+			for(Coordinate coords: ret)
+				print += " " + coords.toString();
+			print += "   ("+ret.size()+")";
+			Logger.loudLogLine(print);
+		}
 		return ret;
 	}
 

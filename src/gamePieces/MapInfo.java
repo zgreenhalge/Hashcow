@@ -1,6 +1,6 @@
 package gamePieces;
 
-import interfaceElements.Button;
+import guiElements.Button;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,7 @@ import org.newdawn.slick.TrueTypeFont;
 import resourceManager.FontManager;
 import utils.Logger;
 import utils.OneToOneMap;
+import utils.Settings;
 
 /**
  * Holds all relevant information about a game board including the Tile values,
@@ -145,8 +146,8 @@ public class MapInfo {
 	 * @return ArrayList<Button> - the Buttons return by the selected Unit or Building
 	 */
 	public ArrayList<Button> select(int X, int Y, Player selector){
-		//turn on for selection feedback: should probably get a dev switch later on
-		//Logger.loudLogLine(X + "," + Y);
+		if((boolean)Settings.getSetting(Settings.DEV_MODE))
+			Logger.loudLogLine(X + "," + Y);
 		ArrayList<Button> ret = new ArrayList<Button>();
 		coords = new Coordinate(selectedX, selectedY);
 		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
@@ -164,7 +165,7 @@ public class MapInfo {
 			ret.addAll(buildings.getValue(coords).select(selector));
 		else
 			if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
-				board[selectedX][selectedY].select();
+				board[selectedX][selectedY].select(selector);
 		return ret;
 	}
 	

@@ -1,4 +1,4 @@
-package interfaceElements;
+package guiElements;
 
 import java.util.ArrayList;
 

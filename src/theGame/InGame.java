@@ -2,18 +2,17 @@ package theGame;
 
 import java.util.ArrayList;
 
-import interfaceElements.Button;
-import interfaceElements.HorizontalMenu;
-import interfaceElements.TextButton;
-import interfaceElements.Menu;
-import interfaceElements.buttonActions.ButtonAction;
-import gamePieces.Building;
 import gamePieces.Coordinate;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 import gamePieces.TestHQ;
 import gamePieces.TestUnit;
 import gamePieces.Unit;
+import guiElements.Button;
+import guiElements.HorizontalMenu;
+import guiElements.Menu;
+import guiElements.TextButton;
+import guiElements.buttonActions.ButtonAction;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -23,6 +22,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.FontManager;
 import utils.Logger;
+import utils.Settings;
 
 public class InGame extends HCGameState {
 
@@ -88,9 +88,8 @@ public class InGame extends HCGameState {
 			for(int n=0; n<players.size(); n++){
 				start = map.getStartingPosition(n);
 				(new TestUnit(start, players.get(n), map)).register();
+				(new TestHQ(start, players.get(n), map)).register();
 			}
-			map.addBuilding(new TestHQ(new Coordinate(3, 2), players.get(1), map));
-			(new TestUnit(new Coordinate(0, 1), curPlayer, map)).register();
 			map.getUnit(new Coordinate(0,0)).setCurrentHealth(4);
 			map.getUnit(new Coordinate(3,3)).setCurrentHealth(1);
 			playing = true;
@@ -188,7 +187,10 @@ public class InGame extends HCGameState {
 		map.hideAll();
 		if(playing)
 			startTurn();
-		turnCount++;
+		if(players.indexOf(curPlayer) == 0)
+			turnCount++;
+		if((boolean)Settings.getSetting(Settings.DEV_MODE))
+			Logger.loudLogLine("Turn  " + turnCount + "." + players.indexOf(curPlayer));
 	}
 	
 	@Override

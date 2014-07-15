@@ -1,6 +1,6 @@
 package gamePieces;
 
-import interfaceElements.Button;
+import guiElements.Button;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ import resourceManager.UnitSound;
  * A generic Unit
  *
  */
-public abstract class Unit {
+public abstract class Unit implements Selectable{
 
 	protected static final TrueTypeFont f = FontManager.TINY_TRUETYPE;
 	protected static final Color graveInjuryMask = Color.red;
@@ -38,6 +38,7 @@ public abstract class Unit {
 	protected boolean selected;
 	protected boolean visible;
 	protected boolean dead;
+	protected boolean moveDisplay;
 
 	protected String name = "Unknown";
 	protected int BASE_MOVE_RANGE;
@@ -62,6 +63,58 @@ public abstract class Unit {
 		visible = false;
 		this.map = map;
 		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
+	}
+	
+
+	
+	/**
+	 * Update the Unit
+	 * @param delta - time since the last update call
+	 */
+	public void update(int delta){
+		current.update(delta);
+		cursor.update(delta);
+		if(currentHealth == 0 && !dead){
+			kill();
+			return;
+		}
+		else if(current.equals(image.getAnimation(UnitImage.DEATH)) && current.isStopped()){
+			map.removeUnit(this);
+			owner.removeUnit(this);
+			return;
+		}
+		else if(currentX < location.X()*32)
+			currentX += 4;
+		else if(currentX > location.X()*32)
+			currentX -= 4;
+		else if(currentY < location.Y()*32)
+			currentY += 4;
+		else if(currentY > location.Y()*32)
+			currentY -= 4;
+		//movement logic goes here?
+	}
+	
+	/**
+	 * Render the Unit
+	 * @param g - the Graphics object being used
+	 * @param X - the X offset of the map
+	 * @param Y - the Y offset of the map
+	 */
+	public void render(Graphics g, int X, int Y){
+		if(visible){
+			if(map.isBuilt(location))
+				current.getCurrentFrame().setAlpha(0.5f);
+			else
+				current.getCurrentFrame().setAlpha(1.0f);
+			if(currentHealth <= BASE_HEALTH/5)
+				current.draw(X+currentX, Y+currentY, graveInjuryMask);
+			else if(currentHealth <= BASE_HEALTH/2)
+				current.draw(X+currentX, Y+currentY, injuryMask);
+			else if(currentHealth > BASE_HEALTH/2)
+				current.draw(X+currentX, Y+currentY);
+			if(selected)
+				cursor.draw(X+currentX, Y+currentY);
+		}
 	}
 	
 	/**
@@ -120,6 +173,10 @@ public abstract class Unit {
 	public void deselect(){
 		selected = false;
 		current = image.getAnimation(UnitImage.IDLE);
+	}
+	
+	public boolean isSelected(){
+		return selected;
 	}
 
 	public int getColumn(){
@@ -208,55 +265,6 @@ public abstract class Unit {
 		name = s;
 	}
 	
-	/**
-	 * Update the Unit
-	 * @param delta - time since the last update call
-	 */
-	public void update(int delta){
-		current.update(delta);
-		cursor.update(delta);
-		if(currentHealth == 0 && !dead){
-			kill();
-			return;
-		}
-		else if(current.equals(image.getAnimation(UnitImage.DEATH)) && current.isStopped()){
-			map.removeUnit(this);
-			owner.removeUnit(this);
-			return;
-		}
-		else if(currentX < location.X()*32)
-			currentX += 4;
-		else if(currentX > location.X()*32)
-			currentX -= 4;
-		else if(currentY < location.Y()*32)
-			currentY += 4;
-		else if(currentY > location.Y()*32)
-			currentY -= 4;
-		//movement logic goes here?
-	}
-	
-	/**
-	 * Render the Unit
-	 * @param g - the Graphics object being used
-	 * @param X - the X offset of the map
-	 * @param Y - the Y offset of the map
-	 */
-	public void render(Graphics g, int X, int Y){
-		if(visible){
-			if(map.isBuilt(location))
-				current.getCurrentFrame().setAlpha(0.1f);
-			else
-				current.getCurrentFrame().setAlpha(1.0f);
-			if(currentHealth <= BASE_HEALTH/5)
-				current.draw(X+currentX, Y+currentY, graveInjuryMask);
-			else if(currentHealth <= BASE_HEALTH/2)
-				current.draw(X+currentX, Y+currentY, injuryMask);
-			else if(currentHealth > BASE_HEALTH/2)
-				current.draw(X+currentX, Y+currentY);
-			if(selected)
-				cursor.draw(X+currentX, Y+currentY);
-		}
-	}
 	
 	/**
 	 * Move the Unit one tile up
@@ -361,6 +369,14 @@ public abstract class Unit {
 					temp.add(new Coordinate(x,y));
 			}
 		return temp;
+	}
+
+	public MapInfo getMap() {
+		return map;
+	}
+
+	public void displayMove() {
+		moveDisplay = true;
 	}
 	
 }

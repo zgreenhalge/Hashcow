@@ -1,11 +1,11 @@
 package theGame;
 
 
-import interfaceElements.Button;
-import interfaceElements.TextButton;
-import interfaceElements.buttonActions.ExitGameAction;
-import interfaceElements.buttonActions.StateTransitionAction;
-import interfaceElements.buttonActions.UnImplementedAction;
+import guiElements.Button;
+import guiElements.TextButton;
+import guiElements.buttonActions.ExitGameAction;
+import guiElements.buttonActions.StateTransitionAction;
+import guiElements.buttonActions.UnImplementedAction;
 
 import java.awt.Font;
 import java.util.ArrayList;

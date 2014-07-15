@@ -1,5 +1,9 @@
 package gamePieces;
 
+import guiElements.Button;
+
+import java.util.ArrayList;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -11,10 +15,10 @@ import resourceManager.ImageManager;
  * A terrain Tile that makes up the game map.  
  *
  */
-public class Tile {
+public class Tile implements Selectable{
 
 	private String name;
-	private int moveCost;
+	private int[] moveCost;
 	private boolean buildable;
 	private boolean visible = true;
 	private boolean selected;
@@ -22,12 +26,12 @@ public class Tile {
 	private Animation ani;
 	private Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
-	public static final Tile GRASS = new Tile("Grass", 1, ImageManager.getSpriteSheet("res/images/tiles/grass.png", 32, 32, 0), true);
+	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, ImageManager.getSpriteSheet("res/images/tiles/grass.png", 32, 32, 0), true);
 	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	
-	private Tile(String n, int cost, SpriteSheet ss, boolean build){
+	private Tile(String n, int[] costs, SpriteSheet ss, boolean build){
 		name = n;
-		moveCost = cost;
+		moveCost = costs;
 		image = ss;
 		buildable = build;
 		ani = new Animation(image, 0, 0, 0, image.getVerticalCount()-1, false, 650, true);
@@ -47,7 +51,7 @@ public class Tile {
 	 * @return true if the Tile is traversable
 	 */
 	public boolean isTraversable(){
-		return moveCost > 0;
+		return moveCost[0] > 0;
 	}
 	
 	/**
@@ -70,8 +74,15 @@ public class Tile {
 	 * Get the move cost of the Tile
 	 * @return > 0 if the tile is traversable, -1 if it is not
 	 */
-	public int moveCost(){
-		return moveCost;
+	public int moveCost(MovementType type){
+		switch(type){
+		case IMMOBILE: return moveCost[0];
+		case WALK: return moveCost[1];
+		case TIRES: return moveCost[2];
+		case TREADS: return moveCost[3];
+		case HOVER: return moveCost[4];
+		default: return 1;
+		}
 	}
 	
 	/**
@@ -109,8 +120,9 @@ public class Tile {
 	/**
 	 * Select the Tile
 	 */
-	public void select(){
+	public ArrayList<Button> select(Player selector){
 		selected = true;
+		return new ArrayList<Button>();
 	}
 	
 	/**

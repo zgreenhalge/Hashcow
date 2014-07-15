@@ -1,6 +1,6 @@
-package interfaceElements;
+package guiElements;
      
-import interfaceElements.buttonActions.ButtonAction;
+import guiElements.buttonActions.ButtonAction;
 
 import java.awt.Font;
 

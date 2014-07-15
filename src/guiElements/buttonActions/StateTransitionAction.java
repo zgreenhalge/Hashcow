@@ -1,4 +1,4 @@
-package interfaceElements.buttonActions;
+package guiElements.buttonActions;
 
 import org.newdawn.slick.state.StateBasedGame;
 

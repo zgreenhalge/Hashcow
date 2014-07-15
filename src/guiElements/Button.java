@@ -1,4 +1,4 @@
-package interfaceElements;
+package guiElements;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.GUIContext;

@@ -15,13 +15,16 @@ public class Settings {
 	private static PrintWriter out;
 	
 	public static final String VOLUME = "volume";
+	public static final String DEV_MODE = "dev";
 	
-	private static String volume;
+	private static String volume = "0.25f";
+	private static String dev = "0.25f";
 	
 	private Settings(){}
 	
 	public static void setToDefaults(){
 		volume = "0.25f";
+		dev = "true";
 	}
 	
 	public static void loadSettings(String path) throws FileNotFoundException{
@@ -42,13 +45,14 @@ public class Settings {
 		File file = new File(path);
 		out = new PrintWriter(new FileWriter(file));
 		out.println("volume:"+volume);
-		
+		out.println("dev:"+dev);
 		out.close();
 	}
 	
 	public static Object getSetting(String name){
 		switch(name){
 			case VOLUME: return Float.parseFloat(volume);
+			case DEV_MODE: return Boolean.parseBoolean(dev);
 			default: return null;
 		}
 	}
@@ -57,6 +61,7 @@ public class Settings {
 	public static void set(String name, String value){
 		switch(name){
 			case VOLUME: volume = value; break;
+			case DEV_MODE: dev = value; break;
 			default: break;
 		}
 	}

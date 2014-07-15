@@ -7,7 +7,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import resourceManager.UnitImage;
-import utils.Logger;
 
 /**
  * A generic building class. 
@@ -38,6 +37,12 @@ public class Building extends Unit {
 		pathable = new boolean[WIDTH][HEIGHT];
 	}
 	
+	@Override
+	public void register(){
+		super.owner.addBuilding(this);
+		super.map.addBuilding(this);
+	}
+	
 	/**
 	 * @Override
 	 * Update the Building.
@@ -54,8 +59,7 @@ public class Building extends Unit {
 			owner.removeBuilding(this);
 			return;
 		}
-	}
-	
+	}	
 	
 	/**
 	 * @Override
@@ -139,4 +143,5 @@ public class Building extends Unit {
 			}
 		return temp;
 	}
+	
 }

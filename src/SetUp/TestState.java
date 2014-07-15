@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import interfaceElements.Button;
-import interfaceElements.TextButton;
-import interfaceElements.buttonActions.ButtonAction;
-import interfaceElements.buttonActions.ToggleFPSAction;
+import guiElements.Button;
+import guiElements.TextButton;
+import guiElements.buttonActions.ButtonAction;
+import guiElements.buttonActions.ToggleFPSAction;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

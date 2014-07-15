@@ -3,7 +3,6 @@ package theGame;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,11 +23,13 @@ public class Main extends StateBasedGame {
 	
 	public static void main(String[] args){
 		//entry point of program
-		try {
+		try{
 			Settings.loadSettings("config.txt");
-		} catch (FileNotFoundException e){
-			Settings.setToDefaults();
+			}
+		catch(FileNotFoundException e){
+			//do nothing, Settings will handle init
 		}
+		
 		try{
 			currentGame = new Main("This Is The Title");
 			appgc = new AppGameContainer(currentGame);
@@ -68,6 +69,10 @@ public class Main extends StateBasedGame {
 	
 	public static StateBasedGame getGame(){
 		return currentGame;
+	}
+	
+	public static GameContainer getGameContainer(){
+		return appgc;
 	}
 
 	/**

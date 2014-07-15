@@ -1,16 +1,19 @@
-package interfaceElements;
+package guiElements;
      
-import interfaceElements.buttonActions.ButtonAction;
+import guiElements.buttonActions.ButtonAction;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
      
+
+
 
 
 
@@ -44,17 +47,17 @@ public class ImageButton extends MouseOverArea implements Button {
 	 * @param action - the action the button will take when pressed
 	 * @throws SlickException - when something goes wrong
 	 */
-    public ImageButton(GameContainer gc, Animation animation, int x, int y,
+    public ImageButton(GameContainer gc, SpriteSheet ss, int x, int y,
         StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
-	    super((GUIContext)gc, animation.getImage(0), x, y);
+	    super((GUIContext)gc, ss.getSubImage(0, 0), x, y);
 	    super.setMouseDownColor(Color.red);
 	    super.setMouseOverColor(Color.blue);
-	    super.setMouseOverImage(animation.getImage(1));
-	    super.setMouseDownImage(animation.getImage(2));
+	    super.setMouseOverImage(ss.getSubImage(0, 1));
+	    super.setMouseDownImage(ss.getSubImage(0, 2));
 	    this.sbg = sbg;
 	    this.stateID = stateID;
 	    this.action = action;
-	    name = animation.getImage(0).getName()+"Button";
+	    name = ss.getSubImage(0, 0).getName()+"Button";
     }
     
     public void setHidden(boolean b){
