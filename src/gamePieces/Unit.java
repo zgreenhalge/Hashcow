@@ -1,7 +1,5 @@
 package gamePieces;
 
-import guiElements.Button;
-
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
@@ -39,6 +37,7 @@ public abstract class Unit implements Selectable{
 	protected boolean visible;
 	protected boolean dead;
 	protected boolean moveDisplay;
+	protected boolean attackDisplay;
 
 	protected String name = "Unknown";
 	protected int BASE_MOVE_RANGE;
@@ -151,8 +150,8 @@ public abstract class Unit implements Selectable{
 	 * @param selector - the Player who selected the Unit
 	 * @return @return ArrayList<Button> - the Buttons for this Unit's abilities 
 	 */
-	public ArrayList<Button> select(Player selector){
-		ArrayList<Button> ret = new ArrayList<Button>();
+	public void select(Coordinate coords, Player selector){
+		//ArrayList<Button> ret = new ArrayList<Button>();
 		selected = true;
 		if(visible){
 			current = image.getAnimation(UnitImage.SELECTED);
@@ -164,7 +163,7 @@ public abstract class Unit implements Selectable{
 				//draw attack range?
 			}
 		}
-		return ret;
+		//return ret;
 	}
 	
 	/**
@@ -375,8 +374,22 @@ public abstract class Unit implements Selectable{
 		return map;
 	}
 
-	public void displayMove() {
-		moveDisplay = true;
+	public void toggleDisplayMove() {
+		moveDisplay = !moveDisplay;
+	}
+	
+	public void toggleDisplayAttack(){
+		attackDisplay = !attackDisplay;
+	}
+
+	public ArrayList<Coordinate> getMovementRange() {
+		ArrayList<Coordinate> ret = new ArrayList<Coordinate>();
+		
+		return ret;
+	}
+	
+	public void moveTo(Coordinate coord){
+		
 	}
 	
 }

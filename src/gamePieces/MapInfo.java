@@ -1,8 +1,7 @@
 package gamePieces;
 
-import guiElements.Button;
-
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -23,6 +22,7 @@ import utils.Settings;
 public class MapInfo {
 
 	private Tile[][] board;
+	private Stack<Selectable> inputStack;
 	private OneToOneMap<Coordinate, Unit> units;
 	private OneToOneMap<Coordinate, Building> buildings;
 	private SightMap currentSight;
@@ -52,6 +52,7 @@ public class MapInfo {
 		MAX_PLAYERS = max;
 		units = new OneToOneMap<Coordinate, Unit>();
 		buildings = new OneToOneMap<Coordinate, Building>();
+		inputStack = new Stack<Selectable>();
 	}
 	
 	/**
@@ -145,28 +146,30 @@ public class MapInfo {
 	 * @param selector - the Player who is doing the selecting
 	 * @return ArrayList<Button> - the Buttons return by the selected Unit or Building
 	 */
-	public ArrayList<Button> select(int X, int Y, Player selector){
+	public void select(int X, int Y, Player selector){
 		if((boolean)Settings.getSetting(Settings.DEV_MODE))
 			Logger.loudLogLine(X + "," + Y);
-		ArrayList<Button> ret = new ArrayList<Button>();
-		coords = new Coordinate(selectedX, selectedY);
-		if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
-			board[selectedX][selectedY].deselect();
-		if(isOccupied(coords))
-			units.getValue(coords).deselect();
-		if(isBuilt(coords))
-			buildings.getValue(coords).deselect();
-		selectedX = X;
-		selectedY = Y;
-		coords= new Coordinate(X, Y);
-		if(isOccupied(coords))
-			ret.addAll(units.getValue(coords).select(selector));
-		else if(isBuilt(coords))
-			ret.addAll(buildings.getValue(coords).select(selector));
-		else
+		if(inputStack.peek() != null)
+			inputStack.pop().select(new Coordinate(X, Y), selector);
+		else{
+			coords = new Coordinate(selectedX, selectedY);
 			if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
-				board[selectedX][selectedY].select(selector);
-		return ret;
+				board[selectedX][selectedY].deselect();
+			if(isOccupied(coords))
+				units.getValue(coords).deselect();
+			if(isBuilt(coords))
+				buildings.getValue(coords).deselect();
+			selectedX = X;
+			selectedY = Y;
+			coords= new Coordinate(X, Y);
+			if(isOccupied(coords))
+				units.getValue(coords).select(coords, selector);
+			else if(isBuilt(coords))
+				buildings.getValue(coords).select(coords, selector);
+			else
+				if(selectedX >= 0 && selectedX < board.length && selectedY >= 0 && selectedY < board[selectedX].length)
+					board[selectedX][selectedY].select(coords, selector);
+		}
 	}
 	
 	/**
@@ -406,6 +409,14 @@ public class MapInfo {
 	 */
 	public SightMap getSightMap() {
 		return currentSight;
+	}
+
+	public void requestNextInput(Selectable waiting) {
+		inputStack.push(waiting);
+	}
+	
+	public void cancelInputRequest(Selectable waiting){
+		inputStack.remove(waiting);
 	}
 	
 }

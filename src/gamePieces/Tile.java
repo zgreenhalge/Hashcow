@@ -1,9 +1,5 @@
 package gamePieces;
 
-import guiElements.Button;
-
-import java.util.ArrayList;
-
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -120,9 +116,8 @@ public class Tile implements Selectable{
 	/**
 	 * Select the Tile
 	 */
-	public ArrayList<Button> select(Player selector){
+	public void select(Coordinate coords, Player selector){
 		selected = true;
-		return new ArrayList<Button>();
 	}
 	
 	/**

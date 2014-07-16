@@ -135,13 +135,13 @@ public class InGame extends HCGameState {
 			if(mouseX != selectedX || mouseY != selectedY){
 				selectedX = (int)mouseX;
 				selectedY = (int)mouseY;
-				if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
+				/*if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
 					for(Button b: map.select(selectedX, selectedY, curPlayer))
 						selected.addButton(b);
 					selected.init();
-				}else{
+				}else{*/
 					map.select(selectedX, selectedY, curPlayer);
-				}
+				//}
 			}	
 		}
 		super.update(container, game, delta);
