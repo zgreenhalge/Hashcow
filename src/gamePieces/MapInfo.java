@@ -149,7 +149,7 @@ public class MapInfo {
 	public void select(int X, int Y, Player selector){
 		if((boolean)Settings.getSetting(Settings.DEV_MODE))
 			Logger.loudLogLine(X + "," + Y);
-		if(inputStack.peek() != null)
+		if(!inputStack.isEmpty())
 			inputStack.pop().select(new Coordinate(X, Y), selector);
 		else{
 			coords = new Coordinate(selectedX, selectedY);
