@@ -10,7 +10,6 @@ import gamePieces.TestUnit;
 import gamePieces.Unit;
 import guiElements.Button;
 import guiElements.HorizontalMenu;
-import guiElements.Menu;
 import guiElements.TextButton;
 import guiElements.buttonActions.ButtonAction;
 
@@ -22,6 +21,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import resourceManager.FontManager;
 import utils.Logger;
+import utils.SaveStruct;
 import utils.Settings;
 
 public class InGame extends HCGameState {
@@ -37,7 +37,6 @@ public class InGame extends HCGameState {
 	private Player curPlayer;
 	private int selectedX;
 	private int selectedY;
-	private Menu selected;
 	private HorizontalMenu menuBar;
 	
 	private Button endTurnButton;
@@ -46,8 +45,6 @@ public class InGame extends HCGameState {
 	private boolean mouseWasDown;
 	private int X;
 	private int Y;
-	private int centerX;
-	private int centerY;
 	private int startX;
 	private int startY;
 	private int prevX;
@@ -59,8 +56,17 @@ public class InGame extends HCGameState {
 		ID = ++lastId;
 		map = board;
 		this.players = players;
-		curPlayer = players.get(0);
 		selectedX = selectedY = -1;
+	}
+	
+	public InGame(SaveStruct save){
+		ID = ++lastId;
+		map = save.getMap();
+		players = save.getPlayers();
+		curPlayer = players.get(save.getCurPlayer());
+		turnCount = save.getTurn();
+		selectedX = selectedY = -1;
+		playing = true;
 	}
 	
 	@Override
@@ -68,15 +74,13 @@ public class InGame extends HCGameState {
 			throws SlickException{
 		super.init(container, game);
 		mouseWasDown = false;
-		//TODO change this so that we render the center of the map on the center of the screen - will keep 
-		X = centerX = (container.getWidth() - map.getWidth()*32)/2;
-		Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
+		//X = centerX = (container.getWidth() - map.getWidth()*32)/2;
+		//Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
 		input = container.getInput();
 		try{
 			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, 2, new ButtonAction(){public void activate(){endTurn();}});
 		}catch(Exception e){Logger.loudLog(e);}
-		selected = new Menu(15, 40);
 		menuBar = new HorizontalMenu(container.getWidth() - endTurnButton.getWidth(), 0);
 		menuBar.addButton(endTurnButton);
 	}
@@ -86,12 +90,16 @@ public class InGame extends HCGameState {
 		if(!playing){
 			Coordinate start;
 			for(int n=0; n<players.size(); n++){
+				curPlayer = players.get(n);
+				curPlayer.setLastX((Main.getGameContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32));
+				curPlayer.setLastY((Main.getGameContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32));
 				start = map.getStartingPosition(n);
 				(new TestUnit(start, players.get(n), map)).register();
 				(new TestHQ(start, players.get(n), map)).register();
 			}
 			map.getUnit(new Coordinate(0,0)).setCurrentHealth(4);
 			map.getUnit(new Coordinate(3,3)).setCurrentHealth(1);
+			curPlayer = players.get(0);
 			playing = true;
 		}
 		startTurn();
@@ -103,7 +111,6 @@ public class InGame extends HCGameState {
 		g.scale((float)scale, (float)scale); 	//scale map render to zoom level
 		map.render(g, X, Y);
 		g.resetTransform();						//reset scale to draw HUD
-		selected.render(container, g);
 		menuBar.render(container, g);
 		super.render(container, game, g);
 	}
@@ -127,7 +134,6 @@ public class InGame extends HCGameState {
 			mouseWasDown = false;
 		}
 		if(input.isMousePressed(Input.MOUSE_LEFT_BUTTON)){
-			selected.clear();
 			double mouseX = input.getMouseX();
 			double mouseY = input.getMouseY();
 			mouseX = (int)(mouseX/scale-X)/32;
@@ -135,13 +141,7 @@ public class InGame extends HCGameState {
 			if(mouseX != selectedX || mouseY != selectedY){
 				selectedX = (int)mouseX;
 				selectedY = (int)mouseY;
-				/*if(selectedX >= 0 && selectedX < map.getWidth() && selectedY >= 0 && selectedY < map.getHeight()){
-					for(Button b: map.select(selectedX, selectedY, curPlayer))
-						selected.addButton(b);
-					selected.init();
-				}else{*/
-					map.select(selectedX, selectedY, curPlayer);
-				//}
+				map.select(selectedX, selectedY, curPlayer);
 			}	
 		}
 		super.update(container, game, delta);
@@ -155,8 +155,8 @@ public class InGame extends HCGameState {
 			map.cycleDisplayMode();
 		if(i == Input.KEY_SPACE){
 			scale = 1.0f;
-			X = centerX;
-			Y = centerY;
+			X = (Main.getGameContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32);
+			Y = (Main.getGameContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32);
 		}
 	}
 	
@@ -175,7 +175,8 @@ public class InGame extends HCGameState {
 	}
 	
 	public void startTurn(){
-		curPlayer.age();
+		X = curPlayer.getLastX();
+		Y = curPlayer.getLastY();
 		for(Unit u: curPlayer.owned())
 			u.setVisible(true);
 		map.setSightMap(curPlayer.getSightMap());
@@ -183,19 +184,43 @@ public class InGame extends HCGameState {
 	}
 	
 	public void endTurn(){
-		curPlayer = players.get(curPlayer.getId() % players.size()); //get the next player
-		map.hideAll();
-		if(playing)
+		curPlayer.setLastX(X);
+		curPlayer.setLastY(Y);
+		if(playing){
+			curPlayer.age();
+			map.hideAll();
+			curPlayer = players.get(curPlayer.getId() % players.size()); //get the next player
+			if(players.indexOf(curPlayer) == 0)
+				turnCount++;
+			if((boolean)Settings.getSetting(Settings.DEV_MODE))
+				Logger.loudLogLine("Turn  " + turnCount + "." + players.indexOf(curPlayer));
 			startTurn();
-		if(players.indexOf(curPlayer) == 0)
-			turnCount++;
-		if((boolean)Settings.getSetting(Settings.DEV_MODE))
-			Logger.loudLogLine("Turn  " + turnCount + "." + players.indexOf(curPlayer));
+		}
+	}
+	
+	public void saveGame(){
+		SaveStruct.save(new SaveStruct(this));
 	}
 	
 	@Override
 	public int getID() {
 		return ID;
+	}
+
+	public ArrayList<Player> getPlayers() {
+		return players;
+	}
+	
+	public MapInfo getMap(){
+		return map;
+	}
+	
+	public int getTurn(){
+		return turnCount;
+	}
+	
+	public Player getCurrentPlayer(){
+		return curPlayer;
 	}
 
 }

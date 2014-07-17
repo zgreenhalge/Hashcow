@@ -1,11 +1,15 @@
 package gamePieces;
 
+import java.io.Serializable;
+
 /**
  * A representation of a location given in X and Y values.
  *
  */
-public class Coordinate {
+public class Coordinate implements Serializable{
 
+	private static final long serialVersionUID = 559990832024871296L;
+	
 	private int X;
 	private int Y;
 	

@@ -9,14 +9,14 @@ public class TestUnitLibrary{
 	private static UnitImage testBuildingImage;
 	private static UnitSound testBuildingSound;
 	
-	public static final int MECH_LIGHT = 0;
+	public static final int TEST_UNIT = 0;
 	public static final int TEST_HQ = 1;
 	
 	private TestUnitLibrary(){}
 	
 	public static UnitImage getUnitImage(int id) {
 		switch(id){
-			case MECH_LIGHT:
+			case TEST_UNIT:
 				if(mechLightImage == null){
 					try{
 						mechLightImage = new UnitImage("res/images/units/mechLight");
@@ -40,7 +40,7 @@ public class TestUnitLibrary{
 	
 	public static UnitSound getUnitSound(int id){
 		switch(id){
-		case MECH_LIGHT:
+		case TEST_UNIT:
 			if(mechLightSound == null){
 				try{
 					mechLightSound = new UnitSound("res/sounds/units/mechLight");

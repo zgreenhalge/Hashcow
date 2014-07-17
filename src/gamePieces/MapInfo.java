@@ -1,5 +1,6 @@
 package gamePieces;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -19,8 +20,9 @@ import utils.Settings;
  * influence the rendering of Units, Buildings, and Tiles.
  *
  */
-public class MapInfo {
+public class MapInfo implements Serializable{
 
+	private static final long serialVersionUID = 2167261174340187347L;
 	private Tile[][] board;
 	private Stack<Selectable> inputStack;
 	private OneToOneMap<Coordinate, Unit> units;
@@ -34,10 +36,10 @@ public class MapInfo {
 	private int column;
 	private int displayMode = 0;
 	private String pos;
-	private Color prev;
-	private TrueTypeFont f = FontManager.TINY_TRUETYPE;
-	private Coordinate coords;
-	private Tile temp;
+	private transient Color prev;
+	private transient TrueTypeFont f = FontManager.TINY_TRUETYPE;
+	private transient Coordinate coords;
+	private transient Tile temp;
 	
 	//STATIC TEST MAP INFORMATION, a way to load this better should happen
 	public static final MapInfo TEST_MAP = new MapInfo(

@@ -10,11 +10,6 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
-     
-
-
-
-
 
 import resourceManager.SoundManager;
 import utils.Logger;

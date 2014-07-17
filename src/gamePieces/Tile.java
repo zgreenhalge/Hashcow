@@ -1,5 +1,7 @@
 package gamePieces;
 
+import java.io.Serializable;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -11,25 +13,31 @@ import resourceManager.ImageManager;
  * A terrain Tile that makes up the game map.  
  *
  */
-public class Tile implements Selectable{
+public class Tile implements Selectable, Serializable{
 
+	private static final long serialVersionUID = -5677051974294100077L;
+	
 	private String name;
 	private int[] moveCost;
 	private boolean buildable;
 	private boolean visible = true;
 	private boolean selected;
-	private SpriteSheet image;
-	private Animation ani;
-	private Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
+	private transient SpriteSheet image;
+	private transient Animation ani;
+	private transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
-	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, ImageManager.getSpriteSheet("res/images/tiles/grass.png", 32, 32, 0), true);
+	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, true);
 	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	
-	private Tile(String n, int[] costs, SpriteSheet ss, boolean build){
+	private Tile(String n, int[] costs, boolean build){
 		name = n;
 		moveCost = costs;
-		image = ss;
 		buildable = build;
+		load();
+	}
+	
+	public void load(){
+		image = ImageManager.getSpriteSheet("res/images/tiles/" + name.toLowerCase() + ".png", 32, 32, 1);
 		ani = new Animation(image, 0, 0, 0, image.getVerticalCount()-1, false, 650, true);
 	}
 	
@@ -39,7 +47,7 @@ public class Tile implements Selectable{
 	 * @return a new Tile instance with the same values as the passed Tile
 	 */
 	public static Tile copy(Tile tile){
-		return new Tile(tile.name, tile.moveCost, tile.image, tile.buildable);
+		return new Tile(tile.name, tile.moveCost, tile.buildable);
 	}
 	
 	/**

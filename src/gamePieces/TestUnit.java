@@ -1,13 +1,12 @@
 package gamePieces;
 
-import resourceManager.TestUnitLibrary;
-import resourceManager.UnitImage;
-
 /**
  * A test implementation of a Unit
  *
  */
 public class TestUnit extends Unit {
+
+	private static final long serialVersionUID = 8105115509694378024L;
 	
 	//move these to a unit database?				//
 	private static final int BASE_MOVE_RANGE = 3;	//
@@ -21,9 +20,7 @@ public class TestUnit extends Unit {
 	
 	public TestUnit(Coordinate location, Player owner, MapInfo map) {
 		super(location, owner, map);
-		super.image = TestUnitLibrary.getUnitImage(TestUnitLibrary.MECH_LIGHT);
-		super.sound = TestUnitLibrary.getUnitSound(TestUnitLibrary.MECH_LIGHT);
-		super.current = image.getAnimation(UnitImage.IDLE);
+		super.unitId = 0;
 		setBaseMoveRange(BASE_MOVE_RANGE);
 		setBaseSightRange(BASE_SIGHT_RANGE);
 		setBaseAttackRange(BASE_ATTACK_RANGE);
@@ -32,6 +29,7 @@ public class TestUnit extends Unit {
 		setBaseHealth(BASE_HEALTH);
 		setCurrentHealth(BASE_HEALTH);
 		setName(name);
+		load();
 		owner.addUnit(this);
 	}
 

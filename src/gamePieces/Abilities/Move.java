@@ -46,13 +46,13 @@ public class Move implements Ability, Selectable{
 
 	@Override
 	public boolean isSelected() {
-		//not used
+		//unused
 		return false;
 	}
 
 	@Override
 	public void deselect(){
-		//not used
+		//unused
 	}
 
 	@Override

@@ -1,15 +1,21 @@
 package gamePieces;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * A player within the game.
  *
  */
-public class Player {
+public class Player implements Serializable{
 
-	
+	private static final long serialVersionUID = 7640543740958854322L;
+
 	private int id;
+	
+	private int lastX;
+	private int lastY;
+	
 	private ArrayList<Unit> units;
 	private ArrayList<Building> buildings;
 	private ArrayList<Unit> owned;
@@ -115,5 +121,21 @@ public class Player {
 	 */
 	public ArrayList<Unit> owned() {
 		return owned;
+	}
+
+	public int getLastX() {
+		return lastX;
+	}
+
+	public void setLastX(int x) {
+		this.lastX = x;
+	}
+
+	public int getLastY() {
+		return lastY;
+	}
+
+	public void setLastY(int y) {
+		this.lastY = y;
 	}
 }

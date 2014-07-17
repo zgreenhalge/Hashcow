@@ -1,11 +1,14 @@
 package utils;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class OneToOneMap<K, V> {
+public class OneToOneMap<K, V> implements Serializable{
+
+	private static final long serialVersionUID = 1346189071951100991L;
 	
 	private HashMap<K, V> keyToVal;
 	private HashMap<V, K> valToKey;

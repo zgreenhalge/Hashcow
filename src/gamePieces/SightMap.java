@@ -1,5 +1,6 @@
 package gamePieces;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,8 +13,9 @@ import utils.Settings;
  * Contains information about a particular view of the board.
  * 
  */
-public class SightMap {
+public class SightMap implements Serializable{
 
+	private static final long serialVersionUID = 5901439913345276852L;
 	private ArrayList<Unit> units;
 	private OneToOneMap<Coordinate, ArrayList<Unit>> map;
 	private int playerId;

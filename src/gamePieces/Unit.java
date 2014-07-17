@@ -1,5 +1,6 @@
 package gamePieces;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
@@ -9,6 +10,7 @@ import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
 import resourceManager.ImageManager;
+import resourceManager.TestUnitLibrary;
 import resourceManager.UnitImage;
 import resourceManager.UnitSound;
 
@@ -16,16 +18,19 @@ import resourceManager.UnitSound;
  * A generic Unit
  *
  */
-public abstract class Unit implements Selectable{
+public abstract class Unit implements Selectable, Serializable{
 
+	private static final long serialVersionUID = 1896671301456843011L;
+	
 	protected static final TrueTypeFont f = FontManager.TINY_TRUETYPE;
 	protected static final Color graveInjuryMask = Color.red;
 	protected static final Color injuryMask = Color.magenta; 
 	
-	protected UnitImage image;
-	protected UnitSound sound;
-	protected Animation current;
-	protected Animation cursor;
+	protected transient UnitImage image;
+	protected transient UnitSound sound;
+	protected transient Animation current;
+	protected transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
+	protected int unitId;
 	
 	protected MapInfo map;
 	protected Coordinate location;
@@ -61,10 +66,13 @@ public abstract class Unit implements Selectable{
 		owner = player;
 		visible = false;
 		this.map = map;
-		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
-
+	public void load(){
+		image = TestUnitLibrary.getUnitImage(unitId);
+		sound = TestUnitLibrary.getUnitSound(unitId);
+		current = image.getAnimation(UnitImage.IDLE);
+	}
 	
 	/**
 	 * Update the Unit
