@@ -1,5 +1,8 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -135,5 +138,19 @@ public class SightMap implements Serializable{
 	 */
 	public int getId(){
 		return playerId;
+	}
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.writeObject(units);
+		oos.writeObject(map);
+		oos.writeInt(playerId);
+		
+		oos.flush();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
+		units = (ArrayList<Unit>) ois.readObject();
+		map = (OneToOneMap<Coordinate, ArrayList<Unit>>) ois.readObject();
+		playerId = ois.readInt();
 	}
 }

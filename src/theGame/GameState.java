@@ -24,7 +24,7 @@ import utils.Logger;
 import utils.SaveStruct;
 import utils.Settings;
 
-public class InGame extends HCGameState {
+public class GameState extends HCGameState {
 
 	private int ID;
 	private static int lastId = 1;
@@ -32,6 +32,7 @@ public class InGame extends HCGameState {
 	private boolean playing = false;
 	private ArrayList<Player> players;
 	private int turnCount = 1;
+	private GameState gameState;
 	
 	private MapInfo map;
 	private Player curPlayer;
@@ -52,14 +53,14 @@ public class InGame extends HCGameState {
 	private float scale;
 	private Input input;
 	
-	public InGame(MapInfo board, ArrayList<Player> players){
+	public GameState(MapInfo board, ArrayList<Player> players){
 		ID = ++lastId;
 		map = board;
 		this.players = players;
 		selectedX = selectedY = -1;
 	}
 	
-	public InGame(SaveStruct save){
+	public GameState(SaveStruct save){
 		ID = ++lastId;
 		map = save.getMap();
 		players = save.getPlayers();
@@ -73,16 +74,20 @@ public class InGame extends HCGameState {
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException{
 		super.init(container, game);
+		gameState = this;
 		mouseWasDown = false;
 		//X = centerX = (container.getWidth() - map.getWidth()*32)/2;
 		//Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
 		input = container.getInput();
 		try{
-			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, 2, new ButtonAction(){public void activate(){endTurn();}});
+			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, ID, new ButtonAction(){public void activate(){endTurn();}});
 		}catch(Exception e){Logger.loudLog(e);}
-		menuBar = new HorizontalMenu(container.getWidth() - endTurnButton.getWidth(), 0);
+		menuBar = new HorizontalMenu(container.getWidth() - (endTurnButton.getWidth() + FontManager.BUTTON_TRUETYPE.getWidth("Save Game")), 0);
 		menuBar.addButton(endTurnButton);
+		try{
+			menuBar.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Save Game", 0, 0, game, ID, new ButtonAction(){public void activate(){SaveStruct.save(new SaveStruct(gameState));}}));
+		}catch(Exception e){Logger.loudLog(e);}
 	}
 	
 	@Override

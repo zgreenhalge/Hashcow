@@ -1,5 +1,8 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -52,7 +55,6 @@ public abstract class Unit implements Selectable, Serializable{
 	protected int BASE_DEFENSE;
 	protected int BASE_HEALTH;
 	protected int currentHealth;
-	protected String healthString;
 	
 	//movementType
 	//attackType
@@ -398,6 +400,56 @@ public abstract class Unit implements Selectable, Serializable{
 	
 	public void moveTo(Coordinate coord){
 		
+	}
+
+	public Player getOwner() {
+		return owner;
+	}
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.writeInt(unitId);		
+		oos.writeObject(map);
+		oos.writeObject(location);
+		oos.writeInt(currentX);
+		oos.writeInt(currentY);
+		oos.writeObject(owner);
+		oos.writeBoolean(selected);
+		oos.writeBoolean(visible);
+		oos.writeBoolean(dead);
+		oos.writeBoolean(moveDisplay);
+		oos.writeBoolean(attackDisplay);
+		oos.writeObject(name);
+		oos.writeInt(BASE_MOVE_RANGE);
+		oos.writeInt(BASE_SIGHT_RANGE);
+		oos.writeInt(BASE_ATTACK_RANGE);
+		oos.writeInt(BASE_ATTACK);
+		oos.writeInt(BASE_DEFENSE);
+		oos.writeInt(BASE_HEALTH);
+		oos.writeInt(currentHealth);
+		
+		oos.flush();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
+		unitId = ois.readInt();
+		map = (MapInfo) ois.readObject();
+		location = (Coordinate) ois.readObject();
+		currentX = ois.readInt();
+		currentY = ois.readInt();
+		owner = (Player) ois.readObject();
+		selected = ois.readBoolean();
+		visible  = ois.readBoolean();
+		dead = ois.readBoolean();
+		moveDisplay = ois.readBoolean();
+		attackDisplay = ois.readBoolean();
+		name = (String) ois.readObject();
+		BASE_MOVE_RANGE = ois.readInt();
+		BASE_SIGHT_RANGE = ois.readInt();
+		BASE_ATTACK_RANGE = ois.readInt();
+		BASE_ATTACK = ois.readInt();
+		BASE_DEFENSE = ois.readInt();
+		BASE_HEALTH = ois.readInt();
+		currentHealth = ois.readInt();
 	}
 	
 }

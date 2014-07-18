@@ -1,11 +1,16 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.TrueTypeFont;
 
 import resourceManager.FontManager;
@@ -419,6 +424,65 @@ public class MapInfo implements Serializable{
 	
 	public void cancelInputRequest(Selectable waiting){
 		inputStack.remove(waiting);
+	}
+	
+	/*public Image getPlayerMinimap(int width, int height){
+		
+	}*/
+	
+	public Image getMinimap(int width, int height){
+		ImageBuffer build = new ImageBuffer(board.length, board[0].length);
+		Color temp;
+		Coordinate coord;
+		for(int x=0; x<board.length; x++)
+			for(int y=0; y<board[x].length; y++){
+				coord = new Coordinate(x, y);
+				if(isOccupied(coord)){
+					temp = getUnit(coord).getOwner().getColor();
+				}else if (isBuilt(coord)){
+					temp = getBuilding(coord).getOwner().getColor();
+				}else {
+					temp = board[x][y].getMinimapColor();
+				}
+				build.setRGBA(x, y, temp.getRed(), temp.getGreen(), temp.getBlue(), temp.getAlpha());
+			}
+		
+		return build.getImage().getScaledCopy(width, height);
+	}
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.writeObject(board);
+		oos.writeObject(inputStack);
+		oos.writeObject(units);
+		oos.writeObject(buildings);
+		oos.writeObject(currentSight);
+		oos.writeInt(MAX_PLAYERS);
+		oos.writeObject(positions);
+		oos.writeInt(selectedX);
+		oos.writeInt(selectedY);
+		oos.writeInt(row);
+		oos.writeInt(column);
+		oos.writeInt(displayMode);
+		oos.writeObject(pos);
+		
+		oos.flush();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
+		board = (Tile[][]) ois.readObject();
+		inputStack = (Stack<Selectable>) ois.readObject();
+		units = (OneToOneMap<Coordinate, Unit>) ois.readObject();
+		buildings = (OneToOneMap<Coordinate, Building>) ois.readObject();
+		currentSight = (SightMap) ois.readObject();
+		MAX_PLAYERS = ois.readInt();
+		positions = (Coordinate[]) ois.readObject();
+		selectedX = ois.readInt();
+		selectedY = ois.readInt();
+		row = ois.readInt();
+		column = ois.readInt();
+		displayMode = ois.readInt();
+		pos = (String) ois.readObject();
+		
 	}
 	
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -60,11 +61,12 @@ public class Main extends StateBasedGame {
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		addState(new MainMenu());
+		addState(new MainMenuState());
+		addState(new LoadGameState());
 		ArrayList<Player> temp = new ArrayList<Player>();
-		temp.add(new Player(1));
-		temp.add(new Player(2));
-		addState(new InGame(MapInfo.TEST_MAP, temp));
+		temp.add(new Player(1, Color.green));
+		temp.add(new Player(2, Color.red));
+		addState(new GameState(MapInfo.TEST_MAP, temp));
 	}
 	
 	public static StateBasedGame getGame(){

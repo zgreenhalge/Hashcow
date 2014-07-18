@@ -1,7 +1,12 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import org.newdawn.slick.Color;
 
 /**
  * A player within the game.
@@ -16,6 +21,7 @@ public class Player implements Serializable{
 	private int lastX;
 	private int lastY;
 	
+	private Color teamColor;
 	private ArrayList<Unit> units;
 	private ArrayList<Building> buildings;
 	private ArrayList<Unit> owned;
@@ -26,12 +32,21 @@ public class Player implements Serializable{
 	//unit cap?
 	//commander abilities?
 	
-	public Player(int id){
+	public Player(int id, Color color){
 		this.id = id;
+		teamColor = color;
 		units = new ArrayList<Unit>();
 		buildings = new ArrayList<Building>();
 		owned = new ArrayList<Unit>(units);
 		sight = new SightMap(id); 
+	}
+	
+	/**
+	 * Get the Player's team color
+	 * @return Color of the player's team
+	 */
+	public Color getColor(){
+		return teamColor;
 	}
 	
 	/**
@@ -137,5 +152,32 @@ public class Player implements Serializable{
 
 	public void setLastY(int y) {
 		this.lastY = y;
+	}
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.writeInt(id);
+		oos.writeInt(lastX);
+		oos.writeInt(lastY);
+		oos.writeInt(teamColor.getRed());
+		oos.writeInt(teamColor.getGreen());
+		oos.writeInt(teamColor.getBlue());
+		oos.writeInt(teamColor.getAlpha());
+		oos.writeObject(units);
+		oos.writeObject(buildings);
+		oos.writeObject(owned);
+		oos.writeObject(sight);
+		
+		oos.flush();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
+		id = ois.readInt();
+		lastX = ois.readInt();
+		lastY = ois.readInt();
+		teamColor = new Color(ois.readInt(), ois.readInt(), ois.readInt(), ois.readInt());
+		units = (ArrayList<Unit>) ois.readObject();
+		buildings = (ArrayList<Building>) ois.readObject();
+		owned = (ArrayList<Unit>) ois.readObject();
+		sight = (SightMap) ois.readObject();
 	}
 }

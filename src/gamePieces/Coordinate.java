@@ -1,5 +1,8 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -71,4 +74,13 @@ public class Coordinate implements Serializable{
 	public String toString(){
 		return X + "," + Y;
 	}
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.defaultWriteObject();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
+		ois.defaultReadObject();
+	}
+	
 }

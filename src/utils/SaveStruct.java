@@ -3,6 +3,7 @@ package utils;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,7 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import theGame.InGame;
+import theGame.GameState;
 
 public class SaveStruct implements Serializable{
 
@@ -22,12 +23,14 @@ public class SaveStruct implements Serializable{
 	private ArrayList<Player> players;
 	private MapInfo map;
 	private int turn;
+	private int turnLength;
 	private int curPlayer;
 	
-	public SaveStruct(InGame game){
+	public SaveStruct(GameState game){
 		players = game.getPlayers();
 		map = game.getMap();
 		turn = game.getTurn();
+		turnLength = 4;
 		curPlayer = game.getCurrentPlayer().getId()-1;
 	}
 	
@@ -48,7 +51,10 @@ public class SaveStruct implements Serializable{
 	}
 	
 	public static void save(SaveStruct target){
-		String path = saveDir + "/" + Time.updateCal().fileDateTime() + ".dat";
+		File path = new File(saveDir + "/" + Time.updateCal().fileDateTime() + ".dat");
+		if(!path.exists())
+			try{ path.createNewFile();}
+			catch(Exception e){Logger.loudLog(e);}
 		try{
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 			oos.writeObject(target);
@@ -79,6 +85,10 @@ public class SaveStruct implements Serializable{
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	public int getTurnLength() {
+		return turnLength;
 	}
 	
 }

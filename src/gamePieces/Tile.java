@@ -1,10 +1,14 @@
 package gamePieces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 
 import resourceManager.ImageManager;
@@ -22,14 +26,15 @@ public class Tile implements Selectable, Serializable{
 	private boolean buildable;
 	private boolean visible = true;
 	private boolean selected;
+	private Color minimapColor;
 	private transient SpriteSheet image;
 	private transient Animation ani;
 	private transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
-	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, true);
+	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, true, Color.green.darker());
 	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	
-	private Tile(String n, int[] costs, boolean build){
+	private Tile(String n, int[] costs, boolean build, Color minimap){
 		name = n;
 		moveCost = costs;
 		buildable = build;
@@ -47,7 +52,11 @@ public class Tile implements Selectable, Serializable{
 	 * @return a new Tile instance with the same values as the passed Tile
 	 */
 	public static Tile copy(Tile tile){
-		return new Tile(tile.name, tile.moveCost, tile.buildable);
+		return new Tile(tile.name, tile.moveCost, tile.buildable, tile.minimapColor);
+	}
+	
+	public Color getMinimapColor(){
+		return minimapColor;
 	}
 	
 	/**
@@ -72,6 +81,10 @@ public class Tile implements Selectable, Serializable{
 	 */
 	public Animation getAnimation(){
 		return ani;
+	}
+	
+	public Image getCurrentFrame(){
+		return ani.getCurrentFrame();
 	}
 	
 	/**
@@ -160,4 +173,22 @@ public class Tile implements Selectable, Serializable{
 			ani.draw(X, Y, maskFill);
 	}
 	
+	private void writeObject(ObjectOutputStream oos) throws IOException{
+		oos.writeObject(name);
+		
+		oos.flush();
+	}
+	
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
+		name = (String) ois.readObject();
+		switch(name){
+		case "Grass": moveCost = GRASS.moveCost;
+			buildable = GRASS.buildable;
+			visible = GRASS.visible;
+			selected = false;
+			minimapColor = GRASS.minimapColor;
+			load();
+			break;
+		}
+	}
 }

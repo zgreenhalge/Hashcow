@@ -18,6 +18,8 @@ public class Menu {
 	private int width = 0;
 	private int height = 0;
 	private int buttonHeight;
+	private boolean background;
+	private boolean border;
 	private ArrayList<Button> buttons;
 	private Color prev;
 	private Color bg = new Color(128, 128, 128, 0.3f); 
@@ -34,9 +36,18 @@ public class Menu {
 		if(buttons.isEmpty())
 			return;
 		prev = g.getColor();
-		g.setColor(bg);
-		g.fillRect(X-5, Y-2, width+5, height+5);
-		g.setColor(prev);
+		if(background){
+			g.setColor(bg);
+			g.fillRect(X-5, Y-2, width+5, height+5);
+			g.setColor(prev);
+		}
+		if(border){
+			g.setColor(Color.lightGray);
+			g.drawLine(X, Y, X, Y+height);
+			g.drawLine(X, Y, X+width, Y);
+			g.drawLine(X+width, Y, X+width, Y+height);
+			g.drawLine(X, Y+height, X+width, Y+height);
+		}
 		
 		for(int i=0; i<buttons.size(); i++){
 			b = buttons.get(i);
@@ -77,6 +88,18 @@ public class Menu {
 	public void init() {
 		for(Button b: buttons)
 			b.setUnclickable(false);
+	}
+	
+	public void toggleBackground(){
+		background = !background;
+	}
+	
+	public void toggleBorder(){
+		border = !border;
+	}
+
+	public int getButtonIndex(Button selectedButton) {
+		return buttons.indexOf(selectedButton);
 	}
 	
 }

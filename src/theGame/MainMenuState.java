@@ -22,9 +22,9 @@ import resourceManager.FontManager;
 import resourceManager.SoundManager;
 import utils.Settings;
 
-public class MainMenu extends HCGameState {
+public class MainMenuState extends HCGameState {
 
-	public static final int ID = 001;
+	public static final int ID = 0;
 	private SoundManager sm;
 	private TextButton NEW;
 	private TextButton LOAD;
@@ -45,7 +45,7 @@ public class MainMenu extends HCGameState {
 		LOAD = new TextButton(container, buttonFont, "Load Game",
 				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
 				game, this.getID(), 
-				new UnImplementedAction());
+				new StateTransitionAction(game, 1));
 		SETTINGS = new TextButton(container, buttonFont, "Settings",
 				container.getWidth()/2-ttfont.getWidth("Settings")/2, container.getHeight()-ttfont.getLineHeight()*4,
 				game, this.getID(),
