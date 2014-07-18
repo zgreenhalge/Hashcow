@@ -12,9 +12,13 @@ public class SelectTextButtonAction extends ButtonAction {
 		button = b;
 	}
 	
-	public void activate(){
+	public void nativeActivate(){
 		button.setColor(Color.yellow.darker());
-		button.setBorderEnabled(true);
+		button.setBorderEnabled(true);		
+	}
+	
+	public void activate(){
+		nativeActivate();
 	}
 	
 	public TextButton getButton(){

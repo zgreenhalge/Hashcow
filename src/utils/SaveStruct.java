@@ -2,6 +2,7 @@ package utils;
 
 import gamePieces.MapInfo;
 import gamePieces.Player;
+import gamePieces.Unit;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,12 +54,16 @@ public class SaveStruct implements Serializable{
 	public static void save(SaveStruct target){
 		File path = new File(saveDir + "/" + Time.updateCal().fileDateTime() + ".dat");
 		if(!path.exists())
-			try{ path.createNewFile();}
+			try{
+				(new File(saveDir)).mkdirs();
+				path.createNewFile();
+			}
 			catch(Exception e){Logger.loudLog(e);}
 		try{
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 			oos.writeObject(target);
 			oos.close();
+			Logger.logLine(path.getName() + " saved");
 		}catch(FileNotFoundException e){
 			Logger.log(e);
 			e.printStackTrace();
@@ -72,7 +77,7 @@ public class SaveStruct implements Serializable{
 		SaveStruct ret = null;
 		try{
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-			ret = (SaveStruct)(ois.readObject());
+			ret = (SaveStruct) ois.readObject();
 			ois.close();
 		}catch(FileNotFoundException e){
 			Logger.log(e);
@@ -83,6 +88,9 @@ public class SaveStruct implements Serializable{
 		} catch (ClassNotFoundException e) {
 			Logger.log(e);
 			e.printStackTrace();
+		}
+		for(Unit u: ret.getMap().getAll()){
+			u.load();
 		}
 		return ret;
 	}

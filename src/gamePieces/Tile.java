@@ -38,6 +38,7 @@ public class Tile implements Selectable, Serializable{
 		name = n;
 		moveCost = costs;
 		buildable = build;
+		minimapColor = minimap;
 		load();
 	}
 	

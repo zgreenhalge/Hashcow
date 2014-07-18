@@ -431,21 +431,40 @@ public class MapInfo implements Serializable{
 	}*/
 	
 	public Image getMinimap(int width, int height){
-		ImageBuffer build = new ImageBuffer(board.length, board[0].length);
+		ImageBuffer build = new ImageBuffer(board.length*32, board[0].length*32);
 		Color temp;
-		Coordinate coord;
+		Image image;
 		for(int x=0; x<board.length; x++)
 			for(int y=0; y<board[x].length; y++){
-				coord = new Coordinate(x, y);
-				if(isOccupied(coord)){
-					temp = getUnit(coord).getOwner().getColor();
-				}else if (isBuilt(coord)){
-					temp = getBuilding(coord).getOwner().getColor();
-				}else {
-					temp = board[x][y].getMinimapColor();
-				}
-				build.setRGBA(x, y, temp.getRed(), temp.getGreen(), temp.getBlue(), temp.getAlpha());
+				image = board[x][y].getCurrentFrame();
+				for(int i=0; i<31; i++)
+					for(int j=0; j<31; j++){
+						temp = image.getColor(i, j);
+						build.setRGBA(x*32+i, y*32+j, temp.getRed(), temp.getGreen(), temp.getBlue(), temp.getAlpha());
+					}
 			}
+		for(Building b: buildings.values()){
+			image = b.getCurrentAnimation().getCurrentFrame();
+			for(int i=0; i<31; i++)
+				for(int j=0; j<31; j++){
+					temp = image.getColor(i, j);
+					if(temp.getAlpha() != 0)
+						temp.add(b.getOwner().getColor());
+					if(temp.getAlpha() != 0f)
+						build.setRGBA(b.getColumn()*32+i, b.getRow()*32+j, temp.getRed(), temp.getGreen(), temp.getBlue(), temp.getAlpha());
+				}
+		}
+		for(Unit u: units.values()){
+			image = u.getCurrentAnimation().getCurrentFrame();
+			for(int i=0; i<31; i++)
+				for(int j=0; j<31; j++){
+					temp = image.getColor(i, j);
+					if(temp.getAlpha() != 0)
+						temp.add(u.getOwner().getColor());
+					if(temp.getAlpha() != 0f)
+						build.setRGBA(u.getColumn()*32+i, u.getRow()*32+j, temp.getRed(), temp.getGreen(), temp.getBlue(), temp.getAlpha());
+				}
+		}
 		
 		return build.getImage().getScaledCopy(width, height);
 	}
@@ -483,6 +502,13 @@ public class MapInfo implements Serializable{
 		displayMode = ois.readInt();
 		pos = (String) ois.readObject();
 		
+	}
+
+	public ArrayList<Unit> getAll() {
+		ArrayList<Unit> ret = new ArrayList<Unit>();
+		ret.addAll(units.values());
+		ret.addAll(buildings.values());
+		return ret;
 	}
 	
 }

@@ -44,7 +44,7 @@ public class LoadGameState extends HCGameState {
 						sbg, ID, new ButtonAction());
 				temp.setAction(new SelectTextButtonAction(temp){
 					public void activate(){
-						this.activate();
+						nativeActivate();
 						selectedButton = this.getButton();
 						save = savedGames.get(gameList.getButtonIndex(selectedButton));
 						minimap = save.getMap().getMinimap(200, 200);
@@ -56,7 +56,7 @@ public class LoadGameState extends HCGameState {
 		loadGameButton.setBorderEnabled(true);
 		super.init(gc, sbg);
 	}
-	
+
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException{
 		gameList.render(container, g);
 		loadGameButton.render(container, g);

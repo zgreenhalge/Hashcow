@@ -135,6 +135,14 @@ public abstract class Unit implements Selectable, Serializable{
 	}
 	
 	/**
+	 * Get the Animation that the Unit is currently rendering
+	 * @return the Unit's current Animation
+	 */
+	public Animation getCurrentAnimation(){
+		return current;
+	}
+	
+	/**
 	 * Register this Unit with both it's owner and the game board
 	 */
 	public void register(){
@@ -353,16 +361,15 @@ public abstract class Unit implements Selectable, Serializable{
 		if(!(obj instanceof Unit))
 			return false;
 		Unit temp = (Unit) obj;
-		if(temp.location.Y() == this.location.Y())
-			if(temp.location.X() == this.location.X())
-				if(temp.name.equals(this.name))
-					return true;
+		if(temp.currentX == this.currentX)
+			if(temp.currentY == this.currentY)
+				return true;
 		return false;
 	}
 	
 	@Override
 	public int hashCode(){
-		return location.Y() ^ location.X() ^ name.hashCode();
+		return currentX ^ currentY;
 	}
 
 	/**
