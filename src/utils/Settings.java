@@ -18,7 +18,7 @@ public class Settings {
 	public static final String DEV_MODE = "dev";
 	
 	private static String volume = "0.25f";
-	private static String dev = "0.25f";
+	private static String dev = "true";
 	
 	private Settings(){}
 	

@@ -99,8 +99,14 @@ public class GameState extends HCGameState {
 				curPlayer.setLastX((Main.getGameContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32));
 				curPlayer.setLastY((Main.getGameContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32));
 				start = map.getStartingPosition(n);
-				(new TestUnit(start, players.get(n), map)).register();
 				(new TestHQ(start, players.get(n), map)).register();
+				(new TestUnit(start, players.get(n), map)).register();
+				start = Coordinate.copy(start);
+				if(start.X() > 1)
+					start.X(-1);
+				else
+					start.X(1);
+				(new TestUnit(start, players.get(n), map)).register();
 			}
 			map.getUnit(new Coordinate(0,0)).setCurrentHealth(4);
 			map.getUnit(new Coordinate(3,3)).setCurrentHealth(1);
