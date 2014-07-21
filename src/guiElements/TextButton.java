@@ -35,7 +35,6 @@ public class TextButton extends MouseOverArea implements Button{
     private int oldX, oldY, bigX, bigY;
     private boolean report = false;
     private boolean hidden;
-    private boolean noClick;
  
     public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, Action action) throws SlickException {
     	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
@@ -54,11 +53,6 @@ public class TextButton extends MouseOverArea implements Button{
         bigY = y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
     }
     
-    public void setUnclickable(boolean b){
-		hidden = b;
-		isEnabled = !b;
-		noClick = b;
-    }
     
     public void setHidden(boolean b){
     	hidden = b;
@@ -129,7 +123,7 @@ public class TextButton extends MouseOverArea implements Button{
         	org.newdawn.slick.Font prevFont = g.getFont();
             g.setFont(ttfont);
             Color standard = g.getColor();
-            if (isEnabled) {
+            if(isEnabled){
                 g.setColor(Color.orange.brighter(.5f));
                 if (isMouseOver()) {
                     g.setFont(biggerFont);
@@ -140,7 +134,7 @@ public class TextButton extends MouseOverArea implements Button{
                 	setX(oldX);
                     setY(oldY);
                 }
-            } else {
+            }else{
                 g.setColor(Color.gray);
             }
             if(borderEnabled){
@@ -169,7 +163,7 @@ public class TextButton extends MouseOverArea implements Button{
  
     @Override
     public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-        if (sbg.getCurrentStateID() == stateID && isEnabled){//if in proper state & button is active
+        if (sbg.getCurrentStateID() == stateID && !hidden){//if in proper state & button is active
             if (isMouseOver() && !lastMouseOver){//if mouse is over && wasn't previously over
                 SoundManager.getManager().playSound(SoundManager.BUTTON_OVER); //play sound
                 lastMouseOver = true;	//make sure sound won't repeat
@@ -182,6 +176,8 @@ public class TextButton extends MouseOverArea implements Button{
  
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
+    	if(hidden)
+    		return;
     	if(isEnabled){
     		if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
     			if(report) Logger.logLine(name + " pressed.");
@@ -192,8 +188,7 @@ public class TextButton extends MouseOverArea implements Button{
             super.mouseClicked(button, x, y, clickCount);
     	}
     	else
-    		if(!noClick) 
-    			SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+    		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
     }
 
     private void renderClick(){
@@ -209,9 +204,5 @@ public class TextButton extends MouseOverArea implements Button{
     	}catch(Exception e){}
         super.setLocation(X, Y);
     }
-
-	@Override
-	public boolean isUnclickable() {
-		return noClick;
-	}
+    
 }

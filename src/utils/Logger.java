@@ -111,7 +111,7 @@ public class Logger{
 	 * Writes the log out to file.
 	 * @throws IOException when there is a write error
 	 */
-	public static void writeOut() throws IOException{
+	public static boolean writeOut() throws IOException{
 		if(writeAllowed){
 			out = new PrintWriter(new BufferedWriter(new FileWriter(currentLog, true)));
 			for(String s: writeOut)
@@ -119,7 +119,9 @@ public class Logger{
 			out.close();
 			writeOut = new ArrayList<String>();
 			writeOut.add("");
+			return true;
 		}
+		return false;
 	}
 	
 	public static void update(int delta){

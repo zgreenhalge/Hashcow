@@ -27,7 +27,9 @@ import utils.Settings;
  */
 public class MapInfo implements Serializable{
 
-	private static final long serialVersionUID = 2167261174340187347L;
+	private static final long serialVersionUID = -4266804244413260883L;
+	
+	private String name;
 	private Tile[][] board;
 	private Stack<Selectable> inputStack;
 	private OneToOneMap<Coordinate, Unit> units;
@@ -46,13 +48,8 @@ public class MapInfo implements Serializable{
 	private transient Coordinate coords;
 	private transient Tile temp;
 	
-	//STATIC TEST MAP INFORMATION, a way to load this better should happen
-	public static final MapInfo TEST_MAP = new MapInfo(
-			new Tile[][] {new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}, new Tile[] {Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS), Tile.copy(Tile.GRASS)}},
-			new Coordinate[]{new Coordinate(0,0), new Coordinate(3,3)}, //define for max players
-			1);
-	
-	public MapInfo(Tile[][] map, Coordinate[] start, int max){
+	public MapInfo(String name, Tile[][] map, Coordinate[] start, int max){
+		this.name = name;
 		selectedX = selectedY = -1;
 		board = map;
 		positions = start;
@@ -60,6 +57,10 @@ public class MapInfo implements Serializable{
 		units = new OneToOneMap<Coordinate, Unit>();
 		buildings = new OneToOneMap<Coordinate, Building>();
 		inputStack = new Stack<Selectable>();
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	/**

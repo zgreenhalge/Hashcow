@@ -17,8 +17,6 @@ public interface Button {
 	public boolean isReporting();
 	public void setHidden(boolean b);
 	public boolean isHidden();
-	public void setUnclickable(boolean b);
-	public boolean isUnclickable();
 	public abstract void setEnabled(boolean b);
 	public abstract boolean isEnabled();
 	public void render(GUIContext guic, Graphics g);

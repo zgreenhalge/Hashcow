@@ -20,7 +20,7 @@ public class ImageManager {
 	public static SpriteSheet getSpriteSheet(String path, int frameWidth, int frameHeight, int spacing){
 		SpriteSheet ret = null;
 		try{ret = new SpriteSheet(path, frameWidth, frameHeight, null, spacing);}
-		catch(Exception e){Logger.log(e);}
+		catch(Exception e){e.printStackTrace();Logger.log(e);}
 		return ret;
 	}
 }

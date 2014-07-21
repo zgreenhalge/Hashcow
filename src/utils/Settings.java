@@ -16,15 +16,21 @@ public class Settings {
 	
 	public static final String VOLUME = "volume";
 	public static final String DEV_MODE = "dev";
+	public static final String RESOLUTION = "resolution";
+	public static final String FULLSCREEN = "fullscreen";
 	
 	private static String volume = "0.25f";
 	private static String dev = "true";
+	private static String resolution = "1024x1280";
+	private static String fullscreen = "false";
 	
 	private Settings(){}
 	
 	public static void setToDefaults(){
 		volume = "0.25f";
 		dev = "true";
+		resolution = "1024x1280";
+		fullscreen = "false";
 	}
 	
 	public static void loadSettings(String path) throws FileNotFoundException{
@@ -46,6 +52,8 @@ public class Settings {
 		out = new PrintWriter(new FileWriter(file));
 		out.println("volume:"+volume);
 		out.println("dev:"+dev);
+		out.println("resolution:"+resolution);
+		out.println("fullscreen:"+fullscreen);
 		out.close();
 	}
 	
@@ -53,6 +61,8 @@ public class Settings {
 		switch(name){
 			case VOLUME: return Float.parseFloat(volume);
 			case DEV_MODE: return Boolean.parseBoolean(dev);
+			case RESOLUTION: return resolution;
+			case FULLSCREEN: return Boolean.parseBoolean(fullscreen);
 			default: return null;
 		}
 	}
@@ -62,6 +72,8 @@ public class Settings {
 		switch(name){
 			case VOLUME: volume = value; break;
 			case DEV_MODE: dev = value; break;
+			case RESOLUTION: resolution = value; break;
+			case FULLSCREEN: fullscreen = value; break;
 			default: break;
 		}
 	}

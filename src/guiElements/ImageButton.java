@@ -27,7 +27,6 @@ public class ImageButton extends MouseOverArea implements Button {
     private String name;
     private boolean report;
     private boolean hidden;
-    private boolean noClick;
  
     /**
 	 * 
@@ -69,18 +68,6 @@ public class ImageButton extends MouseOverArea implements Button {
         enabled = b;
     }
     
-    @Override
-    public void setUnclickable(boolean b) {
-    	hidden = b;
-    	enabled = !b;
-    	noClick = b;	
-    }
-    
-    @Override
-    public boolean isUnclickable() {
-    	return noClick;
-    }
-    
     public void setReport(boolean b){
     	report = b;
     }
@@ -108,8 +95,8 @@ public class ImageButton extends MouseOverArea implements Button {
     
     @Override
     public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-    	if (sbg.getCurrentStateID() == stateID) {
-    		if (isMouseOver() && !lastMouseOver && !isEnabled()) {
+    	if (sbg.getCurrentStateID() == stateID && !hidden) {
+    		if (isMouseOver() && !lastMouseOver) {
     			SoundManager.getManager().playSound(SoundManager.BUTTON_OVER);
     			lastMouseOver = true;
     		} else if (!isMouseOver()) {
@@ -121,6 +108,8 @@ public class ImageButton extends MouseOverArea implements Button {
  
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
+    	if(hidden)
+    		return;
     	if(enabled){
            if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
@@ -130,8 +119,7 @@ public class ImageButton extends MouseOverArea implements Button {
 	           super.mouseClicked(button, x, y, clickCount);
        	}
        	else{
-       		if(!noClick)
-       			SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+       		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
       	}
     }
 

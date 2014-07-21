@@ -46,6 +46,8 @@ public class HCGameState extends BasicGameState{
 			displayLog = !displayLog;
 		if(in.isKeyPressed(Input.KEY_F10))
 			container.setShowFPS(!container.isShowingFPS());
+		if(in.isKeyDown(Input.KEY_F) && in.isKeyDown(Input.KEY_LALT))
+			container.setFullscreen(!container.isFullscreen());
 	}
 
 	//MUST BE OVERRIDDEN IN EACH SUB CLASS

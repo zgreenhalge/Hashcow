@@ -6,6 +6,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
+import utils.Logger;
+
 /**
  * A horizontal menu that will scale dynamically as Buttons are added and removed
  *
@@ -18,12 +20,17 @@ public class Menu {
 	private int width = 0;
 	private int height = 0;
 	private int buttonHeight;
+	
 	private boolean background;
 	private boolean border;
+	private boolean centeredX;
+	private boolean centeredY;
+	
 	private ArrayList<Button> buttons;
 	private Color prev;
 	private Color bg = new Color(128, 128, 128, 0.3f); 
 	private Button b;
+	
 	
 	
 	public Menu(int X, int Y){
@@ -52,6 +59,10 @@ public class Menu {
 		for(int i=0; i<buttons.size(); i++){
 			b = buttons.get(i);
 			if(b != null){
+				if(centeredX)
+					X = (container.getWidth()-b.getWidth())/2;
+				if(centeredY)
+					Y = (container.getHeight() - (buttons.size()*b.getHeight() + b.getHeight()*(buttons.indexOf(b)))/2)/2;
 				b.setLocation(X, Y+(buttonHeight+5)*i);
 				b.render(container, g);
 			}
@@ -81,13 +92,8 @@ public class Menu {
 	
 	public void clear(){
 		for(Button b: buttons)
-			b.setUnclickable(true);
+			b.setHidden(true);
 		buttons.clear();
-	}
-
-	public void init() {
-		for(Button b: buttons)
-			b.setUnclickable(false);
 	}
 	
 	public void toggleBackground(){
@@ -98,8 +104,40 @@ public class Menu {
 		border = !border;
 	}
 
-	public int getButtonIndex(Button selectedButton) {
+	public int getIndex(Button selectedButton) {
 		return buttons.indexOf(selectedButton);
+	}
+	
+	public Button getButton(int i){
+		return buttons.get(i);
+	}
+	
+	public void centerX(boolean b){
+		centeredX = b;
+	}
+	
+	public void centerY(boolean b){
+		centeredY = b;
+	}
+	
+	public void setReporting(boolean b){
+		for(Button temp: buttons)
+			temp.setReport(b);
+	}
+
+	public void hide() {
+		for(Button temp: buttons)
+			temp.setHidden(true);
+	}
+	
+	public void show(){
+		for(Button temp: buttons)
+			temp.setHidden(false);
+	}
+
+	public void center(boolean b) {
+		centerX(b);
+		centerY(b);
 	}
 	
 }

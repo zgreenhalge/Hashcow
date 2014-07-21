@@ -1,14 +1,12 @@
 package theGame;
 
-import gamePieces.MapInfo;
-import gamePieces.Player;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -31,10 +29,19 @@ public class Main extends StateBasedGame {
 			//do nothing, Settings will handle init
 		}
 		
+		//prints out all native display modes 
+		/*for(DisplayMode mode: getDisplayModes()){
+			System.out.println(mode.getWidth() + " x " 
+							+ mode.getHeight() + " x " 
+							+ mode.getBitsPerPixel() 
+							+ " " + mode.getFrequency() + "Hz");
+		}*/
+		
 		try{
 			currentGame = new Main("This Is The Title");
 			appgc = new AppGameContainer(currentGame);
-			appgc.setDisplayMode(800, 480, false);
+			String[] res = ((String) Settings.getSetting("resolution")).split("x");
+			appgc.setDisplayMode(Integer.parseInt(res[0]), Integer.parseInt(res[1]), (Boolean) Settings.getSetting("fullscreen"));
 			appgc.setAlwaysRender(true);
 			GameContainer.enableSharedContext();
 			appgc.setShowFPS(true);
@@ -63,6 +70,7 @@ public class Main extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenuState());
 		addState(new LoadGameState());
+		addState(new GameLobbyState());
 	}
 	
 	public static StateBasedGame getGame(){
@@ -72,14 +80,27 @@ public class Main extends StateBasedGame {
 	public static GameContainer getGameContainer(){
 		return appgc;
 	}
+	
+	public static DisplayMode[] getDisplayModes(){
+		DisplayMode[] modes = null;
+		try {
+			modes = Display.getAvailableDisplayModes();
+		} catch (LWJGLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return modes;
+	}
 
 	/**
 	 * Cleanly shut down the game
 	 */
 	public static void exit(){
 		try {
-			Logger.writeOut();
-			System.out.println("Log written to file.");
+			if(Logger.writeOut())
+				System.out.println("Log written to file.");
+			else
+				System.out.println("Logs not written to file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

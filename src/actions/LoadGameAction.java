@@ -31,6 +31,8 @@ public class LoadGameAction implements Action {
 	
 	@Override
 	public void activate() {
+		if(save == null && game == null)
+			return;
 		if(save != null)
 			game = new GameState(save);
 		StateBasedGame sbg = Main.getGame();

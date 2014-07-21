@@ -2,27 +2,23 @@ package theGame;
 
 
 import gamePieces.MapInfo;
-import gamePieces.Player;
-import guiElements.Button;
+import guiElements.Menu;
 import guiElements.TextButton;
 
 import java.awt.Font;
-import java.util.ArrayList;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
 import actions.ExitGameAction;
-import actions.LoadGameAction;
+import actions.GenericAction;
 import actions.StateTransitionAction;
 import actions.UnImplementedAction;
 import resourceManager.FontManager;
+import resourceManager.MapManager;
 import resourceManager.SoundManager;
 import utils.Settings;
 
@@ -30,55 +26,90 @@ public class MainMenuState extends HCGameState {
 
 	public static final int ID = 0;
 	private SoundManager sm;
-	private TextButton NEW;
-	private TextButton LOAD;
-	private TextButton SETTINGS;
-	private TextButton EXIT;
-	private ArrayList<Button> buttons;
+	private int displayLevel;
+	private TextButton NEW_BUTTON;
+	private TextButton LOAD_BUTTON;
+	private TextButton SETTINGS_BUTTON;
+	private TextButton EXIT_BUTTON;
+	private TextButton LOCAL_BUTTON;
+	private TextButton NETWORK_BUTTON;
+	private TextButton BACK_BUTTON;
+	private TextButton HOST_BUTTON;
+	private TextButton JOIN_BUTTON;
+	private Menu mainMenu;
+	private Menu newGameMenu;
+	private Menu networkMenu;
 	
-	
+	private static final int MAIN = 1;
+	private static final int NEW = 2;
+	private static final int NETWORK = 3;
+		
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		super.init(container, game);
 		Font buttonFont = FontManager.BUTTON_FONT;
-		TrueTypeFont ttfont = FontManager.BUTTON_TRUETYPE;
-		ArrayList<Player> temp = new ArrayList<Player>();
-		temp.add(new Player(1, Color.green));
-		temp.add(new Player(2, Color.red));
-		NEW = new TextButton(container, buttonFont, "New Game",
-				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
+		BACK_BUTTON = new TextButton(container, buttonFont, "Back",
+				0, 0,
 				game, this.getID(), 
-				new LoadGameAction(new GameState(MapInfo.TEST_MAP, temp)));
-		LOAD = new TextButton(container, buttonFont, "Load Game",
-				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
+				new GenericAction(){
+					public void activate(){
+						setDisplayLevel(--displayLevel);
+					}
+		});
+		NEW_BUTTON = new TextButton(container, buttonFont, "New Game",
+				0, 0,
+				game, this.getID(), 
+				new GenericAction(){
+					public void activate(){
+						setDisplayLevel(NEW);
+					}
+		});
+		LOAD_BUTTON = new TextButton(container, buttonFont, "Load Game",
+				0, 0,
 				game, this.getID(), 
 				new StateTransitionAction(game, 1));
-		SETTINGS = new TextButton(container, buttonFont, "Settings",
-				container.getWidth()/2-ttfont.getWidth("Settings")/2, container.getHeight()-ttfont.getLineHeight()*4,
+		SETTINGS_BUTTON = new TextButton(container, buttonFont, "Settings",
+				0, 0,
 				game, this.getID(),
 				new UnImplementedAction());
-		EXIT = new TextButton(container, buttonFont, "Exit",
-				container.getWidth()/2-ttfont.getWidth("Exit")/2, container.getHeight()-ttfont.getLineHeight()*3,
+		EXIT_BUTTON = new TextButton(container, buttonFont, "Exit",
+				0, 0,
 				game, this.getID(), 
 				new ExitGameAction());
-		buttons = new ArrayList<Button>();
-		buttons.add(NEW);
-		buttons.add(LOAD);
-		buttons.add(SETTINGS);
-		buttons.add(EXIT);
-		for(Button b: buttons)
-			b.setReport(true);
-		super.init(container, game);
+		LOCAL_BUTTON = new TextButton(container, buttonFont, "Local", 0, 0, game, this.getID(),
+				new WrapperAction(new StateTransitionAction(game, GameLobbyState.ID)){
+					public void activate(){
+						GameLobbyState.setLocal();
+						this.action.activate();
+					}
+		});
+		NETWORK_BUTTON = new TextButton(container, buttonFont, "Network",
+				0, 0,
+				game, this.getID(), 
+				new UnImplementedAction());
+		mainMenu = new Menu(0, 0);
+		newGameMenu = new Menu(0, 0);
+		newGameMenu.center(true);
+		mainMenu.center(true);
+		mainMenu.addButton(NEW_BUTTON);
+		mainMenu.addButton(LOAD_BUTTON);
+		mainMenu.addButton(SETTINGS_BUTTON);
+		mainMenu.addButton(EXIT_BUTTON);
+		newGameMenu.addButton(LOCAL_BUTTON);
+		newGameMenu.addButton(NETWORK_BUTTON);
+		newGameMenu.addButton(BACK_BUTTON);
+		setDisplayLevel(MAIN);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
 		g.setAntiAlias(true);
-		if(buttons != null)
-			for(Button b: buttons){
-				b.render((GUIContext)container, g);
-			}
+		switch(displayLevel){
+			case MAIN: mainMenu.render(container, g); break;
+			case NEW: newGameMenu.render(container, g); break;
+		}
 	    super.render(container, game, g);
 	}
 
@@ -96,6 +127,18 @@ public class MainMenuState extends HCGameState {
 	public int getID() {
 		// TODO Auto-generated method stub
 		return ID;
+	}
+	
+	public void setDisplayLevel(int i){
+		switch(displayLevel){
+			case MAIN: mainMenu.hide(); break;
+			case NEW: newGameMenu.hide(); break;
+		}
+		displayLevel = i;
+		switch(displayLevel){
+			case MAIN: mainMenu.show(); break;
+			case NEW: newGameMenu.show(); break;
+		}
 	}
 	
 	@Override

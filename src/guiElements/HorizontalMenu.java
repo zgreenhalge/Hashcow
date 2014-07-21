@@ -62,7 +62,7 @@ public class HorizontalMenu{
 	 */
 	public void clear(){
 		for(Button b: buttons)
-			b.setUnclickable(true);
+			b.setHidden(true);
 		buttons.clear();
 	}
 	

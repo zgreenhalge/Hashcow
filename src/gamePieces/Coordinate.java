@@ -21,6 +21,15 @@ public class Coordinate implements Serializable{
 		this.Y = Y;
 	}
 	
+	public Coordinate(String s) throws Exception{
+		String[] coords;
+		coords = s.split(",");
+		if(coords.length != 2)
+			throw new Exception("Improper String format: " + s);
+		X = Integer.parseInt(coords[0]);
+		Y = Integer.parseInt(coords[1]);
+	}
+	
 	/**
 	 * Get the X value of this Coordinate
 	 * @return the X value of the Coordinate

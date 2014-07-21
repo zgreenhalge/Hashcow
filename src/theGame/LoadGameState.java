@@ -9,10 +9,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-import actions.Action;
 import actions.LoadGameAction;
 import actions.SelectTextButtonAction;
-import actions.UnImplementedAction;
 import resourceManager.FontManager;
 import utils.SaveState;
 import gamePieces.Unit;
@@ -35,6 +33,7 @@ public class LoadGameState extends HCGameState {
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
+		super.init(gc, sbg);
 		gameList = new Menu(20, 20);
 		savedGames = new ArrayList<SaveState>();
 		TextButton temp;
@@ -52,7 +51,7 @@ public class LoadGameState extends HCGameState {
 						if(selectedButton != null)
 							selectedButton.setBorderEnabled(false);
 						selectedButton = this.getButton();
-						save = savedGames.get(gameList.getButtonIndex(selectedButton));
+						save = savedGames.get(gameList.getIndex(selectedButton));
 						for(Unit u: save.getMap().getAll())
 							u.load();
 						minimap = save.getMap().getMinimap(200, 200);
@@ -63,7 +62,6 @@ public class LoadGameState extends HCGameState {
 			}
 		loadGameButton = new TextButton(gc, FontManager.BUTTON_FONT, "LOAD", 600, 370, sbg, ID, loadGame);
 		loadGameButton.setBorderEnabled(true);
-		super.init(gc, sbg);
 	}
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException{

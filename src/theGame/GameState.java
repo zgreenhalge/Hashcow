@@ -27,7 +27,7 @@ import utils.Settings;
 public class GameState extends HCGameState {
 
 	private int ID;
-	private static int lastId = 1;
+	private static int lastId = 2;
 	
 	private transient boolean init;
 	private boolean playing = false;

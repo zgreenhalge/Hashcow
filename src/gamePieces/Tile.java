@@ -26,19 +26,18 @@ public class Tile implements Selectable, Serializable{
 	private boolean buildable;
 	private boolean visible = true;
 	private boolean selected;
-	private Color minimapColor;
+	private String fileName;
 	private transient SpriteSheet image;
 	private transient Animation ani;
 	private transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
-	public static final Tile GRASS = new Tile("Grass", new int[] {1, 1, 1, 1, 1}, true, Color.green.darker());
 	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	
-	private Tile(String n, int[] costs, boolean build, Color minimap){
+	private Tile(String n, int[] costs, boolean build, String fName){
 		name = n;
 		moveCost = costs;
 		buildable = build;
-		minimapColor = minimap;
+		fileName = fName;
 		load();
 	}
 	
@@ -47,17 +46,17 @@ public class Tile implements Selectable, Serializable{
 		ani = new Animation(image, 0, 0, 0, image.getVerticalCount()-1, false, 650, true);
 	}
 	
+	public String getFileName(){
+		return fileName;
+	}
+	
 	/**
 	 * Create a new Tile from one of the static templates in the class.
 	 * @param tile - the Tile to create a copy of
 	 * @return a new Tile instance with the same values as the passed Tile
 	 */
-	public static Tile copy(Tile tile){
-		return new Tile(tile.name, tile.moveCost, tile.buildable, tile.minimapColor);
-	}
-	
-	public Color getMinimapColor(){
-		return minimapColor;
+	public static Tile copy(TileTemplate template){
+		return new Tile(template.name, template.moveCost, template.buildable, template.fileName);
 	}
 	
 	/**
@@ -183,11 +182,10 @@ public class Tile implements Selectable, Serializable{
 	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
 		name = (String) ois.readObject();
 		switch(name){
-		case "Grass": moveCost = GRASS.moveCost;
-			buildable = GRASS.buildable;
-			visible = GRASS.visible;
+		case "Grass": moveCost = TileTemplate.GRASS.moveCost;
+			buildable = TileTemplate.GRASS.buildable;
+			visible = false;
 			selected = false;
-			minimapColor = GRASS.minimapColor;
 			load();
 			break;
 		}
