@@ -2,7 +2,6 @@ package utils;
 
 import gamePieces.MapInfo;
 import gamePieces.Player;
-import gamePieces.Unit;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,9 +15,10 @@ import java.util.ArrayList;
 
 import theGame.GameState;
 
-public class SaveStruct implements Serializable{
+public class SaveState implements Serializable{
 
-	private static final long serialVersionUID = 5527501721576603651L;
+	private static final long serialVersionUID = -8496319193868800112L;
+
 	private static final String saveDir = "saves";
 	
 	private ArrayList<Player> players;
@@ -27,7 +27,7 @@ public class SaveStruct implements Serializable{
 	private int turnLength;
 	private int curPlayer;
 	
-	public SaveStruct(GameState game){
+	public SaveState(GameState game){
 		players = game.getPlayers();
 		map = game.getMap();
 		turn = game.getTurn();
@@ -51,7 +51,7 @@ public class SaveStruct implements Serializable{
 		return curPlayer;
 	}
 	
-	public static void save(SaveStruct target){
+	public static void save(SaveState target){
 		File path = new File(saveDir + "/" + Time.updateCal().fileDateTime() + ".dat");
 		if(!path.exists())
 			try{
@@ -73,11 +73,11 @@ public class SaveStruct implements Serializable{
 		}
 	}
 	
-	public static SaveStruct load(String path){
-		SaveStruct ret = null;
+	public static SaveState load(String path){
+		SaveState ret = null;
 		try{
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-			ret = (SaveStruct) ois.readObject();
+			ret = (SaveState) ois.readObject();
 			ois.close();
 		}catch(FileNotFoundException e){
 			Logger.log(e);
@@ -88,9 +88,6 @@ public class SaveStruct implements Serializable{
 		} catch (ClassNotFoundException e) {
 			Logger.log(e);
 			e.printStackTrace();
-		}
-		for(Unit u: ret.getMap().getAll()){
-			u.load();
 		}
 		return ret;
 	}

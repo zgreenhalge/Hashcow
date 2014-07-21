@@ -1,8 +1,8 @@
-package guiElements.buttonActions;
+package actions;
 
 import org.newdawn.slick.GameContainer;
 
-public class ToggleFPSAction extends ButtonAction {
+public class ToggleFPSAction implements Action {
 
 	private GameContainer container;
 	

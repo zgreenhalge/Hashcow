@@ -11,7 +11,6 @@ import gamePieces.Unit;
 import guiElements.Button;
 import guiElements.HorizontalMenu;
 import guiElements.TextButton;
-import guiElements.buttonActions.ButtonAction;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -19,9 +18,10 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.Action;
 import resourceManager.FontManager;
 import utils.Logger;
-import utils.SaveStruct;
+import utils.SaveState;
 import utils.Settings;
 
 public class GameState extends HCGameState {
@@ -29,6 +29,7 @@ public class GameState extends HCGameState {
 	private int ID;
 	private static int lastId = 1;
 	
+	private transient boolean init;
 	private boolean playing = false;
 	private ArrayList<Player> players;
 	private int turnCount = 1;
@@ -39,7 +40,6 @@ public class GameState extends HCGameState {
 	private int selectedX;
 	private int selectedY;
 	private HorizontalMenu menuBar;
-	
 	private Button endTurnButton;
 
 	//variables for moving map with mouse
@@ -60,7 +60,7 @@ public class GameState extends HCGameState {
 		selectedX = selectedY = -1;
 	}
 	
-	public GameState(SaveStruct save){
+	public GameState(SaveState save){
 		ID = ++lastId;
 		map = save.getMap();
 		players = save.getPlayers();
@@ -81,17 +81,20 @@ public class GameState extends HCGameState {
 		scale = 1.0f;
 		input = container.getInput();
 		try{
-			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, ID, new ButtonAction(){public void activate(){endTurn();}});
+			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, ID, new Action(){public void activate(){endTurn();}});
 		}catch(Exception e){Logger.loudLog(e);}
 		menuBar = new HorizontalMenu(container.getWidth() - (endTurnButton.getWidth() + FontManager.BUTTON_TRUETYPE.getWidth("Save Game")), 0);
 		menuBar.addButton(endTurnButton);
 		try{
-			menuBar.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Save Game", 0, 0, game, ID, new ButtonAction(){public void activate(){SaveStruct.save(new SaveStruct(gameState));}}));
+			menuBar.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Save Game", 0, 0, game, ID, new Action(){public void activate(){SaveState.save(new SaveState(gameState));}}));
 		}catch(Exception e){Logger.loudLog(e);}
+		init = true;
 	}
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		if(!init)
+			init(container, game);
 		if(!playing){
 			Coordinate start;
 			for(int n=0; n<players.size(); n++){
@@ -210,7 +213,7 @@ public class GameState extends HCGameState {
 	}
 	
 	public void saveGame(){
-		SaveStruct.save(new SaveStruct(this));
+		SaveState.save(new SaveState(this));
 	}
 	
 	@Override

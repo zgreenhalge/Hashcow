@@ -63,10 +63,6 @@ public class Main extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenuState());
 		addState(new LoadGameState());
-		ArrayList<Player> temp = new ArrayList<Player>();
-		temp.add(new Player(1, Color.green));
-		temp.add(new Player(2, Color.red));
-		addState(new GameState(MapInfo.TEST_MAP, temp));
 	}
 	
 	public static StateBasedGame getGame(){

@@ -52,7 +52,7 @@ public class Menu {
 		for(int i=0; i<buttons.size(); i++){
 			b = buttons.get(i);
 			if(b != null){
-				b.setLocation(X, Y+(buttonHeight+1)*i);
+				b.setLocation(X, Y+(buttonHeight+5)*i);
 				b.render(container, g);
 			}
 		}

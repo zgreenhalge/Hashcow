@@ -9,50 +9,59 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.Action;
+import actions.LoadGameAction;
+import actions.SelectTextButtonAction;
+import actions.UnImplementedAction;
 import resourceManager.FontManager;
-import utils.SaveStruct;
+import utils.SaveState;
+import gamePieces.Unit;
 import guiElements.Menu;
 import guiElements.TextButton;
-import guiElements.buttonActions.ButtonAction;
-import guiElements.buttonActions.SelectTextButtonAction;
-import guiElements.buttonActions.UnImplementedAction;
 
 public class LoadGameState extends HCGameState {
 
 	private static final int ID = 1;
 	
 	private Menu gameList;
-	private ArrayList<SaveStruct> savedGames;
+	private ArrayList<SaveState> savedGames;
 	private File saveFolder;
 	
 	private TextButton selectedButton;
 	private TextButton loadGameButton;
-	private SaveStruct save;
+	private SaveState save;
 	private Image minimap;
+	private LoadGameAction loadGame;
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
 		gameList = new Menu(20, 20);
-		savedGames = new ArrayList<SaveStruct>();
+		savedGames = new ArrayList<SaveState>();
 		TextButton temp;
 		saveFolder = new File("saves");
 		minimap = new Image(200, 200);
+		loadGame = new LoadGameAction();
 		if(saveFolder.exists())
 			for(File f: saveFolder.listFiles()){
-				savedGames.add(SaveStruct.load(f.getPath()));
+				savedGames.add(SaveState.load(f.getPath()));
 				temp = new TextButton(gc, FontManager.DEFAULT_FONT, f.getName(), 0, 0,
-						sbg, ID, new ButtonAction());
+						sbg, ID, null);
 				temp.setAction(new SelectTextButtonAction(temp){
 					public void activate(){
-						nativeActivate();
+						activateBorders();
+						if(selectedButton != null)
+							selectedButton.setBorderEnabled(false);
 						selectedButton = this.getButton();
 						save = savedGames.get(gameList.getButtonIndex(selectedButton));
+						for(Unit u: save.getMap().getAll())
+							u.load();
 						minimap = save.getMap().getMinimap(200, 200);
+						loadGame.setSaveState(save);
 					}
 				});
 				gameList.addButton(temp);
 			}
-		loadGameButton = new TextButton(gc, FontManager.BUTTON_FONT, "LOAD", 600, 370, sbg, ID, new UnImplementedAction());
+		loadGameButton = new TextButton(gc, FontManager.BUTTON_FONT, "LOAD", 600, 370, sbg, ID, loadGame);
 		loadGameButton.setBorderEnabled(true);
 		super.init(gc, sbg);
 	}

@@ -1,8 +1,8 @@
-package guiElements.buttonActions;
+package actions;
 
 import org.newdawn.slick.state.StateBasedGame;
 
-public class StateTransitionAction extends ButtonAction {
+public class StateTransitionAction implements Action {
 
 	private StateBasedGame sbg;
 	private int toState;

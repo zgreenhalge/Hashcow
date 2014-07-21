@@ -1,9 +1,9 @@
-package guiElements.buttonActions;
+package actions;
 
 import org.newdawn.slick.SlickException;
 import utils.Logger;
 
-public class UnImplementedAction extends ButtonAction {
+public class UnImplementedAction implements Action {
 
 	public UnImplementedAction(){}
 	

@@ -1,7 +1,5 @@
 package guiElements;
      
-import guiElements.buttonActions.ButtonAction;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -11,6 +9,7 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.Action;
 import resourceManager.SoundManager;
 import utils.Logger;
 
@@ -24,7 +23,7 @@ public class ImageButton extends MouseOverArea implements Button {
     private boolean lastMouseOver = false;
     private StateBasedGame sbg;
     private int stateID;
-    private ButtonAction action;
+    private Action action;
     private String name;
     private boolean report;
     private boolean hidden;
@@ -42,7 +41,7 @@ public class ImageButton extends MouseOverArea implements Button {
 	 * @throws SlickException - when something goes wrong
 	 */
     public ImageButton(GameContainer gc, SpriteSheet ss, int x, int y,
-        StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
+        StateBasedGame sbg, int stateID, Action action) throws SlickException {
 	    super((GUIContext)gc, ss.getSubImage(0, 0), x, y);
 	    super.setMouseDownColor(Color.red);
 	    super.setMouseOverColor(Color.blue);

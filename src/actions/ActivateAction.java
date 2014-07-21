@@ -1,8 +1,8 @@
-package guiElements.buttonActions;
+package actions;
 
 import gamePieces.Abilities.Ability;
 
-public class ActivateAction extends ButtonAction {
+public class ActivateAction implements Action {
 
 	private Ability ability;
 	

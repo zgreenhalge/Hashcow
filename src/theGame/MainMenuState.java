@@ -1,15 +1,15 @@
 package theGame;
 
 
+import gamePieces.MapInfo;
+import gamePieces.Player;
 import guiElements.Button;
 import guiElements.TextButton;
-import guiElements.buttonActions.ExitGameAction;
-import guiElements.buttonActions.StateTransitionAction;
-import guiElements.buttonActions.UnImplementedAction;
 
 import java.awt.Font;
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -18,6 +18,10 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.ExitGameAction;
+import actions.LoadGameAction;
+import actions.StateTransitionAction;
+import actions.UnImplementedAction;
 import resourceManager.FontManager;
 import resourceManager.SoundManager;
 import utils.Settings;
@@ -38,10 +42,13 @@ public class MainMenuState extends HCGameState {
 			throws SlickException {
 		Font buttonFont = FontManager.BUTTON_FONT;
 		TrueTypeFont ttfont = FontManager.BUTTON_TRUETYPE;
+		ArrayList<Player> temp = new ArrayList<Player>();
+		temp.add(new Player(1, Color.green));
+		temp.add(new Player(2, Color.red));
 		NEW = new TextButton(container, buttonFont, "New Game",
 				container.getWidth()/2-ttfont.getWidth("New Game")/2, container.getHeight()-ttfont.getLineHeight()*6,
 				game, this.getID(), 
-				new StateTransitionAction(game, 2));
+				new LoadGameAction(new GameState(MapInfo.TEST_MAP, temp)));
 		LOAD = new TextButton(container, buttonFont, "Load Game",
 				container.getWidth()/2-ttfont.getWidth("Load Game")/2, container.getHeight()-ttfont.getLineHeight()*5,
 				game, this.getID(), 

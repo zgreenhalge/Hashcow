@@ -1,7 +1,5 @@
 package guiElements;
      
-import guiElements.buttonActions.ButtonAction;
-
 import java.awt.Font;
 
 import org.newdawn.slick.Color;
@@ -14,6 +12,7 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.Action;
 import resourceManager.SoundManager;
 import utils.Logger;
      
@@ -29,7 +28,7 @@ public class TextButton extends MouseOverArea implements Button{
     private int stateID;
     private boolean isEnabled = true;
     private TrueTypeFont biggerFont;
-    private ButtonAction action;
+    private Action action;
     private boolean borderEnabled;
     private Color borderColor;
     private String name;
@@ -38,7 +37,7 @@ public class TextButton extends MouseOverArea implements Button{
     private boolean hidden;
     private boolean noClick;
  
-    public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, ButtonAction action) throws SlickException {
+    public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, Action action) throws SlickException {
     	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
     	this.ttfont = new TrueTypeFont(font, false);
         this.text = text;
@@ -85,11 +84,11 @@ public class TextButton extends MouseOverArea implements Button{
     	return borderEnabled;
     }
     
-    public void setAction(ButtonAction ba){
+    public void setAction(Action ba){
     	action = ba;
     }
     
-    public ButtonAction getAction(){
+    public Action getAction(){
     	return action;
     }
     

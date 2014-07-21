@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 import guiElements.Button;
 import guiElements.TextButton;
-import guiElements.buttonActions.ButtonAction;
-import guiElements.buttonActions.ToggleFPSAction;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -19,6 +17,8 @@ import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import actions.Action;
+import actions.ToggleFPSAction;
 import resourceManager.SoundManager;
 import utils.Logger;
 
@@ -74,7 +74,7 @@ public class TestState extends BasicGameState {
 				790-ttfont.getWidth("Toggle Borders"), 460-ttfont.getHeight()*2,
 				game,
 				this.getID(), 
-				new ButtonAction(){
+				new Action(){
 					public void activate(){
 						for(Button b: buttons)
 							if(b instanceof TextButton)
@@ -87,7 +87,7 @@ public class TestState extends BasicGameState {
 				790-ttfont.getWidth("Log Message"), 450-ttfont.getHeight()*3,
 				game,
 				this.getID(), 
-				new ButtonAction(){
+				new Action(){
 					public void activate(){
 						Logger.loudLogLine("Message Print Requested");
 					}
@@ -98,7 +98,7 @@ public class TestState extends BasicGameState {
 				790-ttfont.getWidth("Log Exception"), 440-ttfont.getHeight()*4,
 				game,
 				this.getID(), 
-				new ButtonAction(){
+				new Action(){
 					public void activate(){
 						Logger.loudLog(new SlickException("Exception Print Request"));
 					}

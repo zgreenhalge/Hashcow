@@ -1,10 +1,10 @@
-package guiElements.buttonActions;
+package actions;
 
 import org.newdawn.slick.Color;
 
 import guiElements.TextButton;
 
-public class SelectTextButtonAction extends ButtonAction {
+public class SelectTextButtonAction implements Action {
 
 	private TextButton button;
 	
@@ -12,13 +12,13 @@ public class SelectTextButtonAction extends ButtonAction {
 		button = b;
 	}
 	
-	public void nativeActivate(){
+	public void activateBorders(){
 		button.setColor(Color.yellow.darker());
 		button.setBorderEnabled(true);		
 	}
 	
 	public void activate(){
-		nativeActivate();
+		activateBorders();
 	}
 	
 	public TextButton getButton(){
