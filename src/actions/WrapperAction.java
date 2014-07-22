@@ -1,6 +1,5 @@
-package theGame;
+package actions;
 
-import actions.Action;
 
 public class WrapperAction implements Action {
 
@@ -13,6 +12,10 @@ public class WrapperAction implements Action {
 	@Override
 	public void activate() {
 		action.activate();
+	}
+	
+	public Action getWrappedAction(){
+		return action;
 	}
 
 }

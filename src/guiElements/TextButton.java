@@ -78,8 +78,8 @@ public class TextButton extends MouseOverArea implements Button{
     	return borderEnabled;
     }
     
-    public void setAction(Action ba){
-    	action = ba;
+    public void setAction(Action a){
+    	action = a;
     }
     
     public Action getAction(){

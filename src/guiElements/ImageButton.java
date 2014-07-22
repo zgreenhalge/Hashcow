@@ -42,8 +42,6 @@ public class ImageButton extends MouseOverArea implements Button {
     public ImageButton(GameContainer gc, SpriteSheet ss, int x, int y,
         StateBasedGame sbg, int stateID, Action action) throws SlickException {
 	    super((GUIContext)gc, ss.getSubImage(0, 0), x, y);
-	    super.setMouseDownColor(Color.red);
-	    super.setMouseOverColor(Color.blue);
 	    super.setMouseOverImage(ss.getSubImage(0, 1));
 	    super.setMouseDownImage(ss.getSubImage(0, 2));
 	    this.sbg = sbg;
@@ -122,5 +120,15 @@ public class ImageButton extends MouseOverArea implements Button {
        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
       	}
     }
+
+	@Override
+	public void setAction(Action a) {
+		action = a;
+	}
+
+	@Override
+	public Action getAction() {
+		return action;
+	}
 
 }
