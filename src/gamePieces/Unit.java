@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.PriorityQueue; 
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -405,6 +406,9 @@ public abstract class Unit implements Selectable, Serializable{
 		return ret;
 	}
 	
+	
+
+	
 	public void moveTo(Coordinate coord){
 		
 	}
@@ -412,7 +416,7 @@ public abstract class Unit implements Selectable, Serializable{
 	public Player getOwner() {
 		return owner;
 	}
-	
+
 	private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeInt(unitId);		
 		oos.writeObject(map);
@@ -460,3 +464,20 @@ public abstract class Unit implements Selectable, Serializable{
 	}
 	
 }
+	
+/*class PathStruct{
+	PathStruct prev;
+	PathStruct next;
+	Coordinate coord;
+	int totalCost;
+	
+	public PathStruct()
+	{
+		
+	}
+	
+	
+	
+	
+}
+*/
