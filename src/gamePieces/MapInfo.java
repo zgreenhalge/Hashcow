@@ -148,6 +148,22 @@ public class MapInfo implements Serializable{
 	}
 	
 	/**
+	 * Retrieve a list of Tiles adjacent to this Coordinate
+	 * @param coord - starting coordinate to get adj. Tiles.
+	 * @return a list of Tiles adjacent to this Coordinate
+	 */
+	
+	public ArrayList<Tile> getAdjacentTiles(Coordinate coord){
+		ArrayList<Tile> tiles = new ArrayList<Tile>();
+		tiles.add(getTile(new Coordinate(coord.X() + 1, coord.Y())));
+		tiles.add(getTile(new Coordinate(coord.X() - 1, coord.Y())));
+		tiles.add(getTile(new Coordinate(coord.X(), coord.Y() + 1)));
+		tiles.add(getTile(new Coordinate(coord.X(), coord.Y() - 1)));
+		
+		return tiles;
+	}
+	
+	/**
 	 * Select a given location on the map.
 	 * Will first deselect the last location selected before selecting the appropriate layer at the Coordinate given
 	 * @param coord - the Coordinate selected

@@ -1,4 +1,4 @@
 volume:0.0
 dev:true
-resolution:1024x1280
+resolution:2560x1440
 fullscreen:false

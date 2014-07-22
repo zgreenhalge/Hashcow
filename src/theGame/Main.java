@@ -30,12 +30,12 @@ public class Main extends StateBasedGame {
 		}
 		
 		//prints out all native display modes 
-		/*for(DisplayMode mode: getDisplayModes()){
+		for(DisplayMode mode: getDisplayModes()){
 			System.out.println(mode.getWidth() + " x " 
 							+ mode.getHeight() + " x " 
 							+ mode.getBitsPerPixel() 
 							+ " " + mode.getFrequency() + "Hz");
-		}*/
+		}
 		
 		try{
 			currentGame = new Main("This Is The Title");
