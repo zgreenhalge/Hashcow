@@ -56,6 +56,7 @@ public class TextButton extends MouseOverArea implements Button{
     
     public void setHidden(boolean b){
     	hidden = b;
+    	setAcceptingInput(!b);
     }
     
     public boolean isHidden(){
@@ -180,10 +181,12 @@ public class TextButton extends MouseOverArea implements Button{
     		return;
     	if(isEnabled){
     		if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-    			if(report) Logger.logLine(name + " pressed.");
+    			/*if(report) 
+    				*/Logger.loudLogLine(name + " pressed.");
                 SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
                 renderClick();
-                if(action != null) action.activate();
+                if(action != null)
+                	action.activate();
             }
             super.mouseClicked(button, x, y, clickCount);
     	}

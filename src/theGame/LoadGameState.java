@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -79,6 +80,8 @@ public class LoadGameState extends HCGameState {
 	
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
+			game.enterState(MainMenuState.ID);
 		super.update(container, game, delta);
 	}
 	

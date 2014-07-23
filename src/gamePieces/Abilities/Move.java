@@ -26,7 +26,7 @@ public class Move implements Ability, Selectable{
 		Action activate = new ActivateAction(this);
 		SpriteSheet ss = ImageManager.getSpriteSheet("", 32, 32, 1);
 		try {
-			button = new ImageButton(Main.getGameContainer(), ss, 0, 0, Main.getGame(), Main.getGame().getCurrentStateID(), activate);
+			button = new ImageButton(Main.getStaticContainer(), ss, 0, 0, Main.getGame(), Main.getGame().getCurrentStateID(), activate);
 		} catch (SlickException e) {
 			Logger.log(e);
 			e.printStackTrace();

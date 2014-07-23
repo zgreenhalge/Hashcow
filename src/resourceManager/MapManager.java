@@ -53,8 +53,10 @@ public class MapManager {
 						list.add(Tile.copy(TileTemplate.getTemplate(s)));
 					}
 				}
-				tiles = new Tile[map.size()][list.size()];
-				map.toArray(tiles);
+				tiles = new Tile[map.size()][map.get(0).size()];
+				for(int i=0; i<map.size(); i++)
+					for(int j=0; j<map.get(0).size(); j++)
+						tiles[i][j] = map.get(i).get(j);
 				ret.add(new MapInfo(name, tiles, positions, players));
 			} catch (Exception e) {
 				Logger.loudLog(e);
@@ -84,7 +86,7 @@ public class MapManager {
 				out.print(map.getTile(new Coordinate(x, y)).getFileName());
 				if(y != map.getHeight()-1)
 					out.print(":");
-				else
+				else if(x != map.getWidth()-1)
 					out.println();
 			}
 		out.flush();

@@ -103,6 +103,8 @@ public class MainMenuState extends HCGameState {
 		mainMenu.center(true);
 		newGameMenu.center(true);
 		networkMenu.center(true);
+		newGameMenu.setReporting(true);
+		mainMenu.setReporting(true);
 		mainMenu.addButton(NEW_BUTTON);
 		mainMenu.addButton(LOAD_BUTTON);
 		mainMenu.addButton(SETTINGS_BUTTON);
@@ -131,10 +133,11 @@ public class MainMenuState extends HCGameState {
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
-		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
-			container.exit();
-		if(container.getInput().isKeyPressed(Input.KEY_BACK))
-			displayLevel--;
+		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE)){
+			if(--displayLevel == 0)
+				container.exit();
+			setDisplayLevel(displayLevel);
+		}
 		super.update(container, game, delta);
 	}
 	

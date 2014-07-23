@@ -20,6 +20,8 @@ public class Main extends StateBasedGame {
 	private static AppGameContainer appgc;
 	private static StateBasedGame currentGame;
 	
+	public static final String GAME_VERSION = "0.01a";
+	
 	public static void main(String[] args){
 		//entry point of program
 		try{
@@ -39,10 +41,12 @@ public class Main extends StateBasedGame {
 		
 		try{
 			currentGame = new Main("This Is The Title");
+			Display.setResizable(true);
 			appgc = new AppGameContainer(currentGame);
 			String[] res = ((String) Settings.getSetting("resolution")).split("x");
 			appgc.setDisplayMode(Integer.parseInt(res[0]), Integer.parseInt(res[1]), (Boolean) Settings.getSetting("fullscreen"));
 			appgc.setAlwaysRender(true);
+			appgc.setIcons(new String[] {"/res/icon32.png", "/res/icon24.png", "/res/icon16.png"});
 			GameContainer.enableSharedContext();
 			appgc.setShowFPS(true);
 			appgc.start();			
@@ -77,7 +81,7 @@ public class Main extends StateBasedGame {
 		return currentGame;
 	}
 	
-	public static GameContainer getGameContainer(){
+	public static GameContainer getStaticContainer(){
 		return appgc;
 	}
 	

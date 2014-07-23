@@ -99,8 +99,8 @@ public class GameState extends HCGameState {
 			Coordinate start;
 			for(int n=0; n<players.size(); n++){
 				curPlayer = players.get(n);
-				curPlayer.setLastX((Main.getGameContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32));
-				curPlayer.setLastY((Main.getGameContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32));
+				curPlayer.setLastX((Main.getStaticContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32));
+				curPlayer.setLastY((Main.getStaticContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32));
 				start = map.getStartingPosition(n);
 				(new TestHQ(start, players.get(n), map)).register();
 				(new TestUnit(start, players.get(n), map)).register();
@@ -111,8 +111,6 @@ public class GameState extends HCGameState {
 					start.X(1);
 				(new TestUnit(start, players.get(n), map)).register();
 			}
-			map.getUnit(new Coordinate(0,0)).setCurrentHealth(4);
-			map.getUnit(new Coordinate(3,3)).setCurrentHealth(1);
 			curPlayer = players.get(0);
 			playing = true;
 		}
@@ -169,8 +167,8 @@ public class GameState extends HCGameState {
 			map.cycleDisplayMode();
 		if(i == Input.KEY_SPACE){
 			scale = 1.0f;
-			X = (Main.getGameContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32);
-			Y = (Main.getGameContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32);
+			X = (Main.getStaticContainer().getWidth()/2 - map.getStartingPosition(curPlayer.getId()-1).X()*32);
+			Y = (Main.getStaticContainer().getHeight()/2 - map.getStartingPosition(curPlayer.getId()-1).Y()*32);
 		}
 	}
 	

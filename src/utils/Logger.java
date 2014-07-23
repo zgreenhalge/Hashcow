@@ -56,12 +56,13 @@ public class Logger{
 		writeOut = new ArrayList<String>();
 		writeOut.add("");
 		gc = container;
+		verbose = (Boolean) Settings.getSetting("dev");
 		font = new Font("Times New Roman", Font.PLAIN, 12);
 		ttfont = new TrueTypeFont(font, false);
 		printList = new ArrayList<PrintStruct>();
 		lineHeight = ttfont.getLineHeight();
-		PRINT_LENGTH = container.getHeight()/lineHeight;
 		X = 0;	//left boundary of print area
+		PRINT_LENGTH = container.getHeight()/lineHeight;
 		Y = container.getHeight()-(lineHeight*PRINT_LENGTH); //top boundary of print area
 		writeAllowed = write;
 		init = true;
@@ -125,6 +126,8 @@ public class Logger{
 	}
 	
 	public static void update(int delta){
+		PRINT_LENGTH = gc.getHeight()/lineHeight;
+		Y = gc.getHeight()-(lineHeight*PRINT_LENGTH); //top boundary of print area
 		for(PrintStruct ps: printList)
 			ps.tick(delta);
 		age += delta;

@@ -17,20 +17,19 @@ import actions.GenericAction;
 import actions.WrapperAction;
 import resourceManager.ImageManager;
 import theGame.Main;
+import utils.Logger;
 
 public class ExpandingMenu extends MouseOverArea{
 
-	public static final int TOP = 1;
-	public static final int BOTTOM = 2;
+	public static final int UP = 1;
+	public static final int DOWN = 2;
 	
 	private ArrayList<Button> buttons;
 	private int X;
-	private int width;
 	private int baseY;
 	private int expandY;
-	private int baseHeight;
 	private int buttonHeight;
-	private int MAX_HEIGHT;
+	private int MAX_BUTTONS;
 	private int orientation;
 	private boolean expanded;
 	private Button base;
@@ -43,18 +42,16 @@ public class ExpandingMenu extends MouseOverArea{
 	private Action expandAction = new GenericAction(){ public void activate(){expand();}};
 	
 	
-	public ExpandingMenu(GameContainer container, Button base, int baseX, int baseY, int orientation, int expandedHeight) throws SlickException{
+	public ExpandingMenu(GameContainer container, Button base, int baseX, int baseY, int orientation, int maxDisplay) throws SlickException{
 		super(container, new Image(base.getWidth() + base.getHeight(), base.getHeight()), baseX, baseY);
 		buttons = new ArrayList<Button>();
-		MAX_HEIGHT = expandedHeight;
+		MAX_BUTTONS = maxDisplay;
 		X = baseX;
 		base.setLocation(baseX, baseY);
 		this.baseY = baseY;
-		baseHeight = base.getHeight();
-		width = base.getWidth() + base.getHeight();
 		this.orientation = orientation;
 		SpriteSheet use;
-		if(orientation == TOP)
+		if(orientation == UP)
 			use = expandUp;
 		else 
 			use = expandDown;
@@ -98,11 +95,14 @@ public class ExpandingMenu extends MouseOverArea{
 	
 	public void addButton(Button b){
 		buttons.add(b);
-		buttonHeight += b.getHeight();
-		if(orientation == TOP)
+		if(orientation == UP){
+			buttonHeight += b.getHeight();
 			b.setLocation(X, baseY - buttonHeight);
-		else
-			b.setLocation(X, baseY + buttonHeight);
+		}
+		else{
+			b.setLocation(X, baseY + getHeight() + buttonHeight);
+			buttonHeight += b.getHeight();
+		}
 	}
 	
 	public void removeButton(Button b){
@@ -111,40 +111,28 @@ public class ExpandingMenu extends MouseOverArea{
 	}
 	
 	public void expand(){
-		Button temp;
-		if(orientation == TOP){
-			if(buttonHeight >= MAX_HEIGHT)
-				expandY = baseY - MAX_HEIGHT;
+		if(orientation == UP){
+			expandY = baseY - 1;
+			if(buttons.size() >= MAX_BUTTONS)
+				for(int n=0; n< MAX_BUTTONS; n++)
+					expandY -= buttons.get(n).getHeight();
 			else
-				expandY = baseY - buttonHeight;
-			expandFill = new Rectangle(X-5, expandY, width+10, baseY-expandY+5);
-			int fill = baseY;
-			for(int i=0; i<buttons.size(); i++){
-				temp = buttons.get(i);
-				fill -= temp.getHeight();
-				if(fill > expandY){
-					temp.setLocation(X, fill);
-					temp.setHidden(false);
-				}else
-					temp.setHidden(true);
-			}
+				for(Button b: buttons)
+					expandY -= b.getHeight();
+			expandFill = new Rectangle(X-5, expandY, getWidth()+10, Math.abs(baseY-expandY)+2);
 		}else{
-			if(buttonHeight >= MAX_HEIGHT)
-				expandY = baseY + MAX_HEIGHT;
+			int height = 0;
+			if(buttons.size() >= MAX_BUTTONS)
+				for(int n=0; n< MAX_BUTTONS; n++)
+					height += buttons.get(n).getHeight();
 			else
-				expandY = baseY + buttonHeight;
-			expandFill = new Rectangle(X-5, baseY+baseHeight, width+10, expandY-baseY+5);
-			int fill = baseY+baseHeight;
-			for(int i=0; i< buttons.size(); i++){
-				temp = buttons.get(i);
-				fill += temp.getHeight();
-				if(fill < expandFill.getY() + expandFill.getHeight()){
-					temp.setLocation(X, fill);
-					temp.setHidden(false);
-				}else
-					temp.setHidden(true);
-			}
+				for(Button b: buttons)
+					height += b.getHeight();
+			expandFill = new Rectangle(X-5, baseY+getHeight()-1, getWidth()+10, height+1);
 		}
+		for(Button b: buttons)
+			if(expandFill.contains(b.getX(), b.getY()))
+				b.setHidden(false);
 		expanded = true;
 	}
 	
@@ -156,22 +144,23 @@ public class ExpandingMenu extends MouseOverArea{
 	
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
-		if(expanded && isMouseOver())
+		if(expanded && (isMouseOver() || expandFill.contains(x, y)))
 			return;
 		collapse();
 	}
 	
 	@Override
 	public void mouseWheelMoved(int change){
-		if(buttonHeight > MAX_HEIGHT)
+		if(buttons.size() > MAX_BUTTONS)
 				for(Button b: buttons){
 					if(change > 0)
 						b.setLocation(b.getX(), b.getY()-4);
 					else
 						b.setLocation(b.getX(), b.getY()+4);
 					if(expandFill.contains(b.getX(), b.getY()))
-						continue;
-					b.setHidden(true);
+						b.setHidden(false);
+					else
+						b.setHidden(true);
 				}
 	}
 	
