@@ -1,4 +1,0 @@
-volume:0.0
-dev:true
-resolution:2560x1440
-fullscreen:false
