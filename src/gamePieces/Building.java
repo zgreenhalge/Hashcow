@@ -21,8 +21,8 @@ public class Building extends Unit {
 	private boolean[][] pathable;
 	private boolean globallyVisible;
 	
-	public Building(Coordinate location, Player owner, MapInfo map) {
-		super(location, owner, map);
+	public Building(Coordinate location, Player owner, MapInfo map, MovementType moveType){
+		super(location, owner, map, moveType);
 		super.BASE_MOVE_RANGE = 0;
 		super.BASE_SIGHT_RANGE = 1;
 		super.BASE_ATTACK_RANGE = 0;

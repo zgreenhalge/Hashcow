@@ -1,11 +1,12 @@
 package gamePieces;
-
+ 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.PriorityQueue; 
+import java.util.Set;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
@@ -17,6 +18,7 @@ import resourceManager.ImageManager;
 import resourceManager.TestUnitLibrary;
 import resourceManager.UnitImage;
 import resourceManager.UnitSound;
+import utils.OneToOneMap;
 
 /**
  * A generic Unit
@@ -36,6 +38,7 @@ public abstract class Unit implements Selectable, Serializable{
 	protected transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	protected int unitId;
 	
+	protected MovementType moveType;
 	protected MapInfo map;
 	protected Coordinate location;
 	protected int currentX;
@@ -62,11 +65,12 @@ public abstract class Unit implements Selectable, Serializable{
 	//abilities
 	//upgrades
 	
-	public Unit(Coordinate loc, Player player, MapInfo map){
+	public Unit(Coordinate loc, Player player, MapInfo map, MovementType move){
 		location = loc;
 		currentX = location.X()*32;
 		currentY = location.Y()*32;
 		owner = player;
+		moveType = move;
 		visible = false;
 		this.map = map;
 	}
@@ -211,6 +215,10 @@ public abstract class Unit implements Selectable, Serializable{
 
 	public int getY(){
 		return currentY;
+	}
+	
+	public MovementType getMovementType(){
+		return moveType;
 	}
 
 	public String getName(){
@@ -463,21 +471,49 @@ public abstract class Unit implements Selectable, Serializable{
 		currentHealth = ois.readInt();
 	}
 	
-}
 	
-/*class PathStruct{
-	PathStruct prev;
-	PathStruct next;
-	Coordinate coord;
-	int totalCost;
-	
-	public PathStruct()
-	{
+	/**
+	 * A pathfinding struct to point to all places in a Unit's path
+	 * @author Anthony
+	 */
+	class PathStruct{
+		PathStruct prev;
+		PathStruct next;
+		Coordinate coord;
+		int pathCost;
 		
-	}
-	
-	
-	
-	
+		public PathStruct(PathStruct pre, PathStruct nex, Coordinate c, int cost)
+		{
+			prev = pre;
+			next = nex;
+			coord = c;
+			pathCost = cost;
+		}
+		
+		public PathStruct getPrevious(){
+			return prev;
+		}
+		
+		public void addToPathCost(int cost){
+			pathCost += cost;
+		}
+		
+		/**
+		 * Determine the next Coordinate in the path
+		 * @return
+		 */
+		public PathStruct determineNext(){
+			OneToOneMap<Tile, Coordinate> spaces = map.getAdjacentTiles(getLocation());
+			Set<Tile> tiles = spaces.keySet();
+			Tile[] t = tiles.toArray(new Tile[0]);
+			for(Tile tile : t)
+				if(tile.isTraversable())
+					if(tile.moveCost(moveType) < pathCost)
+						continue; //added this cus i hate errors, this will be deleted
+		
+						
+				
+			}
+			
+		}
 }
-*/

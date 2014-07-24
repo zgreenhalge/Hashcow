@@ -18,8 +18,8 @@ public class TestUnit extends Unit {
 	private static final String name = "TestUnit";	//
 	//move these to a unit database?				//
 	
-	public TestUnit(Coordinate location, Player owner, MapInfo map) {
-		super(location, owner, map);
+	public TestUnit(Coordinate location, Player owner, MapInfo map, MovementType moveType) {
+		super(location, owner, map, moveType);
 		super.unitId = 0;
 		setBaseMoveRange(BASE_MOVE_RANGE);
 		setBaseSightRange(BASE_SIGHT_RANGE);
