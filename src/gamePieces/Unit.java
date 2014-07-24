@@ -481,7 +481,7 @@ public abstract class Unit implements Selectable, Serializable{
 		PathStruct next;
 		Coordinate coord;
 		int pathCost;
-		
+		 
 		public PathStruct(PathStruct pre, PathStruct nex, Coordinate c, int cost)
 		{
 			prev = pre;
