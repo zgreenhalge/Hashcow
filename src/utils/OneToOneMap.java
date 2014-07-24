@@ -34,6 +34,11 @@ public class OneToOneMap<K, V> implements Serializable{
 		return valToKey.containsKey(value);
 	}
 	
+	public void put(K key, V value){
+		keyToVal.put(key, value);
+		valToKey.put(value, key);
+	}
+	
 	public V getValue(K key){
 		return keyToVal.get(key);
 	}

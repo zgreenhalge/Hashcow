@@ -52,12 +52,12 @@ public abstract class Unit implements Selectable, Serializable{
 	protected boolean attackDisplay;
 
 	protected String name = "Unknown";
-	protected int BASE_MOVE_RANGE;
-	protected int BASE_SIGHT_RANGE;
-	protected int BASE_ATTACK_RANGE;
-	protected int BASE_ATTACK;
-	protected int BASE_DEFENSE;
-	protected int BASE_HEALTH;
+	protected int baseMoveRange;
+	protected int baseSightRange;
+	protected int baseAttackRange;
+	protected int baseAttack;
+	protected int baseDefense;
+	protected int baseHealth;
 	protected int currentHealth;
 	
 	//movementType
@@ -117,15 +117,10 @@ public abstract class Unit implements Selectable, Serializable{
 	public void render(Graphics g, int X, int Y){
 		if(visible){
 			if(map.isBuilt(location))
-				current.getCurrentFrame().setAlpha(0.5f);
+				current.getCurrentFrame().setAlpha(0.75f);
 			else
 				current.getCurrentFrame().setAlpha(1.0f);
-			if(currentHealth <= BASE_HEALTH/5)
-				current.draw(X+currentX, Y+currentY, graveInjuryMask);
-			else if(currentHealth <= BASE_HEALTH/2)
-				current.draw(X+currentX, Y+currentY, injuryMask);
-			else if(currentHealth > BASE_HEALTH/2)
-				current.draw(X+currentX, Y+currentY);
+			current.draw(X+currentX, Y+currentY, owner.getColor());
 			if(selected)
 				cursor.draw(X+currentX, Y+currentY);
 		}
@@ -226,28 +221,28 @@ public abstract class Unit implements Selectable, Serializable{
 	}
 	
 	public int getBaseMoveRange(){
-		return BASE_MOVE_RANGE;
+		return baseMoveRange;
 	}
 	
 	public int getBaseSightRange(){
-		return BASE_SIGHT_RANGE;
+		return baseSightRange;
 	}
 
 	public int getBaseAttackRange(){
-		return BASE_ATTACK_RANGE;
+		return baseAttackRange;
 	}
 	
 
 	public int getBaseAttack(){
-		return BASE_ATTACK;
+		return baseAttack;
 	}
 	
 	public int getBaseDefense(){
-		return BASE_DEFENSE;
+		return baseDefense;
 	}
 	
 	public int getMaxHealth(){
-		return BASE_HEALTH;
+		return baseHealth;
 	}
 	
 	public int getCurrentHealth(){
@@ -255,28 +250,28 @@ public abstract class Unit implements Selectable, Serializable{
 	}
 	
 	public void setBaseMoveRange(int i){
-		BASE_MOVE_RANGE = i;
+		baseMoveRange = i;
 	}
 	
 	public void setBaseSightRange(int i){
-		BASE_SIGHT_RANGE = i;
+		baseSightRange = i;
 	}
 	
 	public void setBaseAttackRange(int i){
-		BASE_ATTACK_RANGE = i;
+		baseAttackRange = i;
 	}
 	
 	public void setBaseAttack(int i){
-		BASE_ATTACK = i;
+		baseAttack = i;
 	}
 	
 	public void setBaseDefense(int i){
-		BASE_DEFENSE = i;
+		baseDefense = i;
 	}
 	
 	public void setCurrentHealth(int i){
-		if(i>=BASE_HEALTH)
-			currentHealth = BASE_HEALTH;
+		if(i>=baseHealth)
+			currentHealth = baseHealth;
 		else if(i<0)
 			currentHealth = 0;
 		else
@@ -284,7 +279,7 @@ public abstract class Unit implements Selectable, Serializable{
 	}
 	
 	public void setBaseHealth(int i){
-		BASE_HEALTH = i;
+		baseHealth = i;
 	}
 	
 	public void setName(String s){
@@ -329,8 +324,8 @@ public abstract class Unit implements Selectable, Serializable{
 		currentHealth -= damage;
 		if(currentHealth < 0)
 			currentHealth = 0;
-		else if(currentHealth > BASE_HEALTH)
-			currentHealth = BASE_HEALTH;
+		else if(currentHealth > baseHealth)
+			currentHealth = baseHealth;
 		return currentHealth;
 	}
 	
@@ -438,12 +433,12 @@ public abstract class Unit implements Selectable, Serializable{
 		oos.writeBoolean(moveDisplay);
 		oos.writeBoolean(attackDisplay);
 		oos.writeObject(name);
-		oos.writeInt(BASE_MOVE_RANGE);
-		oos.writeInt(BASE_SIGHT_RANGE);
-		oos.writeInt(BASE_ATTACK_RANGE);
-		oos.writeInt(BASE_ATTACK);
-		oos.writeInt(BASE_DEFENSE);
-		oos.writeInt(BASE_HEALTH);
+		oos.writeInt(baseMoveRange);
+		oos.writeInt(baseSightRange);
+		oos.writeInt(baseAttackRange);
+		oos.writeInt(baseAttack);
+		oos.writeInt(baseDefense);
+		oos.writeInt(baseHealth);
 		oos.writeInt(currentHealth);
 		
 		oos.flush();
@@ -462,12 +457,12 @@ public abstract class Unit implements Selectable, Serializable{
 		moveDisplay = ois.readBoolean();
 		attackDisplay = ois.readBoolean();
 		name = (String) ois.readObject();
-		BASE_MOVE_RANGE = ois.readInt();
-		BASE_SIGHT_RANGE = ois.readInt();
-		BASE_ATTACK_RANGE = ois.readInt();
-		BASE_ATTACK = ois.readInt();
-		BASE_DEFENSE = ois.readInt();
-		BASE_HEALTH = ois.readInt();
+		baseMoveRange = ois.readInt();
+		baseSightRange = ois.readInt();
+		baseAttackRange = ois.readInt();
+		baseAttack = ois.readInt();
+		baseDefense = ois.readInt();
+		baseHealth = ois.readInt();
 		currentHealth = ois.readInt();
 	}
 	

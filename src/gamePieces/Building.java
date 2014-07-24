@@ -23,12 +23,12 @@ public class Building extends Unit {
 	
 	public Building(Coordinate location, Player owner, MapInfo map, MovementType moveType){
 		super(location, owner, map, moveType);
-		super.BASE_MOVE_RANGE = 0;
-		super.BASE_SIGHT_RANGE = 1;
-		super.BASE_ATTACK_RANGE = 0;
-		super.BASE_ATTACK = 0;
-		super.BASE_DEFENSE = 5;
-		super.BASE_HEALTH = 50;
+		super.baseMoveRange = 0;
+		super.baseSightRange = 1;
+		super.baseAttackRange = 0;
+		super.baseAttack = 0;
+		super.baseDefense = 5;
+		super.baseHealth = 50;
 		super.currentHealth = 50;
 		super.name = "Unknown Building";
 		HEIGHT = 1;

@@ -1,6 +1,5 @@
 package guiElements;
      
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -19,7 +18,7 @@ import utils.Logger;
  */
 public class ImageButton extends MouseOverArea implements Button {
  
-    private boolean enabled = false;
+    private boolean enabled = true;
     private boolean lastMouseOver = false;
     private StateBasedGame sbg;
     private int stateID;
@@ -42,12 +41,14 @@ public class ImageButton extends MouseOverArea implements Button {
     public ImageButton(GameContainer gc, SpriteSheet ss, int x, int y,
         StateBasedGame sbg, int stateID, Action action) throws SlickException {
 	    super((GUIContext)gc, ss.getSubImage(0, 0), x, y);
-	    super.setMouseOverImage(ss.getSubImage(0, 1));
-	    super.setMouseDownImage(ss.getSubImage(0, 2));
+	    if(ss.getVerticalCount() > 1)
+		    super.setMouseOverImage(ss.getSubImage(0, 1));
+	    if(ss.getVerticalCount() > 2)
+		    super.setMouseDownImage(ss.getSubImage(0, 2));
 	    this.sbg = sbg;
 	    this.stateID = stateID;
 	    this.action = action;
-	    name = ss.getSubImage(0, 0).getName()+"Button";
+	    name = ss.getName()+"Button";
     }
     
     public void setHidden(boolean b){
@@ -109,16 +110,22 @@ public class ImageButton extends MouseOverArea implements Button {
     	if(hidden)
     		return;
     	if(enabled){
-           if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
+           if(isMouseOver() && sbg.getCurrentStateID() == stateID) {
+        	   if(report) 
+        		   Logger.logLine(name + " pressed.");
                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
-               if(action != null) action.activate();
-           	if(report) Logger.logLine(name + " pressed.");
-	           }
+               if(action != null) 
+            	   action.activate();
+           }
 	           super.mouseClicked(button, x, y, clickCount);
        	}
        	else{
        		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
       	}
+    }
+    
+    public void setLocation(int x, int y){
+    	super.setLocation(x, y);
     }
 
 	@Override

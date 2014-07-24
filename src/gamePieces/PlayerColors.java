@@ -1,10 +1,13 @@
 package gamePieces;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
 
-public class PlayerColors {
+public class PlayerColors implements Iterable<Color>{
 
 	public static final int BLACK = 0;
 	public static final int BLUE = 1;
@@ -30,18 +33,21 @@ public class PlayerColors {
 	private Color white;
 	private Color yellow;
 	
+	private static ArrayList<Color> colors;
+	
 	public PlayerColors(){
-		black = Color.black;
-		blue = Color.blue;
-		cyan = Color.cyan;
-		gray = Color.gray;
-		green = Color.green;
-		magenta = Color.magenta;
-		orange = Color.orange;
-		pink = Color.pink;
-		red = Color.red;
-		white = Color.white;
-		yellow = Color.yellow;
+		colors = new ArrayList<Color>();
+		colors.add(black = Color.black);
+		colors.add(blue = Color.blue);
+		colors.add(cyan = Color.cyan);
+		colors.add(gray = Color.gray);
+		colors.add(green = Color.green);
+		colors.add(magenta = Color.magenta);
+		colors.add(orange = Color.orange);
+		colors.add(pink = Color.pink);
+		colors.add(red = Color.red);
+		colors.add(white = Color.white);
+		colors.add(yellow = Color.yellow);
 	}
 	
 	public Color getColor(int id){
@@ -61,17 +67,29 @@ public class PlayerColors {
 		}
 	}
 	
-	public Image getColorAsImage(int id, int width, int height){
+	public int getId(Color c){
+		return colors.indexOf(c);
+	}
+	
+	public int getNumColors(){
+		return colors.size();
+	}
+	
+	public Image getColorAsImage(Color color, int width, int height){
 		ImageBuffer buffer = new ImageBuffer(width, height);
-		Color temp = getColor(id);
-		int r = temp.getRed();
-		int g = temp.getGreen();
-		int b = temp.getBlue();
-		int a = temp.getAlpha();
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		int a = color.getAlpha();
 		for(int x=0; x<width; x++)
 			for(int y=0; y<height; y++)
 				buffer.setRGBA(x, y, r, g, b, a);
 		return buffer.getImage();
+	}
+	
+	@Override
+	public Iterator<Color> iterator() {
+		return colors.iterator();
 	}
 	
 	

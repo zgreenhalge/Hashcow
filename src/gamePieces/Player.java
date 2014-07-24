@@ -22,6 +22,8 @@ public class Player implements Serializable{
 	private int lastY;
 	
 	private Color teamColor;
+	private Race race;
+	private String name;
 	private ArrayList<Unit> units;
 	private ArrayList<Building> buildings;
 	private ArrayList<Unit> owned;
@@ -32,13 +34,29 @@ public class Player implements Serializable{
 	//unit cap?
 	//commander abilities?
 	
-	public Player(int id, Color color){
+	public Player(int id){
 		this.id = id;
-		teamColor = color;
 		units = new ArrayList<Unit>();
 		buildings = new ArrayList<Building>();
 		owned = new ArrayList<Unit>(units);
 		sight = new SightMap(id); 
+		name = "Player " + id;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String n){
+		name = n;
+	}
+	
+	/**
+	 * Check if the Player is ready to start the game
+	 * @return true iff the Player has all the required Objects to start a game
+	 */
+	public boolean ready(){
+		return (race != null && teamColor != null);
 	}
 	
 	/**
@@ -47,6 +65,30 @@ public class Player implements Serializable{
 	 */
 	public Color getColor(){
 		return teamColor;
+	}
+	
+	/**
+	 * Set the Player's team color
+	 * @param color - the color of the Player's team
+	 */
+	public void setColor(Color color) {
+		teamColor = color;		
+	}
+	
+	/**
+	 * Get the Race the Player is playing as
+	 * @return the Player's Race
+	 */
+	public Race getRace(){
+		return race;
+	}
+	
+	/**
+	 * Set the Player's Race
+	 * @param r - the Race that the Player should be
+	 */
+	public void setRace(Race r){
+		race = r;
 	}
 	
 	/**
@@ -180,4 +222,5 @@ public class Player implements Serializable{
 		owned = (ArrayList<Unit>) ois.readObject();
 		sight = (SightMap) ois.readObject();
 	}
+	
 }
