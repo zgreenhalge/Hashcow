@@ -475,14 +475,12 @@ public abstract class Unit implements Selectable, Serializable{
 		PathStruct prev;
 		PathStruct next;
 		Coordinate coord;
-		int pathCost;
 		int pathRemaining;
 		 
-		public PathStruct(PathStruct pre, Coordinate c, int cost)
+		public PathStruct(PathStruct pre, Coordinate c)
 		{
 			prev = pre;
 			coord = c;
-			pathCost = cost;
 			if(prev == null)
 				pathRemaining = getBaseMoveRange();
 			else
@@ -493,27 +491,23 @@ public abstract class Unit implements Selectable, Serializable{
 			return prev;
 		}
 		
-		public void addToPathCost(int cost){
-			pathCost += cost;
-		}
 		
 		/**
 		 * Determine the next Coordinate in the path
 		 * @return
 		 */
 		public PathStruct determineNext(){
+			PathStruct pa = null;
 			OneToOneMap<Tile, Coordinate> spaces = map.getAdjacentTiles(getLocation());
 			Set<Tile> tiles = spaces.keySet();
 			Tile[] t = tiles.toArray(new Tile[0]);
 			for(Tile tile : t)
 				if(tile.isTraversable())
-					if(tile.moveCost(moveType) < pathCost && tile.moveCost(moveType) <= pathRemaining){
-						pathCost += tile.moveCost(moveType);
+					if(tile.moveCost(moveType) <= pathRemaining){
 						pathRemaining -= tile.moveCost(moveType);
-						// how to reference this? 
-						//next = new PathStruct(should be this PathStruct, spaces.getValue(tile))
+						pa = new PathStruct(PathStruct.this, spaces.getValue(tile));
 					}
-			return null;
+			return pa;
 			}
 		 	
 		}
