@@ -34,6 +34,7 @@ public class ExpandingMenu extends MouseOverArea{
 	private boolean expanded;
 	private Button base;
 	private int targetState;
+	private boolean hidden;
 	
 	private Rectangle baseFill;
 	private Rectangle expandFill;
@@ -68,11 +69,15 @@ public class ExpandingMenu extends MouseOverArea{
 		this.base = base;
 		base.setAction(new WrapperAction(base.getAction()){
 			public void activate(){
-				expand();
+				if(expanded)
+					collapse();
+				else
+					expand();
 				this.action.activate();
 			}
 		});
 		baseFill = new Rectangle(baseX-5, baseY, super.getWidth()+10, super.getHeight());
+		expandFill = new Rectangle(0, 0, 0, 0);
 	}
 	
 	public void setX(int x){
@@ -117,6 +122,8 @@ public class ExpandingMenu extends MouseOverArea{
 	
 	@Override
     public void render(GUIContext guic, Graphics g){
+		if(hidden)
+			return;
 		Color prev = g.getColor();
 		if(expanded){
 			g.setColor(Color.lightGray);
@@ -175,27 +182,35 @@ public class ExpandingMenu extends MouseOverArea{
 			expandFill = new Rectangle(X-5, baseY+getHeight()-1, getWidth()+10, height+1);
 		}
 		for(Button b: buttons)
-			if(expandFill.contains(b.getX(), b.getY()))
+			if(expandFill.contains(b.getX(), b.getY())){
 				b.setHidden(false);
+				b.setEnabled(true);
+			}
 		expanded = true;
 	}
 	
 	public void collapse(){
-		for(Button b: buttons)
+		for(Button b: buttons){
 			b.setHidden(true);
+			b.setEnabled(false);
+		}
 		expanded = false;
 	}
 	
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
-		if(Main.getGame().getCurrentStateID() == targetState || expanded && (isMouseOver() || expandFill.contains(x, y)))
+		if(hidden || Main.getGame().getCurrentStateID() != targetState)
 			return;
+		if(expanded && expandFill.contains(x, y)){
+			consumeEvent();
+			return;	
+		}
 		collapse();
 	}
 	
 	@Override
 	public void mouseWheelMoved(int change){
-		if(Main.getGame().getCurrentStateID() == targetState)
+		if(Main.getGame().getCurrentStateID() == targetState && !hidden)
 			if(buttons.size() > MAX_BUTTONS)
 					for(Button b: buttons){
 						if(change > 0)
@@ -213,6 +228,17 @@ public class ExpandingMenu extends MouseOverArea{
 		base.setReport(b);
 		for(Button button: buttons)
 			button.setReport(b);
+	}
+
+	public void setHidden(boolean b) {
+		hidden = b;
+		base.setHidden(b);
+		for(Button button: buttons)
+			button.setHidden(b);
+	}
+	
+	public boolean isHidden(){
+		return hidden;
 	}
 	
 }

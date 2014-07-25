@@ -12,7 +12,6 @@ import actions.GenericAction;
 import actions.GenericIdAction;
 import resourceManager.FontManager;
 import theGame.GameLobbyState;
-import theGame.GameState;
 import theGame.Main;
 import gamePieces.Player;
 import gamePieces.PlayerColors;
@@ -33,6 +32,8 @@ public class LocalPlayerLobbyPanel {
 	private Button raceBase;
 	private ExpandingMenu raceMenu;
 	private Image colorTile;
+	
+	private boolean hidden;
 	
 	public LocalPlayerLobbyPanel(GameLobbyState lby, Player p, int x, int y) throws SlickException{
 		GameContainer container = Main.getStaticContainer();
@@ -62,11 +63,11 @@ public class LocalPlayerLobbyPanel {
 					}
 				}
 			}));
+		}
 		raceBase = new TextButton(container, FontManager.BUTTON_FONT, "Select Your Race...",
 				0, 0,
 				Main.getGame(), lby.getID(),
 				new GenericAction());
-		}
 		raceMenu = new ExpandingMenu(container, lobby.getID(), raceBase, X+colorMenu.getWidth()+container.getWidth()/50, y+nameHeight+container.getHeight()/50, ExpandingMenu.DOWN, 5);
 		for(Race r: Race.values())
 			raceMenu.addButton(new TextButton(container,
@@ -81,6 +82,7 @@ public class LocalPlayerLobbyPanel {
 			}));
 		colorMenu.setReporting(true);
 		raceMenu.setReporting(true);
+		
 	}
 	
 	public Player getPlayer(){
@@ -92,7 +94,7 @@ public class LocalPlayerLobbyPanel {
 	}
 	
 	public int getHeight(){
-		return nameFont.getHeight() + (colorMenu.getY() + colorMenu.getHeight() - Y);
+		return (colorMenu.getY() + colorMenu.getHeight()) - Y;
 	}
 	
 	public int getX(){
@@ -104,6 +106,8 @@ public class LocalPlayerLobbyPanel {
 	}
 	
 	public void render(GameContainer container, Graphics g){
+		if(hidden)
+			return;
 		if(player.getRace() == null)
 			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName());
 		else
@@ -111,6 +115,26 @@ public class LocalPlayerLobbyPanel {
 		colorMenu.render(container, g);
 		raceMenu.render(container, g);
 		colorTile.draw(X, Y);
+	}
+	
+	public void setHidden(boolean b){
+		hidden = b;
+		colorMenu.setHidden(b);
+		raceMenu.setHidden(b);
+	}
+	
+	public boolean isHidden(){
+		return hidden;
+	}
+	
+	public void setLocation(int X, int Y){
+		GameContainer container = Main.getStaticContainer();
+		this.X = X;
+		this.Y = Y;
+		raceMenu.setX(X + colorMenu.getWidth()+container.getWidth()/50);
+		raceMenu.setY(Y + nameFont.getHeight() + container.getHeight()/50);
+		colorMenu.setX(X);
+		colorMenu.setY(Y + nameFont.getHeight() + container.getHeight()/50);
 	}
 	
 }

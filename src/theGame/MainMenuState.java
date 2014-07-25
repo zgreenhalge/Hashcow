@@ -162,6 +162,7 @@ public class MainMenuState extends HCGameState {
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		container.setAlwaysRender(true);
 		sm = SoundManager.getManager();
 		SoundManager.setVolume((Float)Settings.getSetting(Settings.VOLUME));
 		sm.loopSound(SoundManager.MAIN_MENU);

@@ -19,8 +19,7 @@ public enum Race {
 		return id;
 	}
 	
-	@Override
-	public String toString(){
+	public String getName(){
 		return name;
 	}
 	

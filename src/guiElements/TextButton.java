@@ -14,6 +14,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import actions.Action;
 import resourceManager.SoundManager;
+import theGame.Main;
 import utils.Logger;
      
 /**
@@ -35,6 +36,7 @@ public class TextButton extends MouseOverArea implements Button{
     private int oldX, oldY, bigX, bigY;
     private boolean report = false;
     private boolean hidden;
+    public static boolean buttonPressed;
  
     public TextButton(GameContainer gc, Font font, String text, int x, int y, StateBasedGame sbg, int stateID, Action action) throws SlickException {
     	super((GUIContext)gc, new Image(0, 0), x, y, (new TrueTypeFont(font, false)).getWidth(text), (new TrueTypeFont(font, false)).getHeight());
@@ -56,7 +58,7 @@ public class TextButton extends MouseOverArea implements Button{
     
     public void setHidden(boolean b){
     	hidden = b;
-    	setAcceptingInput(!b);
+    	//setAcceptingInput(!b);
     }
     
     public boolean isHidden(){
@@ -179,19 +181,23 @@ public class TextButton extends MouseOverArea implements Button{
     public void mouseClicked(int button, int x, int y, int clickCount) {
     	if(hidden)
     		return;
-    	if(enabled){
-    		if (isMouseOver() && sbg.getCurrentStateID() == stateID) {
-    			if(report) 
-    				Logger.loudLogLine(name + " pressed.");
-                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
-                renderClick();
-                if(action != null)
-                	action.activate();
-            }
-            super.mouseClicked(button, x, y, clickCount);
+    	if(isMouseOver()){
+    		if (sbg.getCurrentStateID() == stateID){ 
+    			if(enabled){
+	    			if(report) 
+	    				Logger.loudLogLine(name + " pressed.");
+	                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
+	                renderClick();
+	                if(action != null)
+	                	action.activate();
+	                consumeEvent();
+    			} else {
+    				SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+    				consumeEvent();
+    			}
+    		}
     	}
-    	else
-    		SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+		super.mouseClicked(button, x, y, clickCount);
     }
 
     private void renderClick(){

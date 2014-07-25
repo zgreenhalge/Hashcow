@@ -45,7 +45,7 @@ public class Main extends StateBasedGame {
 			appgc = new AppGameContainer(currentGame);
 			String[] res = ((String) Settings.getSetting("resolution")).split("x");
 			appgc.setDisplayMode(Integer.parseInt(res[0]), Integer.parseInt(res[1]), (Boolean) Settings.getSetting("fullscreen"));
-			appgc.setAlwaysRender(true);
+			//appgc.setAlwaysRender(true);
 			appgc.setIcons(new String[] {"/res/icon32.png", "/res/icon24.png", "/res/icon16.png"});
 			GameContainer.enableSharedContext();
 			appgc.setShowFPS(true);
