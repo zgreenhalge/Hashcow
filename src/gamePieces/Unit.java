@@ -476,13 +476,17 @@ public abstract class Unit implements Selectable, Serializable{
 		PathStruct next;
 		Coordinate coord;
 		int pathCost;
+		int pathRemaining;
 		 
-		public PathStruct(PathStruct pre, PathStruct nex, Coordinate c, int cost)
+		public PathStruct(PathStruct pre, Coordinate c, int cost)
 		{
 			prev = pre;
-			next = nex;
 			coord = c;
 			pathCost = cost;
+			if(prev == null)
+				pathRemaining = getBaseMoveRange();
+			else
+				pathRemaining = prev.pathRemaining;
 		}
 		
 		public PathStruct getPrevious(){
@@ -503,11 +507,12 @@ public abstract class Unit implements Selectable, Serializable{
 			Tile[] t = tiles.toArray(new Tile[0]);
 			for(Tile tile : t)
 				if(tile.isTraversable())
-					if(tile.moveCost(moveType) < pathCost)
-						continue; //added this cus i hate errors, this will be deleted
-		
-						
-				
+					if(tile.moveCost(moveType) < pathCost && tile.moveCost(moveType) <= pathRemaining){
+						pathCost += tile.moveCost(moveType);
+						pathRemaining -= tile.moveCost(moveType);
+						// how to reference this? 
+						//next = new PathStruct(should be this PathStruct, spaces.getValue(tile))
+					}
 			return null;
 			}
 			
