@@ -20,7 +20,7 @@ import utils.Logger;
 /**
  * A Button based on a String
  */
-public class TextButton extends MouseOverArea implements Button{
+public class TextButton extends MouseOverArea implements Button, Component{
     	     
     private TrueTypeFont ttfont;
     private String text;
@@ -112,6 +112,14 @@ public class TextButton extends MouseOverArea implements Button{
     	return report;
     }
     
+    public int getX(){
+    	return bigX;
+    }
+    
+    public int getY(){
+    	return bigY;
+    }
+    
     public int getWidth(){
     	return biggerFont.getWidth(text);
     }
@@ -119,10 +127,73 @@ public class TextButton extends MouseOverArea implements Button{
     public int getHeight(){
     	return biggerFont.getHeight();
     }
+    
+    public void setLocation(int X, int Y){
+    	try{
+	    	oldX = X;
+            oldY = Y;
+            bigX = X - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;
+            bigY = Y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
+    	}catch(Exception e){}
+        super.setLocation(X, Y);
+    }
 
-    @Override
-    public void render(GUIContext guic, Graphics g) {
-    	if(!hidden){
+
+	@Override
+	public boolean contains(int x, int y) {
+		if(x < bigX || x > bigX + getWidth())
+			return false;
+		if(y < bigY || y > bigY + getHeight())
+			return false;
+		return true;
+	}
+
+
+	@Override
+	public boolean mouseClick(int button, int x, int y) {
+		if(hidden)
+    		return false;
+    	if(isMouseOver()){
+    		if(sbg.getCurrentStateID() == stateID){ 
+    			if(enabled){
+	    			if(report) 
+	    				Logger.loudLogLine(name + " pressed.");
+	                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
+	                if(action != null)
+	                	action.activate();
+    			}else{
+    				SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
+    			}
+    			return true;
+    		}
+    	}
+		super.mouseClicked(button, x, y, 1);
+		return false;
+	}
+
+	@Override
+	public boolean mouseMove(int oldx, int oldy, int newx, int newy){
+		if(hidden)
+			return false;
+		if(isMouseOver()){
+			if(sbg.getCurrentStateID() == stateID){
+	            if(!lastMouseOver){
+	                SoundManager.getManager().playSound(SoundManager.BUTTON_OVER);
+	                lastMouseOver = true;
+	                super.mouseMoved(oldx, oldy, newx, newy);
+	                return true;
+	            }
+	        } else 
+				lastMouseOver = false;
+			super.mouseMoved(oldx, oldy, newx, newy);
+		} else 
+			lastMouseOver = false;
+		return false;
+	}
+
+	@Override
+	public void render(GameContainer container, StateBasedGame game, Graphics g) {
+		if(!hidden){
         	org.newdawn.slick.Font prevFont = g.getFont();
             g.setFont(ttfont);
             Color standard = g.getColor();
@@ -158,60 +229,17 @@ public class TextButton extends MouseOverArea implements Button{
             	g.setColor(prevCol);
             }
             g.drawString(text, getX(), getY());
-            super.render(guic, g);
+            super.render(container, g);
             g.setColor(standard);
             g.setFont(prevFont);
     	}
-    }
- 
-    @Override
-    public void mouseMoved(int oldx, int oldy, int newx, int newy) {
-        if (sbg.getCurrentStateID() == stateID && !hidden){//if in proper state & button is active
-            if (isMouseOver() && !lastMouseOver){//if mouse is over && wasn't previously over
-                SoundManager.getManager().playSound(SoundManager.BUTTON_OVER); //play sound
-                lastMouseOver = true;	//make sure sound won't repeat
-            } else if (!isMouseOver()) { //if mouse is not over button
-                lastMouseOver = false;	//allow sound to be played again
-            }
-        }
-        super.mouseMoved(oldx, oldy, newx, newy);	//pass to super
-    }
- 
-    @Override
-    public void mouseClicked(int button, int x, int y, int clickCount) {
-    	if(hidden)
-    		return;
-    	if(isMouseOver()){
-    		if (sbg.getCurrentStateID() == stateID){ 
-    			if(enabled){
-	    			if(report) 
-	    				Logger.loudLogLine(name + " pressed.");
-	                SoundManager.getManager().playSound(SoundManager.BUTTON_CLICK);
-	                renderClick();
-	                if(action != null)
-	                	action.activate();
-	                consumeEvent();
-    			} else {
-    				SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
-    				consumeEvent();
-    			}
-    		}
-    	}
-		super.mouseClicked(button, x, y, clickCount);
-    }
+	}
 
-    private void renderClick(){
-    	
-    }
-    
-    public void setLocation(int X, int Y){
-    	try{
-	    	oldX = X;
-            oldY = Y;
-            bigX = X - (biggerFont.getWidth(text) - ttfont.getWidth(text))/2;
-            bigY = Y - (biggerFont.getLineHeight() - ttfont.getLineHeight())/2;
-    	}catch(Exception e){}
-        super.setLocation(X, Y);
-    }
+
+	@Override
+	public void update(GameContainer container, StateBasedGame game, int delta){	
+	}
+
+
     
 }

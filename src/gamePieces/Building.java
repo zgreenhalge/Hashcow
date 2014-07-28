@@ -72,10 +72,10 @@ public class Building extends Unit {
 		if((visible || globallyVisible) && selected)
 			cursor.draw(X+currentX, Y+currentY);
 		if(visible){
-			current.draw(X+currentX, Y+currentY);
+			current.draw(X+currentX, Y+currentY, owner.getColor());
 			seenBy.add(map.getSightMap().getId());
 		}else if(globallyVisible || seenBy.contains(map.getSightMap().getId())){
-			current.getCurrentFrame().draw(X+currentX, Y+currentY, fogMask);
+			current.getCurrentFrame().draw(X+currentX, Y+currentY, owner.getColor().addToCopy(fogMask));
 		}
 	}
 
