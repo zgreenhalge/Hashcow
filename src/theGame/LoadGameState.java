@@ -15,14 +15,14 @@ import actions.SelectTextButtonAction;
 import resourceManager.FontManager;
 import utils.SaveState;
 import gamePieces.Unit;
-import guiElements.Menu;
+import guiElements.VerticalMenu;
 import guiElements.TextButton;
 
 public class LoadGameState extends HCGameState {
 
 	private static final int ID = 1;
 	
-	private Menu gameList;
+	private VerticalMenu gameList;
 	private ArrayList<SaveState> savedGames;
 	private File saveFolder;
 	
@@ -35,7 +35,7 @@ public class LoadGameState extends HCGameState {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
 		super.init(gc, sbg);
-		gameList = new Menu(20, 20);
+		gameList = new VerticalMenu(20, 20);
 		savedGames = new ArrayList<SaveState>();
 		TextButton temp;
 		saveFolder = new File("saves");

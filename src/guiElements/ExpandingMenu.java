@@ -9,7 +9,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -20,7 +19,7 @@ import resourceManager.ImageManager;
 import theGame.Main;
 import utils.Logger;
 
-public class ExpandingMenu extends MouseOverArea implements Component{
+public class ExpandingMenu extends MouseOverArea implements Menu{
 
 	public static final int UP = 1;
 	public static final int DOWN = 2;
@@ -39,6 +38,7 @@ public class ExpandingMenu extends MouseOverArea implements Component{
 	private Button base;
 	private int targetState;
 	private boolean hidden;
+	private boolean reporting;
 	
 	private Rectangle baseFill;
 	private Rectangle expandFill;
@@ -149,6 +149,8 @@ public class ExpandingMenu extends MouseOverArea implements Component{
 	}
 	
 	public void expand(){
+		if(reporting)
+			Logger.loudLogLine(name + " expanded");
 		if(orientation == UP){
 			expandY = baseY - 1;
 			if(buttons.size() >= MAX_BUTTONS)
@@ -177,9 +179,10 @@ public class ExpandingMenu extends MouseOverArea implements Component{
 	}
 	
 	public void collapse(){
+		if(reporting)
+			Logger.loudLogLine(name + " collapsed");
 		for(Button b: buttons){
 			b.setHidden(true);
-			b.setEnabled(false);
 		}
 		expanded = false;
 	}
@@ -227,7 +230,10 @@ public class ExpandingMenu extends MouseOverArea implements Component{
 	}
 
 	@Override
-	public boolean mouseClick(int button, int x, int y) {
+	public boolean mouseClick(int button, int x, int y){
+		for(Button b: buttons)
+			if(b.mouseClick(button, x, y))
+				return true;
 		if(hidden || Main.getGame().getCurrentStateID() != targetState)
 			return false;
 		if(expanded && expandFill.contains(x, y))
@@ -274,6 +280,16 @@ public class ExpandingMenu extends MouseOverArea implements Component{
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean isReporting() {
+		return reporting;
+	}
+
+	@Override
+	public void setReport(boolean b) {
+		reporting = b;
 	}
 	
 }

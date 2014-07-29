@@ -29,7 +29,7 @@ public class Tile implements Selectable, Serializable{
 	private String fileName;
 	private transient SpriteSheet image;
 	private transient Animation ani;
-	private transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
+	private static transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	
 	private static final Color maskFill = new Color(0.9f, 0.9f, 0.9f, 0.35f);
 	

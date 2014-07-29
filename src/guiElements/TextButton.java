@@ -152,7 +152,6 @@ public class TextButton extends MouseOverArea implements Button, Component{
 	public boolean mouseClick(int button, int x, int y) {
 		if(hidden)
     		return false;
-		Logger.loudLogLine(name + " checking for click");
     	if(contains(x, y)){
     		if(sbg.getCurrentStateID() == stateID){ 
     			if(enabled){

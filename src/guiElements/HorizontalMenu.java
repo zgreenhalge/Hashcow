@@ -11,7 +11,7 @@ import org.newdawn.slick.state.StateBasedGame;
  * A horizontal menu structure that scales dynamically as Buttons are added or removed
  *
  */
-public class HorizontalMenu implements Component{
+public class HorizontalMenu implements Menu{
 
 	private static int lastId = 1;
 	
@@ -102,6 +102,9 @@ public class HorizontalMenu implements Component{
 
 	@Override
 	public boolean mouseClick(int button, int x, int y) {
+		for(Button b: buttons)
+			if(b.mouseClick(button, x, y))
+				return true;
 		return false;
 	}
 
@@ -137,6 +140,15 @@ public class HorizontalMenu implements Component{
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean isReporting() {
+		return false;
+	}
+
+	@Override
+	public void setReport(boolean b) {		
 	}
 	
 }

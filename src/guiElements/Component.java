@@ -15,6 +15,8 @@ public interface Component {
 	public void setLocation(int x, int y);
 	public void setHidden(boolean b);
 	public boolean isHidden();
+	public boolean isReporting();
+	public void setReport(boolean b);
 	public boolean contains(int x, int y);
 	public boolean mouseClick(int button, int x, int y);
 	public boolean mouseMove(int oldx, int oldy, int newx, int newy);

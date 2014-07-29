@@ -2,7 +2,7 @@ package theGame;
 
 
 import guiElements.LayeredGUI;
-import guiElements.Menu;
+import guiElements.VerticalMenu;
 import guiElements.TextButton;
 
 import java.awt.Font;
@@ -37,9 +37,9 @@ public class MainMenuState extends HCGameState {
 	private TextButton BACK_BUTTON;
 	private TextButton HOST_BUTTON;
 	private TextButton JOIN_BUTTON;
-	private Menu mainMenu;
-	private Menu newGameMenu;
-	private Menu networkMenu;
+	private VerticalMenu mainMenu;
+	private VerticalMenu newGameMenu;
+	private VerticalMenu networkMenu;
 	private LayeredGUI gui;
 	
 	private static final int MAIN = 1;
@@ -140,9 +140,9 @@ public class MainMenuState extends HCGameState {
 		SoundManager.setVolume((Float)Settings.getSetting(Settings.VOLUME));
 		sm.loopSound(SoundManager.MAIN_MENU);
 		if(mainMenu == null){
-			mainMenu = new Menu(0, 0);
-			newGameMenu = new Menu(0, 0);
-			networkMenu = new Menu(0, 0);
+			mainMenu = new VerticalMenu(0, 0);
+			newGameMenu = new VerticalMenu(0, 0);
+			networkMenu = new VerticalMenu(0, 0);
 			mainMenu.center(true);
 			newGameMenu.center(true);
 			networkMenu.center(true);
@@ -164,8 +164,8 @@ public class MainMenuState extends HCGameState {
 			gui.add(mainMenu, MAIN);
 			gui.add(newGameMenu, NEW);
 			gui.add(networkMenu, NETWORK);
+			setDisplayLevel(MAIN);
 		}
-		setDisplayLevel(MAIN);
 	}
 
 }

@@ -66,44 +66,34 @@ public class LayeredGUI implements InputListener{
 	}
 	
 	public void hideAllBut(int layer){
-		for(int l = 0; l<MAX_LAYER; l++){
+		for(int l = 0; l<MAX_LAYER; l++)
 			if(tiers.containsKey(l))
 				for(Component c: tiers.getValue(l))
-					if(l == layer)
-						c.setHidden(false);
-					else
-						c.setHidden(true);
-					
-		}
+					c.setHidden(true);
+		if(tiers.containsKey(layer))
+			for(Component c: tiers.getValue(layer))
+				c.setHidden(false);
 	}
 
 	public void showAllBut(int layer){
-		for(int l = 0; l<MAX_LAYER; l++){
+		for(int l = 0; l<MAX_LAYER; l++)
 			if(tiers.containsKey(l))
 				for(Component c: tiers.getValue(l))
-					if(l == layer)
-						c.setHidden(true);
-					else
-						c.setHidden(false);
-					
-		}
+					c.setHidden(false);
+		if(tiers.containsKey(layer))
+			for(Component c: tiers.getValue(layer))
+				c.setHidden(true);
 	}
 	
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
 		Logger.loudLogLine("Mouse click: " + x + "," + y);
-		for(int layer = 0; layer<MAX_LAYER; layer++){
-			if(tiers.containsKey(layer)){
-				Logger.loudLogLine("Checking componenets in layer " + layer);
-				for(Component c: tiers.getValue(layer)){
-					Logger.loudLogLine("Passing click to " + c.getName());
-					if(c.mouseClick(button, x, y)){ //if event is consumed, no other layers get it
-						Logger.loudLogLine("Click consumed by " + c.getName());
-						break;
-					}
-				}
-			}
-		}
+		tierLoop: //break out of this block once input is consumed
+		for(int layer = 0; layer<MAX_LAYER; layer++)
+			if(tiers.containsKey(layer))
+				for(Component c: tiers.getValue(layer))
+					if(c.mouseClick(button, x, y)) //if event is consumed, no other layers get it
+						break tierLoop;
 	}
 
 	@Override
@@ -114,11 +104,12 @@ public class LayeredGUI implements InputListener{
 
 	@Override
 	public void mouseMoved(int oldX, int oldY, int newX, int newY) {
+		tierLoop:
 		for(int layer = 0; layer<MAX_LAYER; layer++){
 			if(tiers.containsKey(layer))
 				for(Component c: tiers.getValue(layer))
 					if(c.mouseMove(oldX, oldY, newX, newY)) //if event is consumed, no other layers get it
-						break;
+						break tierLoop;
 		}
 		
 	}
