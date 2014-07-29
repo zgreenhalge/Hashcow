@@ -6,6 +6,8 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public interface Component {
 
+	public void setName(String s);
+	public String getName();
 	public int getX();
 	public int getY();
 	public int getWidth();

@@ -9,12 +9,10 @@ import org.newdawn.slick.InputListener;
 import org.newdawn.slick.state.StateBasedGame;
 
 import theGame.Main;
+import utils.Logger;
 import utils.OneToOneMap;
 
 public class LayeredGUI implements InputListener{
-
-	private static GameContainer container;
-	private static StateBasedGame game;
 	
 	private static final int MAX_LAYER = 9;
 	
@@ -22,12 +20,9 @@ public class LayeredGUI implements InputListener{
 	private OneToOneMap<Component, Integer> lookup;
 	
 	public LayeredGUI(){
-		if(container == null)
-			container = Main.getStaticContainer();
-		if(game == null)
-			game = Main.getGame();
 		tiers = new OneToOneMap<Integer, ArrayList<Component>>();
-		lookup = new OneToOneMap<Component, Integer>();
+		lookup = new OneToOneMap<Component, Integer>();	
+		Main.getStaticContainer().getInput().addListener(this);
 	}
 	
 	public void render(GameContainer container, StateBasedGame game, Graphics g){
@@ -69,16 +64,46 @@ public class LayeredGUI implements InputListener{
 			for(Component r: tiers.getValue(layer))
 				r.setHidden(false);
 	}
+	
+	public void hideAllBut(int layer){
+		for(int l = 0; l<MAX_LAYER; l++){
+			if(tiers.containsKey(l))
+				for(Component c: tiers.getValue(l))
+					if(l == layer)
+						c.setHidden(false);
+					else
+						c.setHidden(true);
+					
+		}
+	}
 
+	public void showAllBut(int layer){
+		for(int l = 0; l<MAX_LAYER; l++){
+			if(tiers.containsKey(l))
+				for(Component c: tiers.getValue(l))
+					if(l == layer)
+						c.setHidden(true);
+					else
+						c.setHidden(false);
+					
+		}
+	}
+	
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
+		Logger.loudLogLine("Mouse click: " + x + "," + y);
 		for(int layer = 0; layer<MAX_LAYER; layer++){
-			if(tiers.containsKey(layer))
-				for(Component c: tiers.getValue(layer))
-					if(c.mouseClick(button, x, y)) //if event is consumed, no other layers get it
+			if(tiers.containsKey(layer)){
+				Logger.loudLogLine("Checking componenets in layer " + layer);
+				for(Component c: tiers.getValue(layer)){
+					Logger.loudLogLine("Passing click to " + c.getName());
+					if(c.mouseClick(button, x, y)){ //if event is consumed, no other layers get it
+						Logger.loudLogLine("Click consumed by " + c.getName());
 						break;
+					}
+				}
+			}
 		}
-		
 	}
 
 	@Override

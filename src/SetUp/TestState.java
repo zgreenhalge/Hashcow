@@ -118,7 +118,7 @@ public class TestState extends BasicGameState {
 		g.drawString("Everything is working fine... for now", X+220, Y+220);
 		g.drawString("X: " + X + " Y: " + Y, 650, 0);
 		for(Button b: buttons)
-			b.render((GUIContext)container, g);
+			b.render(container, game, g);
 		if(displayLog) Logger.render();		
 	}
 

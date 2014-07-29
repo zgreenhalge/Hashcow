@@ -99,9 +99,8 @@ public class TextButton extends MouseOverArea implements Button, Component{
     }
     
     @Override
-    public Button setName(String s) {
+    public void setName(String s) {
     	name = s;
-    	return this;
     }
     
     public void setReport(boolean b){
@@ -153,7 +152,8 @@ public class TextButton extends MouseOverArea implements Button, Component{
 	public boolean mouseClick(int button, int x, int y) {
 		if(hidden)
     		return false;
-    	if(isMouseOver()){
+		Logger.loudLogLine(name + " checking for click");
+    	if(contains(x, y)){
     		if(sbg.getCurrentStateID() == stateID){ 
     			if(enabled){
 	    			if(report) 
@@ -164,10 +164,10 @@ public class TextButton extends MouseOverArea implements Button, Component{
     			}else{
     				SoundManager.getManager().playSound(SoundManager.BUTTON_DISABLED);
     			}
+    			super.mouseClicked(button, x, y, 1);
     			return true;
     		}
     	}
-		super.mouseClicked(button, x, y, 1);
 		return false;
 	}
 
@@ -183,11 +183,10 @@ public class TextButton extends MouseOverArea implements Button, Component{
 	                super.mouseMoved(oldx, oldy, newx, newy);
 	                return true;
 	            }
-	        } else 
-				lastMouseOver = false;
+			}
 			super.mouseMoved(oldx, oldy, newx, newy);
-		} else 
-			lastMouseOver = false;
+		}
+		lastMouseOver = false;
 		return false;
 	}
 

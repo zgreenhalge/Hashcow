@@ -32,12 +32,12 @@ public class Main extends StateBasedGame {
 		}
 		
 		//prints out all native display modes 
-		for(DisplayMode mode: getDisplayModes()){
+		/*for(DisplayMode mode: getDisplayModes()){
 			System.out.println(mode.getWidth() + " x " 
 							+ mode.getHeight() + " x " 
 							+ mode.getBitsPerPixel() 
 							+ " " + mode.getFrequency() + "Hz");
-		}
+		}*/
 		
 		try{
 			currentGame = new Main("This Is The Title");
@@ -73,7 +73,7 @@ public class Main extends StateBasedGame {
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new MainMenuState());
-		addState(new LoadGameState());
+		//addState(new LoadGameState());
 		addState(new GameLobbyState());
 	}
 	
@@ -90,8 +90,7 @@ public class Main extends StateBasedGame {
 		try {
 			modes = Display.getAvailableDisplayModes();
 		} catch (LWJGLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(e);
 		}
 		return modes;
 	}

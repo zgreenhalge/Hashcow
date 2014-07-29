@@ -123,7 +123,7 @@ public class GameState extends HCGameState {
 		g.scale((float)scale, (float)scale); 	//scale map render to zoom level
 		map.render(g, X, Y);
 		g.resetTransform();						//reset scale to draw HUD
-		menuBar.render(container, g);
+		menuBar.render(container, game, g);
 		super.render(container, game, g);
 	}
 

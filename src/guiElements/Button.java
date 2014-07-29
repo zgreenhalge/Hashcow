@@ -11,7 +11,7 @@ public interface Button extends Component{
 	public Action getAction();
 	public void setAction(Action a);
 	public String getName();
-	public Button setName(String s);
+	public void setName(String s);
 	public boolean isReporting();
 	public void setReport(boolean b);
 	public abstract boolean isEnabled();

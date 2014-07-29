@@ -82,15 +82,8 @@ public class ImageButton extends MouseOverArea implements Button, Component {
     }
     
     @Override
-    public Button setName(String s) {
+    public void setName(String s) {
     	name = s;
-    	return this;
-    }
-    
-    @Override
-    public void render(GUIContext guic, Graphics g){
-    	if(!hidden)
-    		super.render(guic, g);
     }
  
     public void setLocation(int x, int y){
@@ -151,22 +144,22 @@ public class ImageButton extends MouseOverArea implements Button, Component {
 	    			return true;
 	    		}
 	    	}
+			super.mouseMoved(oldx, oldy, newx, newy);
 		}
 		lastMouseOver = false;
-		super.mouseMoved(oldx, oldy, newx, newy);
 		return false;
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) {
-		// TODO Auto-generated method stub
+		if(!hidden)
+    		super.render(container, g);
 		
 	}
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) {
-		// TODO Auto-generated method stub
-		
+		//does nothing until we have animated buttons
 	}
 
 }

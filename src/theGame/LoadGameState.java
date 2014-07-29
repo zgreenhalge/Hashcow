@@ -66,7 +66,7 @@ public class LoadGameState extends HCGameState {
 	}
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException{
-		gameList.render(container, g);
+		gameList.render(container, game, g);
 		loadGameButton.render(container, g);
 		minimap.draw(600, 120);
 		if(save != null){

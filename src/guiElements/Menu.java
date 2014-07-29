@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.state.StateBasedGame;
 
 import utils.Logger;
 
@@ -12,9 +14,11 @@ import utils.Logger;
  * A horizontal menu that will scale dynamically as Buttons are added and removed
  *
  */
-public class Menu {
+public class Menu implements Component{
 
+	private static int lastId = 1;
 	
+	private String name;
 	private int X;
 	private int Y;
 	private int width = 0;
@@ -25,6 +29,7 @@ public class Menu {
 	private boolean border;
 	private boolean centeredX;
 	private boolean centeredY;
+	private boolean hidden;
 	
 	private ArrayList<Button> buttons;
 	private Color prev;
@@ -37,36 +42,7 @@ public class Menu {
 		this.X = X;
 		this.Y = Y;
 		buttons = new ArrayList<Button>();
-	}
-	
-	public void render(GameContainer container, Graphics g){
-		if(buttons.isEmpty())
-			return;
-		prev = g.getColor();
-		if(background){
-			g.setColor(bg);
-			g.fillRect(X-5, Y-2, width+5, height+5);
-			g.setColor(prev);
-		}
-		if(border){
-			g.setColor(Color.lightGray);
-			g.drawLine(X, Y, X, Y+height);
-			g.drawLine(X, Y, X+width, Y);
-			g.drawLine(X+width, Y, X+width, Y+height);
-			g.drawLine(X, Y+height, X+width, Y+height);
-		}
-		
-		for(int i=0; i<buttons.size(); i++){
-			b = buttons.get(i);
-			if(b != null){
-				if(centeredX)
-					X = (container.getWidth()-b.getWidth())/2;
-				if(centeredY)
-					Y = (container.getHeight() - (buttons.size()*b.getHeight() + b.getHeight()*(buttons.indexOf(b)))/2)/2;
-				b.setLocation(X, Y+(buttonHeight+5)*i);
-				b.render(container, g);
-			}
-		}
+		name = "Menu" + (lastId++);
 	}
 	
 	public void addButton(Button b){
@@ -125,19 +101,109 @@ public class Menu {
 			temp.setReport(b);
 	}
 
-	public void hide() {
-		for(Button temp: buttons)
-			temp.setHidden(true);
-	}
-	
-	public void show(){
-		for(Button temp: buttons)
-			temp.setHidden(false);
-	}
-
 	public void center(boolean b) {
 		centerX(b);
 		centerY(b);
+	}
+
+	@Override
+	public int getX() {
+		return X;
+	}
+
+	@Override
+	public int getY() {
+		return Y;
+	}
+
+	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	@Override
+	public void setLocation(int x, int y) {
+		X = x;
+		Y = y;
+	}
+
+	@Override
+	public void setHidden(boolean b) {
+		hidden = b;
+		for(Button temp: buttons)
+			temp.setHidden(b);
+	}
+
+	@Override
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		return new Rectangle(X, Y, width, height).contains(x, y);
+	}
+
+	@Override
+	public boolean mouseClick(int button, int x, int y) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMove(int oldx, int oldy, int newx, int newy) {
+		return false;
+	}
+
+	@Override
+	public void render(GameContainer container, StateBasedGame game, Graphics g) {
+		if(buttons.isEmpty())
+			return;
+		prev = g.getColor();
+		if(background){
+			g.setColor(bg);
+			g.fillRect(X-5, Y-2, width+5, height+5);
+			g.setColor(prev);
+		}
+		if(border){
+			g.setColor(Color.lightGray);
+			g.drawLine(X, Y, X, Y+height);
+			g.drawLine(X, Y, X+width, Y);
+			g.drawLine(X+width, Y, X+width, Y+height);
+			g.drawLine(X, Y+height, X+width, Y+height);
+		}
+		
+		for(int i=0; i<buttons.size(); i++){
+			b = buttons.get(i);
+			if(b != null){
+				if(centeredX)
+					X = (container.getWidth()-b.getWidth())/2;
+				if(centeredY)
+					Y = (container.getHeight() - (buttons.size()*b.getHeight() + b.getHeight()*(buttons.indexOf(b)))/2)/2;
+				b.setLocation(X, Y+(buttonHeight+5)*i);
+				b.render(container, game, g);
+			}
+		}
+	}
+
+	@Override
+	public void update(GameContainer container, StateBasedGame game, int delta) {
+		for(Button b: buttons)
+			b.update(container, game, delta);		
+	}
+	
+	@Override
+	public void setName(String s) {
+		name = s;		
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 	
 }

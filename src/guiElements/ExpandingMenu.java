@@ -11,6 +11,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.MouseOverArea;
+import org.newdawn.slick.state.StateBasedGame;
 
 import actions.Action;
 import actions.GenericAction;
@@ -19,11 +20,14 @@ import resourceManager.ImageManager;
 import theGame.Main;
 import utils.Logger;
 
-public class ExpandingMenu extends MouseOverArea{
+public class ExpandingMenu extends MouseOverArea implements Component{
 
 	public static final int UP = 1;
 	public static final int DOWN = 2;
 	
+	private static int lastId = 1;
+	
+	private String name;
 	private ArrayList<Button> buttons;
 	private int X;
 	private int baseY;
@@ -78,6 +82,7 @@ public class ExpandingMenu extends MouseOverArea{
 		});
 		baseFill = new Rectangle(baseX-5, baseY, super.getWidth()+10, super.getHeight());
 		expandFill = new Rectangle(0, 0, 0, 0);
+		name = "ExpandingMenu" + (lastId++);
 	}
 	
 	public void setX(int x){
@@ -118,24 +123,6 @@ public class ExpandingMenu extends MouseOverArea{
 			}
 		}
 		super.setY(y);
-	}
-	
-	@Override
-    public void render(GUIContext guic, Graphics g){
-		if(hidden)
-			return;
-		Color prev = g.getColor();
-		if(expanded){
-			g.setColor(Color.lightGray);
-			g.fill(expandFill);
-			for(Button b: buttons)
-				b.render(guic, g);
-		}
-		g.setColor(Color.lightGray);
-		g.fill(baseFill);
-		base.render(guic, g);
-		expand.render(guic, g);
-		g.setColor(prev);
 	}
 	
 	public void addButton(Button b){
@@ -198,19 +185,10 @@ public class ExpandingMenu extends MouseOverArea{
 	}
 	
 	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		if(hidden || Main.getGame().getCurrentStateID() != targetState)
-			return;
-		if(expanded && expandFill.contains(x, y)){
-			consumeEvent();
-			return;	
-		}
-		collapse();
-	}
-	
-	@Override
 	public void mouseWheelMoved(int change){
-		if(Main.getGame().getCurrentStateID() == targetState && !hidden)
+		if(hidden)
+			return;
+		if(Main.getGame().getCurrentStateID() == targetState && isMouseOver())
 			if(buttons.size() > MAX_BUTTONS)
 					for(Button b: buttons){
 						if(change > 0)
@@ -239,6 +217,63 @@ public class ExpandingMenu extends MouseOverArea{
 	
 	public boolean isHidden(){
 		return hidden;
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		if(expanded)
+			return expandFill.contains(x, y) || baseFill.contains(x, y);
+		return baseFill.contains(x, y);
+	}
+
+	@Override
+	public boolean mouseClick(int button, int x, int y) {
+		if(hidden || Main.getGame().getCurrentStateID() != targetState)
+			return false;
+		if(expanded && expandFill.contains(x, y))
+			return true;	
+		collapse();
+		return false;
+	}
+
+	@Override
+	public boolean mouseMove(int oldx, int oldy, int newx, int newy) {
+		return false;
+	}
+
+	@Override
+	public void render(GameContainer container, StateBasedGame game, Graphics g) {
+		if(hidden)
+			return;
+		Color prev = g.getColor();
+		if(expanded){
+			g.setColor(Color.lightGray);
+			g.fill(expandFill);
+			for(Button b: buttons)
+				b.render(container, game, g);
+		}
+		g.setColor(Color.lightGray);
+		g.fill(baseFill);
+		base.render(container, game, g);
+		expand.render(container, game, g);
+		g.setColor(prev);
+		
+	}
+
+	@Override
+	public void update(GameContainer container, StateBasedGame game, int delta) {
+		for(Button b: buttons)
+			b.update(container, game, delta);
+	}
+
+	@Override
+	public void setName(String s) {
+		name = s;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 	
 }

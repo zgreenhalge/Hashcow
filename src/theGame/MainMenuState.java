@@ -1,6 +1,7 @@
 package theGame;
 
 
+import guiElements.LayeredGUI;
 import guiElements.Menu;
 import guiElements.TextButton;
 
@@ -19,6 +20,7 @@ import actions.UnImplementedAction;
 import actions.WrapperAction;
 import resourceManager.FontManager;
 import resourceManager.SoundManager;
+import utils.Logger;
 import utils.Settings;
 
 public class MainMenuState extends HCGameState {
@@ -38,6 +40,7 @@ public class MainMenuState extends HCGameState {
 	private Menu mainMenu;
 	private Menu newGameMenu;
 	private Menu networkMenu;
+	private LayeredGUI gui;
 	
 	private static final int MAIN = 1;
 	private static final int NEW = 2;
@@ -97,36 +100,13 @@ public class MainMenuState extends HCGameState {
 				new UnImplementedAction());
 		JOIN_BUTTON.setEnabled(false);
 		HOST_BUTTON.setEnabled(false);
-		mainMenu = new Menu(0, 0);
-		newGameMenu = new Menu(0, 0);
-		networkMenu = new Menu(0, 0);
-		mainMenu.center(true);
-		newGameMenu.center(true);
-		networkMenu.center(true);
-		newGameMenu.setReporting(true);
-		mainMenu.setReporting(true);
-		mainMenu.addButton(NEW_BUTTON);
-		mainMenu.addButton(LOAD_BUTTON);
-		mainMenu.addButton(SETTINGS_BUTTON);
-		mainMenu.addButton(EXIT_BUTTON);
-		newGameMenu.addButton(LOCAL_BUTTON);
-		newGameMenu.addButton(NETWORK_BUTTON);
-		newGameMenu.addButton(BACK_BUTTON);
-		networkMenu.addButton(JOIN_BUTTON);
-		networkMenu.addButton(HOST_BUTTON);
-		networkMenu.addButton(BACK_BUTTON);
-		setDisplayLevel(MAIN);
+		LOAD_BUTTON.setEnabled(false);
 	}
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		g.setAntiAlias(true);
-		switch(displayLevel){
-			case MAIN: mainMenu.render(container, g); break;
-			case NEW: newGameMenu.render(container, g); break;
-			case NETWORK: networkMenu.render(container, g); break;
-		}
+		gui.render(container, game, g);
 	    super.render(container, game, g);
 	}
 
@@ -147,26 +127,45 @@ public class MainMenuState extends HCGameState {
 	}
 	
 	public void setDisplayLevel(int i){
-		switch(displayLevel){
-			case MAIN: mainMenu.hide(); break;
-			case NEW: newGameMenu.hide(); break;
-			case NETWORK: networkMenu.hide(); break;
-		}
 		displayLevel = i;
-		switch(displayLevel){
-			case MAIN: mainMenu.show(); break;
-			case NEW: newGameMenu.show(); break;
-			case NETWORK: networkMenu.show(); break;
-		}
+		gui.hideAllBut(displayLevel);
 	}
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		super.enter(container, game);
 		container.setAlwaysRender(true);
-		sm = SoundManager.getManager();
+		if(sm == null)
+			sm = SoundManager.getManager();
 		SoundManager.setVolume((Float)Settings.getSetting(Settings.VOLUME));
 		sm.loopSound(SoundManager.MAIN_MENU);
-		super.enter(container, game);
+		if(mainMenu == null){
+			mainMenu = new Menu(0, 0);
+			newGameMenu = new Menu(0, 0);
+			networkMenu = new Menu(0, 0);
+			mainMenu.center(true);
+			newGameMenu.center(true);
+			networkMenu.center(true);
+			newGameMenu.setReporting(true);
+			mainMenu.setReporting(true);
+			mainMenu.addButton(NEW_BUTTON);
+			mainMenu.addButton(LOAD_BUTTON);
+			mainMenu.addButton(SETTINGS_BUTTON);
+			mainMenu.addButton(EXIT_BUTTON);
+			newGameMenu.addButton(LOCAL_BUTTON);
+			newGameMenu.addButton(NETWORK_BUTTON);
+			newGameMenu.addButton(BACK_BUTTON);
+			networkMenu.addButton(JOIN_BUTTON);
+			networkMenu.addButton(HOST_BUTTON);
+			networkMenu.addButton(BACK_BUTTON);
+		}
+		if(gui == null){
+			gui = new LayeredGUI();
+			gui.add(mainMenu, MAIN);
+			gui.add(newGameMenu, NEW);
+			gui.add(networkMenu, NETWORK);
+		}
+		setDisplayLevel(MAIN);
 	}
 
 }

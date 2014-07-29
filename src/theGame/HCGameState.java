@@ -32,7 +32,7 @@ public class HCGameState extends BasicGameState{
 			}
 		}
 		in = container.getInput();
-		Logger.logLine("State " + getID() + " is initializing");
+		Logger.loudLogLine("State " + getID() + " is initializing");
 	}
 
 	@Override
@@ -65,6 +65,10 @@ public class HCGameState extends BasicGameState{
 			}catch(SlickException e){
 				Logger.log(new Exception("Cannot enter fullscreen mode"));
 			}
+	}
+	
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		Logger.loudLogLine("Entering state " + getID());
 	}
 
 	//MUST BE OVERRIDDEN IN EACH SUB CLASS
