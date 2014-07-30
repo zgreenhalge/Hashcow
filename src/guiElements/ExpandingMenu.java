@@ -6,6 +6,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
@@ -82,7 +83,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 		});
 		baseFill = new Rectangle(baseX-5, baseY, super.getWidth()+10, super.getHeight());
 		expandFill = new Rectangle(0, 0, 0, 0);
-		name = "ExpandingMenu" + (lastId++);
+		name = base.getName() + "ExpandingMenu";
 	}
 	
 	public void setX(int x){
@@ -171,9 +172,10 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			expandFill = new Rectangle(X-5, baseY+getHeight()-1, getWidth()+10, height+1);
 		}
 		for(Button b: buttons)
-			if(expandFill.contains(b.getX(), b.getY())){
+			if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2)){
 				b.setHidden(false);
-				b.setEnabled(true);
+			}else{
+				b.setHidden(true);
 			}
 		expanded = true;
 	}
@@ -185,24 +187,6 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			b.setHidden(true);
 		}
 		expanded = false;
-	}
-	
-	@Override
-	public void mouseWheelMoved(int change){
-		if(hidden)
-			return;
-		if(Main.getGame().getCurrentStateID() == targetState && isMouseOver())
-			if(buttons.size() > MAX_BUTTONS)
-					for(Button b: buttons){
-						if(change > 0)
-							b.setLocation(b.getX(), b.getY()-4);
-						else
-							b.setLocation(b.getX(), b.getY()+4);
-						if(expandFill.contains(b.getX(), b.getY()))
-							b.setHidden(false);
-						else
-							b.setHidden(true);
-					}
 	}
 	
 	public void setReporting(boolean b){
@@ -231,11 +215,13 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 
 	@Override
 	public boolean mouseClick(int button, int x, int y){
+		if(hidden || Main.getGame().getCurrentStateID() != targetState)
+			return false;
+		if(base.mouseClick(button, x, y))
+			return true;
 		for(Button b: buttons)
 			if(b.mouseClick(button, x, y))
 				return true;
-		if(hidden || Main.getGame().getCurrentStateID() != targetState)
-			return false;
 		if(expanded && expandFill.contains(x, y))
 			return true;	
 		collapse();
@@ -244,6 +230,14 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 
 	@Override
 	public boolean mouseMove(int oldx, int oldy, int newx, int newy) {
+		if(base.mouseMove(oldx, oldy, newx, newy) || baseFill.contains(newx, newy))
+			return true;
+		for(Button b: buttons)
+			if(b.mouseMove(oldx, oldy, newx, newy))
+				return true;
+		if(expanded)
+			if(expandFill.contains(newx, newy))
+				return true;
 		return false;
 	}
 
@@ -290,6 +284,31 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 	@Override
 	public void setReport(boolean b) {
 		reporting = b;
+	}
+
+	@Override
+	public boolean mouseWheelMove(int change) {
+		if(hidden)
+			return false;
+		if(Main.getGame().getCurrentStateID() == targetState){
+			Input in = Main.getStaticContainer().getInput();
+			if(contains(in.getMouseX(), in.getMouseY())){
+				if(buttons.size() > MAX_BUTTONS){
+					for(Button b: buttons){
+						if(change > 0)
+							b.setLocation(b.getX(), b.getY()-4);
+						else
+							b.setLocation(b.getX(), b.getY()+4);
+						if(expandFill.contains(b.getX(), b.getY()))
+							b.setHidden(false);
+						else
+							b.setHidden(true);
+					}
+				return true;
+				}
+			}
+		}
+		return false;		
 	}
 	
 }

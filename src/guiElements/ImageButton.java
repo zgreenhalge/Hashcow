@@ -162,4 +162,10 @@ public class ImageButton extends MouseOverArea implements Button, Component {
 		//does nothing until we have animated buttons
 	}
 
+	@Override
+	public boolean mouseWheelMove(int change) {
+		// does nothing in this component 
+		return false;
+	}
+
 }

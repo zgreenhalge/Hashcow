@@ -5,19 +5,20 @@ import java.util.ArrayList;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.InputListener;
 import org.newdawn.slick.state.StateBasedGame;
 
 import theGame.Main;
 import utils.Logger;
 import utils.OneToOneMap;
+import utils.Settings;
 
-public class LayeredGUI implements InputListener{
+public class LayeredGUI implements GUI{
 	
-	private static final int MAX_LAYER = 9;
+	private static final int MAX_LAYER = 10;
 	
 	private OneToOneMap<Integer, ArrayList<Component>> tiers;
 	private OneToOneMap<Component, Integer> lookup;
+	private int currentLayer = 4;
 	
 	public LayeredGUI(){
 		tiers = new OneToOneMap<Integer, ArrayList<Component>>();
@@ -26,7 +27,7 @@ public class LayeredGUI implements InputListener{
 	}
 	
 	public void render(GameContainer container, StateBasedGame game, Graphics g){
-		for(int layer = 0; layer<MAX_LAYER; layer++){
+		for(int layer = MAX_LAYER-1; layer > -1; layer--){
 			if(tiers.containsKey(layer))
 				for(Component c: tiers.getValue(layer))
 					c.render(container, game, g);
@@ -39,7 +40,26 @@ public class LayeredGUI implements InputListener{
 			c.update(container, game, delta);
 	}
 	
+	public void add(Component c){
+		lookup.add(c, currentLayer);
+		if(!tiers.containsKey(currentLayer))
+			tiers.add(currentLayer, new ArrayList<Component>());
+		tiers.getValue(currentLayer).add(c);
+	}
+	
+	public void setLayer(int i){
+		if(i >= MAX_LAYER)
+			i = MAX_LAYER-1;
+		else if(i < 0)
+			i = 0;
+		currentLayer = i;
+	}
+	
 	public void add(Component c, int layer){
+		if(layer >= MAX_LAYER)
+			layer = MAX_LAYER-1;
+		else if(layer < 0)
+			layer = 0;
 		lookup.add(c, layer);
 		if(!tiers.containsKey(layer))
 			tiers.add(layer, new ArrayList<Component>());
@@ -86,8 +106,9 @@ public class LayeredGUI implements InputListener{
 	}
 	
 	@Override
-	public void mouseClicked(int button, int x, int y, int clickCount) {
-		Logger.loudLogLine("Mouse click: " + x + "," + y);
+	public void mouseClicked(int button, int x, int y, int clickCount){
+		if((Boolean) Settings.getSetting("dev"))
+			Logger.logNote("Mouse click: " + x + "," + y);
 		tierLoop: //break out of this block once input is consumed
 		for(int layer = 0; layer<MAX_LAYER; layer++)
 			if(tiers.containsKey(layer))
@@ -127,9 +148,15 @@ public class LayeredGUI implements InputListener{
 	}
 
 	@Override
-	public void mouseWheelMoved(int change) {
-		// TODO Auto-generated method stub
-		
+	public void mouseWheelMoved(int change){
+		Logger.logNote("Mouse wheel moved");
+		tierLoop:
+			for(int layer = 0; layer<MAX_LAYER; layer++){
+				if(tiers.containsKey(layer))
+					for(Component c: tiers.getValue(layer))
+						if(c.mouseWheelMove(change)) //if event is consumed, no other layers get it
+							break tierLoop;
+			}
 	}
 
 	@Override

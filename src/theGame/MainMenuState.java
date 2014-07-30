@@ -19,6 +19,7 @@ import actions.StateTransitionAction;
 import actions.UnImplementedAction;
 import actions.WrapperAction;
 import resourceManager.FontManager;
+import resourceManager.ImageManager;
 import resourceManager.SoundManager;
 import utils.Logger;
 import utils.Settings;

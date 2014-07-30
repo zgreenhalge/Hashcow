@@ -20,6 +20,7 @@ public interface Component {
 	public boolean contains(int x, int y);
 	public boolean mouseClick(int button, int x, int y);
 	public boolean mouseMove(int oldx, int oldy, int newx, int newy);
+	public boolean mouseWheelMove(int change);
 	public void render(GameContainer container, StateBasedGame game, Graphics g);
 	public void update(GameContainer container, StateBasedGame game, int delta);
 	

@@ -7,21 +7,25 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.state.StateBasedGame;
 
 import actions.GenericAction;
 import actions.GenericIdAction;
 import resourceManager.FontManager;
 import theGame.GameLobbyState;
 import theGame.Main;
+import utils.Logger;
 import gamePieces.Player;
 import gamePieces.PlayerColors;
 import gamePieces.Race;
 
-public class LocalPlayerLobbyPanel {
+public class LocalPlayerLobbyPanel implements Component{
 
 	private static TrueTypeFont nameFont = FontManager.NAME_TRUETYPE;
 	private static PlayerColors colors = new PlayerColors();
+	private static int lastId = 1;
 	
+	private String name;
 	private GameLobbyState lobby;
 	private Player player;
 	private int X;
@@ -34,6 +38,7 @@ public class LocalPlayerLobbyPanel {
 	private Image colorTile;
 	
 	private boolean hidden;
+	private boolean reporting;
 	
 	public LocalPlayerLobbyPanel(GameLobbyState lby, Player p, int x, int y) throws SlickException{
 		GameContainer container = Main.getStaticContainer();
@@ -82,7 +87,7 @@ public class LocalPlayerLobbyPanel {
 			}));
 		colorMenu.setReporting(true);
 		raceMenu.setReporting(true);
-		
+		name = "LocalPlayerLobbyPanel" + (lastId++);
 	}
 	
 	public Player getPlayer(){
@@ -105,18 +110,6 @@ public class LocalPlayerLobbyPanel {
 		return Y;
 	}
 	
-	public void render(GameContainer container, Graphics g){
-		if(hidden)
-			return;
-		if(player.getRace() == null)
-			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName());
-		else
-			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName() + " - " + player.getRace());
-		colorMenu.render(container, g);
-		raceMenu.render(container, g);
-		colorTile.draw(X, Y);
-	}
-	
 	public void setHidden(boolean b){
 		hidden = b;
 		colorMenu.setHidden(b);
@@ -135,6 +128,73 @@ public class LocalPlayerLobbyPanel {
 		raceMenu.setY(Y + nameFont.getHeight() + container.getHeight()/50);
 		colorMenu.setX(X);
 		colorMenu.setY(Y + nameFont.getHeight() + container.getHeight()/50);
+	}
+
+	@Override
+	public void setName(String s) {
+		name = s;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean isReporting() {
+		return reporting;
+	}
+
+	@Override
+	public void setReport(boolean b) {
+		reporting = b;
+		raceMenu.setReport(b);
+		colorMenu.setReport(b);
+	}
+
+	@Override
+	public boolean contains(int x, int y) {
+		if(x < X || x > X + getWidth())
+			return false;
+		if(y < Y || y > Y + getHeight())
+			return false;
+		return true;
+	}
+
+	@Override
+	public boolean mouseClick(int button, int x, int y) {
+		return raceMenu.mouseClick(button, x, y) || colorMenu.mouseClick(button, x, y);
+	}
+
+	@Override
+	public boolean mouseMove(int oldx, int oldy, int newx, int newy) {
+		return raceMenu.mouseMove(oldx, oldy, newx, newy) || colorMenu.mouseMove(oldx, oldy, newx, newy);
+	}
+
+	@Override
+	public void render(GameContainer container, StateBasedGame game, Graphics g) {
+		if(hidden)
+			return;
+		if(player.getRace() == null)
+			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName());
+		else
+			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName() + " - " + player.getRace());
+		colorMenu.render(container, game, g);
+		raceMenu.render(container, game, g);
+		colorTile.draw(X, Y);
+	}
+
+	@Override
+	public void update(GameContainer container, StateBasedGame game, int delta) {
+		raceMenu.update(container, game, delta);
+		colorMenu.update(container, game, delta);
+	}
+
+	@Override
+	public boolean mouseWheelMove(int change) {
+		if(hidden) 
+			return false;
+		return raceMenu.mouseWheelMove(change) || colorMenu.mouseWheelMove(change);
 	}
 	
 }

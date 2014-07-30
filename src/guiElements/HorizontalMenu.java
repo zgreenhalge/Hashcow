@@ -150,5 +150,11 @@ public class HorizontalMenu implements Menu{
 	@Override
 	public void setReport(boolean b) {		
 	}
+
+	@Override
+	public boolean mouseWheelMove(int change) {
+		// does nothing in this component
+		return false;
+	}
 	
 }

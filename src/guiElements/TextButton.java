@@ -182,10 +182,9 @@ public class TextButton extends MouseOverArea implements Button, Component{
 	                super.mouseMoved(oldx, oldy, newx, newy);
 	                return true;
 	            }
-			}
+			}else lastMouseOver = false;
 			super.mouseMoved(oldx, oldy, newx, newy);
-		}
-		lastMouseOver = false;
+		}else lastMouseOver = false;
 		return false;
 	}
 
@@ -236,6 +235,13 @@ public class TextButton extends MouseOverArea implements Button, Component{
 
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta){	
+	}
+
+
+	@Override
+	public boolean mouseWheelMove(int change) {
+		// does nothing in this component
+		return false;
 	}
 
 

@@ -3,6 +3,7 @@ package theGame;
 import gamePieces.MapInfo;
 import gamePieces.Player;
 import guiElements.ExpandingMenu;
+import guiElements.LayeredGUI;
 import guiElements.LocalPlayerLobbyPanel;
 import guiElements.TextButton;
 
@@ -21,6 +22,7 @@ import actions.GenericAction;
 import actions.GenericIdAction;
 import actions.StateTransitionAction;
 import resourceManager.FontManager;
+import resourceManager.ImageManager;
 import resourceManager.MapManager;
 import utils.Logger;
 import utils.OneToOneMap;
@@ -39,6 +41,7 @@ public class GameLobbyState extends HCGameState {
 	
 	private int numPlayers;
 	
+	private LayeredGUI gui;
 	private MapInfo selectedMap;
 	private OneToOneMap<Player, Color> selectedColors;
 	private ArrayList<LocalPlayerLobbyPanel> players;
@@ -82,7 +85,7 @@ public class GameLobbyState extends HCGameState {
 		mapMenu = new ExpandingMenu(container, ID, mapMenuBase, 0, minimapY + minimap.getHeight() + cHeight/50, ExpandingMenu.DOWN, 10);
 		mapMenu.setX(minimapX+((minimap.getWidth()-mapMenu.getWidth())/2));
 		for(MapInfo map: maps){
-			mapMenu.addButton(new TextButton(container, buttonFont, "(" + map.getMaxPlayers() + ")" + map.getName(),
+			mapMenu.addButton(new TextButton(container, buttonFont, "(" + map.getMaxPlayers() + ") " + map.getName(),
 					0, 0,
 					game, this.getID(), 
 					new GenericIdAction(maps.indexOf(map)){
@@ -93,7 +96,7 @@ public class GameLobbyState extends HCGameState {
 			}));
 		}
 		removePlayerButton = new TextButton(container, buttonFont, " - ",
-				temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight(),
+				temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2,
 				game, this.getID(), 
 				new GenericAction(){
 			public void activate(){
@@ -101,7 +104,7 @@ public class GameLobbyState extends HCGameState {
 			}
 		}); 
 		addPlayerButton = new TextButton(container, buttonFont, " + ",
-				temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight(),
+				temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2,
 				game, this.getID(), 
 				new GenericAction(){
 					public void activate(){
@@ -127,29 +130,34 @@ public class GameLobbyState extends HCGameState {
 						Main.getGame().enterState(gs.getID());
 					}
 		});
-		backButton.setBorderEnabled(true);
-		startButton.setBorderEnabled(true);
-		addPlayerButton.setBorderEnabled(true);
-		removePlayerButton.setBorderEnabled(true);
-		startButton.setEnabled(false);
 	}
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		currentLobby = this;
+		backButton.setBorderEnabled(true);
+		startButton.setBorderEnabled(true);
+		addPlayerButton.setBorderEnabled(true);
+		removePlayerButton.setBorderEnabled(true);
+		startButton.setEnabled(false);
+		mapMenu.collapse();
+		if(gui == null){
+			gui = new LayeredGUI();
+			gui.add(mapMenu, 0);
+			gui.add(startButton, 1);
+			gui.add(backButton, 1);
+			for(int i = players.size()-1; i>-1; i--)
+				gui.add(players.get(i), i);
+			gui.add(addPlayerButton, 9);
+			gui.add(removePlayerButton, 9);
+		}
 	}
 		
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException{
 		super.render(container, game, g);
-		mapMenu.render(container, g);
+		gui.render(container, game, g);
 		minimap.draw(minimapX, minimapY);
-		startButton.render(container, g);
-		backButton.render(container, g);
-		addPlayerButton.render(container, g);
-		removePlayerButton.render(container, g);
-		for(int i = players.size()-1; i>-1; i--)
-			players.get(i).render(container, g);
 		
 	}
 	
@@ -158,6 +166,7 @@ public class GameLobbyState extends HCGameState {
 		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			game.enterState(MainMenuState.ID);
 		evaluateStartButton();
+		gui.update(container, game, delta);
 		super.update(container, game, delta);
 		
 	}
