@@ -149,7 +149,6 @@ public class LayeredGUI implements GUI{
 
 	@Override
 	public void mouseWheelMoved(int change){
-		Logger.logNote("Mouse wheel moved");
 		tierLoop:
 			for(int layer = 0; layer<MAX_LAYER; layer++){
 				if(tiers.containsKey(layer))

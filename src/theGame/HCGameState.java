@@ -45,12 +45,12 @@ public class HCGameState extends BasicGameState{
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		Logger.update(delta);
-		if(Display.wasResized()){
+		if(Display.getHeight() != container.getHeight() || Display.getWidth() != container.getWidth()){
 	        try{
 	        	Settings.set("resolution", Display.getWidth() + "x" + Display.getHeight());
 	        	((AppGameContainer) container).setDisplayMode(Display.getWidth(), Display.getHeight(), false);
-	        	for(int i=0; i< game.getStateCount(); i++)
-	        		game.getState(i).init(container, game);
+	        	Logger.loudLogLine("Display resize detected. Reinitializing states.");
+	        	container.reinit();
 	        }catch(Exception e){
 	            e.printStackTrace();
 	        }

@@ -81,7 +81,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 				this.action.activate();
 			}
 		});
-		baseFill = new Rectangle(baseX-5, baseY, super.getWidth()+10, super.getHeight());
+		baseFill = new Rectangle(base.getX()-5, baseY, getWidth()+10, getHeight());
 		expandFill = new Rectangle(0, 0, 0, 0);
 		name = base.getName() + "ExpandingMenu";
 	}
@@ -89,7 +89,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 	public void setX(int x){
 		X = x;
 		base.setLocation(X, baseY);
-		baseFill.setX(x-5);
+		baseFill.setX(base.getX()-5);
 		buttonHeight = 0;
 		if(orientation == UP){
 			for(Button b: buttons){
@@ -160,7 +160,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			else
 				for(Button b: buttons)
 					expandY -= b.getHeight();
-			expandFill = new Rectangle(X-5, expandY, getWidth()+10, Math.abs(baseY-expandY)+2);
+			expandFill = new Rectangle(base.getX()-5, expandY, getWidth()+10, Math.abs(baseY-expandY)+2);
 		}else{
 			int height = 0;
 			if(buttons.size() >= MAX_BUTTONS)
@@ -169,7 +169,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			else
 				for(Button b: buttons)
 					height += b.getHeight();
-			expandFill = new Rectangle(X-5, baseY+getHeight()-1, getWidth()+10, height+1);
+			expandFill = new Rectangle(base.getX()-5, baseY+getHeight()-1, getWidth()+10, height+1);
 		}
 		for(Button b: buttons)
 			if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2)){
@@ -293,19 +293,28 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 		if(Main.getGame().getCurrentStateID() == targetState){
 			Input in = Main.getStaticContainer().getInput();
 			if(contains(in.getMouseX(), in.getMouseY())){
+				Logger.loudLogLine(change + " ");
 				if(buttons.size() > MAX_BUTTONS){
-					for(Button b: buttons){
-						if(change > 0)
+					if(change > 0 && !contains(base.getX(), buttons.get(buttons.size()-1).getY()+buttons.get(buttons.size()-1).getHeight())){
+						for(Button b: buttons){
 							b.setLocation(b.getX(), b.getY()-4);
-						else
-							b.setLocation(b.getX(), b.getY()+4);
-						if(expandFill.contains(b.getX(), b.getY()))
-							b.setHidden(false);
-						else
-							b.setHidden(true);
+							if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2))
+								b.setHidden(false);
+							else
+								b.setHidden(true);
+						}
 					}
-				return true;
+					else if(!contains(base.getX(), buttons.get(0).getY()-buttons.get(0).getHeight())){
+						for(Button b: buttons){
+							b.setLocation(b.getX(), b.getY()+4);
+							if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2))
+								b.setHidden(false);
+							else
+								b.setHidden(true);
+						}
+					}
 				}
+				return true;
 			}
 		}
 		return false;		

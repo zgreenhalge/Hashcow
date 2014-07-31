@@ -27,7 +27,8 @@ public enum Race {
 		switch(id){
 			case 0: return TEST;
 			case 1: return HUMAN;
-			case 2: return BUG;
+			case 2: return ANDROID;
+			case 3: return BUG;
 			default: return null;
 		}
 	}
