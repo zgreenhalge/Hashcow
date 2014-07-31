@@ -10,6 +10,7 @@ import gamePieces.TestUnit;
 import gamePieces.Unit;
 import guiElements.Button;
 import guiElements.HorizontalMenu;
+import guiElements.LayeredGUI;
 import guiElements.TextButton;
 
 import org.newdawn.slick.GameContainer;
@@ -39,8 +40,10 @@ public class GameState extends HCGameState {
 	private Player curPlayer;
 	private int selectedX;
 	private int selectedY;
+	private LayeredGUI gui; 
 	private HorizontalMenu menuBar;
 	private Button endTurnButton;
+	private Button saveGameButton;
 
 	//variables for moving map with mouse
 	private boolean mouseWasDown;
@@ -71,8 +74,7 @@ public class GameState extends HCGameState {
 	}
 	
 	@Override
-	public void init(GameContainer container, StateBasedGame game)
-			throws SlickException{
+	public void init(GameContainer container, StateBasedGame game) throws SlickException{
 		super.init(container, game);
 		gameState = this;
 		mouseWasDown = false;
@@ -80,14 +82,22 @@ public class GameState extends HCGameState {
 		//Y = centerY = (container.getHeight() - map.getHeight()*32)/2;
 		scale = 1.0f;
 		input = container.getInput();
-		try{
-			endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn", 0, 0, game, ID, new Action(){public void activate(){endTurn();}});
-		}catch(Exception e){Logger.loudLog(e);}
-		menuBar = new HorizontalMenu(container.getWidth() - (endTurnButton.getWidth() + FontManager.BUTTON_TRUETYPE.getWidth("Save Game")), 0);
-		menuBar.addButton(endTurnButton);
-		try{
-			menuBar.addButton(new TextButton(container, FontManager.BUTTON_FONT, "Save Game", 0, 0, game, ID, new Action(){public void activate(){SaveState.save(new SaveState(gameState));}}));
-		}catch(Exception e){Logger.loudLog(e);}
+		endTurnButton = new TextButton(container, FontManager.BUTTON_FONT, "End Turn",
+				0, 0, game, ID,
+				new Action(){
+					public void activate(){
+						endTurn();
+					}
+				}
+		);
+		saveGameButton = new TextButton(container, FontManager.BUTTON_FONT, "Save Game",
+				0, 0, game, ID,
+				new Action(){
+					public void activate(){
+						SaveState.save(new SaveState(gameState));
+					}
+				}
+		);
 		init = true;
 	}
 	
@@ -95,6 +105,14 @@ public class GameState extends HCGameState {
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		if(!init)
 			init(container, game);
+		if(gui == null){
+			gui = new LayeredGUI();
+			menuBar = new HorizontalMenu(0, 0);
+			menuBar.addButton(endTurnButton);
+			menuBar.addButton(saveGameButton);
+			menuBar.setLocation(container.getWidth() - menuBar.getWidth(), 0);
+			gui.add(menuBar);
+		}
 		if(!playing){
 			Coordinate start;
 			for(int n=0; n<players.size(); n++){
@@ -120,10 +138,12 @@ public class GameState extends HCGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		g.scale((float)scale, (float)scale); 	//scale map render to zoom level
+		/****************************************************************************/
+		g.scale((float)scale, (float)scale);
 		map.render(g, X, Y);
-		g.resetTransform();						//reset scale to draw HUD
-		menuBar.render(container, game, g);
+		g.resetTransform();
+		/***************************************************************************/
+		gui.render(container, game, g);
 		super.render(container, game, g);
 	}
 

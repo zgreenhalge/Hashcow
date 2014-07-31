@@ -293,7 +293,6 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 		if(Main.getGame().getCurrentStateID() == targetState){
 			Input in = Main.getStaticContainer().getInput();
 			if(contains(in.getMouseX(), in.getMouseY())){
-				Logger.loudLogLine(change + " ");
 				if(buttons.size() > MAX_BUTTONS){
 					if(change > 0 && !contains(base.getX(), buttons.get(buttons.size()-1).getY()+buttons.get(buttons.size()-1).getHeight())){
 						for(Button b: buttons){
