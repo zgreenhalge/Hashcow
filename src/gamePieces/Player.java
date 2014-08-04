@@ -20,6 +20,7 @@ public class Player implements Serializable{
 	
 	private int lastX;
 	private int lastY;
+	private float scale;
 	
 	private Color teamColor;
 	private Race race;
@@ -41,6 +42,7 @@ public class Player implements Serializable{
 		owned = new ArrayList<Unit>(units);
 		sight = new SightMap(id); 
 		name = "Player " + id;
+		scale = 1.0f;
 	}
 	
 	public String getName(){
@@ -194,6 +196,14 @@ public class Player implements Serializable{
 
 	public void setLastY(int y) {
 		this.lastY = y;
+	}
+	
+	public void setScale(float s){
+		scale = s;
+	}
+	
+	public float getScale(){
+		return scale;
 	}
 	
 	private void writeObject(ObjectOutputStream oos) throws IOException{

@@ -28,7 +28,10 @@ public class LoadGameState extends HCGameState {
 	private VerticalMenu gameList;
 	private ArrayList<SaveState> savedGames;
 	private File saveFolder;
+	
 	private int mapWidth;
+	private int mMapX;
+	private int mMapY;
 	
 	private LayeredGUI gui;
 	private TextButton selectedButton;
@@ -41,11 +44,13 @@ public class LoadGameState extends HCGameState {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
 		super.init(gc, sbg);
-		gameList = new VerticalMenu(20, 20);
+		mapWidth = 3*gc.getWidth()/12;
+		mMapX = 2*gc.getWidth()/3;
+		mMapY = gc.getWidth()/20;
+		gameList = new VerticalMenu(mMapY, mMapY);
 		savedGames = new ArrayList<SaveState>();
 		TextButton temp;
 		saveFolder = new File("saves");
-		mapWidth = gc.getWidth()/5;
 		minimap = new Image(mapWidth, mapWidth);
 		loadGame = new LoadGameAction();
 		if(saveFolder.exists())
@@ -69,11 +74,11 @@ public class LoadGameState extends HCGameState {
 				gameList.addButton(temp);
 			}
 		loadGameButton = new TextButton(gc, FontManager.BUTTON_FONT, "Load",
-				600, 370,
+				mMapX, mMapY + gc.getHeight() - FontManager.BUTTON_TRUETYPE.getLineHeight()*4,
 				sbg, ID,
 				loadGame);
 		backButton = new TextButton(gc, FontManager.BUTTON_FONT, "Back",
-				0, 0,
+				mMapX + mapWidth - FontManager.BUTTON_TRUETYPE.getWidth("Back"), mMapY + gc.getHeight() - FontManager.BUTTON_TRUETYPE.getLineHeight()*4,
 				sbg, ID, 
 				new StateTransitionAction(sbg, MainMenuState.ID));
 	}
@@ -94,12 +99,12 @@ public class LoadGameState extends HCGameState {
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException{
 		gui.render(container, game, g);
-		minimap.draw(600, 120);
+		minimap.draw(mMapX, mMapY);
 		if(save != null){
 			int day = (save.getTurn()*save.getTurnLength())/24;
 			int time = (save.getTurn()*save.getTurnLength())%24;
-			g.drawString("DAY " + day + " " + time + ":00", 600, 330);
-			g.drawString("Players: " + save.getPlayers().size(), 600, 350);
+			g.drawString("DAY " + day + " " + time + ":00", mMapX, mMapY + mapWidth + g.getFont().getLineHeight());
+			g.drawString("Players: " + save.getPlayers().size(), mMapX, mMapY + mapWidth + g.getFont().getLineHeight()*2);
 		}
 		super.render(container, game, g);
 	}
@@ -109,6 +114,7 @@ public class LoadGameState extends HCGameState {
 		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			game.enterState(MainMenuState.ID);
 		super.update(container, game, delta);
+		gui.update(container, game, delta);
 	}
 	
 	@Override

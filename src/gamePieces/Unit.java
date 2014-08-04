@@ -35,7 +35,7 @@ public abstract class Unit implements Selectable, Serializable{
 	protected transient UnitImage image;
 	protected transient UnitSound sound;
 	protected transient Animation current;
-	protected transient Animation cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
+	protected transient Animation cursor;
 	protected int unitId;
 	
 	protected MovementType moveType;
@@ -79,6 +79,7 @@ public abstract class Unit implements Selectable, Serializable{
 		image = TestUnitLibrary.getUnitImage(unitId);
 		sound = TestUnitLibrary.getUnitSound(unitId);
 		current = image.getAnimation(UnitImage.IDLE);
+		cursor = ImageManager.getAnimation(ImageManager.getSpriteSheet("res/images/selectedTile.png", 32, 32, 1), 400);
 	}
 	
 	/**

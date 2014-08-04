@@ -210,6 +210,7 @@ public class InGameState extends HCGameState {
 	public void startTurn(){
 		X = curPlayer.getLastX();
 		Y = curPlayer.getLastY();
+		scale = curPlayer.getScale();
 		for(Unit u: curPlayer.owned())
 			u.setVisible(true);
 		map.setSightMap(curPlayer.getSightMap());
@@ -219,6 +220,7 @@ public class InGameState extends HCGameState {
 	public void endTurn(){
 		curPlayer.setLastX(X);
 		curPlayer.setLastY(Y);
+		curPlayer.setScale(scale);
 		if(playing){
 			curPlayer.age();
 			map.hideAll();
