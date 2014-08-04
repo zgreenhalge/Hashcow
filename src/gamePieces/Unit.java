@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.PriorityQueue; 
 import java.util.Set;
 
@@ -473,8 +475,8 @@ public abstract class Unit implements Selectable, Serializable{
 	 * @author Anthony
 	 */
 	class PathStruct{
-		PathStruct prev;
 		PathStruct next;
+		PathStruct prev;
 		Coordinate coord;
 		int pathRemaining;
 		 
@@ -488,28 +490,50 @@ public abstract class Unit implements Selectable, Serializable{
 				pathRemaining = prev.pathRemaining;
 		}
 		
-		public PathStruct getPrevious(){
-			return prev;
+		public ArrayList<Coordinate> buildPath(){
+			ArrayList<Coordinate> path = new ArrayList<Coordinate>();
+			PathStruct p = prev;
+			path.add(this.coord);
+			while(p != null)
+			{
+				p = p.prev;
+				path.add(p.coord);
+			}
+			Collections.reverse(path);
+			return path;
 		}
-		
 		
 		/**
 		 * Determine the next Coordinate in the path
 		 * @return
 		 */
-		public PathStruct determineNext(){
-			PathStruct pa = null;
+		public void determineNext(){
 			OneToOneMap<Tile, Coordinate> spaces = map.getAdjacentTiles(getLocation());
 			Set<Tile> tiles = spaces.keySet();
-			Tile[] t = tiles.toArray(new Tile[0]);
-			for(Tile tile : t)
-				if(tile.isTraversable())
-					if(tile.moveCost(moveType) <= pathRemaining){
-						pathRemaining -= tile.moveCost(moveType);
-						pa = new PathStruct(PathStruct.this, spaces.getValue(tile));
-					}
-			return pa;
-			}
+			Iterator<Tile> itr = tiles.iterator();
+			Tile theTile = null;
+			
+			while(itr.hasNext()){
+				Tile tempTile = itr.next();
+				if(!tempTile.isTraversable())
+					tiles.remove(tempTile);
+				if(theTile == null)
+					theTile = tempTile;
+				else if(tempTile.moveCost(moveType) < theTile.moveCost(moveType))
+					theTile = tempTile;
+				else
+					continue;
 		 	
+			}
+			
+			if(theTile != null)
+			{
+				next = new PathStruct(PathStruct.this, spaces.getValue(theTile));
+				pathRemaining -= theTile.moveCost(moveType);
+						
+			}
+				
 		}
+	}
 }
+	
