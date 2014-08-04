@@ -2,18 +2,18 @@ package actions;
 
 import org.newdawn.slick.state.StateBasedGame;
 
-import theGame.GameState;
+import theGame.InGameState;
 import theGame.Main;
 import utils.SaveState;
 
 public class LoadGameAction implements Action {
 
 	private SaveState save;
-	private GameState game;
+	private InGameState game;
 	
 	public LoadGameAction(){}
 
-	public LoadGameAction(GameState game){
+	public LoadGameAction(InGameState game){
 		this.game = game;
 	}
 	
@@ -25,7 +25,7 @@ public class LoadGameAction implements Action {
 		this.save = save;
 	}
 	
-	public void setGameState(GameState game){
+	public void setGameState(InGameState game){
 		this.game = game;
 	}
 	
@@ -34,7 +34,7 @@ public class LoadGameAction implements Action {
 		if(save == null && game == null)
 			return;
 		if(save != null)
-			game = new GameState(save);
+			game = new InGameState(save);
 		StateBasedGame sbg = Main.getGame();
 		sbg.addState(game);
 		sbg.enterState(game.getID());

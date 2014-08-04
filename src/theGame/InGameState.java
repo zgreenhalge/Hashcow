@@ -25,7 +25,7 @@ import utils.Logger;
 import utils.SaveState;
 import utils.Settings;
 
-public class GameState extends HCGameState {
+public class InGameState extends HCGameState {
 
 	private int ID;
 	private static int lastId = 2;
@@ -34,7 +34,7 @@ public class GameState extends HCGameState {
 	private boolean playing = false;
 	private ArrayList<Player> players;
 	private int turnCount = 1;
-	private GameState gameState;
+	private InGameState gameState;
 	
 	private MapInfo map;
 	private Player curPlayer;
@@ -56,14 +56,14 @@ public class GameState extends HCGameState {
 	private float scale;
 	private Input input;
 	
-	public GameState(MapInfo board, ArrayList<Player> players){
+	public InGameState(MapInfo board, ArrayList<Player> players){
 		ID = ++lastId;
 		map = board;
 		this.players = players;
 		selectedX = selectedY = -1;
 	}
 	
-	public GameState(SaveState save){
+	public InGameState(SaveState save){
 		ID = ++lastId;
 		map = save.getMap();
 		players = save.getPlayers();

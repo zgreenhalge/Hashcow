@@ -99,9 +99,7 @@ public class MainMenuState extends HCGameState {
 				new UnImplementedAction());
 		HOST_BUTTON = new TextButton(container, buttonFont, "Host", 0, 0, game, this.getID(),
 				new UnImplementedAction());
-		JOIN_BUTTON.setEnabled(false);
-		HOST_BUTTON.setEnabled(false);
-		LOAD_BUTTON.setEnabled(false);
+		NETWORK_BUTTON.setEnabled(false);
 	}
 
 	@Override

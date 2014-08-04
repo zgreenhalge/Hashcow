@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import theGame.GameState;
+import theGame.InGameState;
 
 public class SaveState implements Serializable{
 
@@ -27,7 +27,7 @@ public class SaveState implements Serializable{
 	private int turnLength;
 	private int curPlayer;
 	
-	public SaveState(GameState game){
+	public SaveState(InGameState game){
 		players = game.getPlayers();
 		map = game.getMap();
 		turn = game.getTurn();

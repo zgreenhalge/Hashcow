@@ -124,7 +124,7 @@ public class GameLobbyState extends HCGameState {
 						for(Player p: temp)
 							if(!p.ready())
 								return;
-						GameState gs = new GameState(selectedMap, temp);
+						InGameState gs = new InGameState(selectedMap, temp);
 						Main.getGame().addState(gs);
 						
 						Main.getGame().enterState(gs.getID());
