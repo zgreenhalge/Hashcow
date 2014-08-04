@@ -111,6 +111,7 @@ public class GameState extends HCGameState {
 			menuBar.addButton(endTurnButton);
 			menuBar.addButton(saveGameButton);
 			menuBar.setLocation(container.getWidth() - menuBar.getWidth(), 0);
+			Logger.loudLogLine("menuBar width: " + menuBar.getWidth());
 			gui.add(menuBar);
 		}
 		if(!playing){

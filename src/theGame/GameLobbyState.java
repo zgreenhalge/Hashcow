@@ -225,15 +225,16 @@ public class GameLobbyState extends HCGameState {
 	private void evaluateStartButton(){
 		if(selectedMap == null){
 			startButton.setEnabled(false);
-		} else if(numPlayers <= selectedMap.getMaxPlayers()){
+		}else if(numPlayers == 1){
+			startButton.setEnabled(false);
+		}else if(numPlayers <= selectedMap.getMaxPlayers()){
 			for(Player p: getPlayers())
 				if(!p.ready()){
 					startButton.setEnabled(false);
 					return;
 				}
 			startButton.setEnabled(true);
-					
-		} else
+		}else
 			startButton.setEnabled(false);
 	}
 	

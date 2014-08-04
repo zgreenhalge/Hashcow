@@ -63,7 +63,7 @@ public class SaveState implements Serializable{
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
 			oos.writeObject(target);
 			oos.close();
-			Logger.logLine(path.getName() + " saved");
+			Logger.logNote(path.getName() + " saved");
 		}catch(FileNotFoundException e){
 			Logger.log(e);
 			e.printStackTrace();

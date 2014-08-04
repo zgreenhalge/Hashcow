@@ -36,6 +36,8 @@ public class HorizontalMenu implements Menu{
 	 */
 	public void addButton(Button b){
 		buttons.add(b);
+		if(!b.isHidden())
+			width += b.getWidth();
 	}
 	
 	/**
@@ -44,6 +46,8 @@ public class HorizontalMenu implements Menu{
 	 */
 	public void removeButton(Button b){
 		buttons.remove(b);
+		if(!b.isHidden())
+			width -= b.getWidth();
 	}
 
 	/**
