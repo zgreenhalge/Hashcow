@@ -15,8 +15,8 @@ public class Time {
 	}
 	
 	public String fileDateTime(){
-		return String.format("%02d_%02d_%04d %02d.%02d.%02d%s", cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.YEAR),
-								cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND), cal.get(Calendar.AM_PM));
+		return String.format("%02d_%02d_%04d %02d-%02d", cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.YEAR),
+								cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE));
 	}
 	
 	public String dateTime(){

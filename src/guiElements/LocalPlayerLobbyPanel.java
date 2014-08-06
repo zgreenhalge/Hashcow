@@ -3,10 +3,8 @@ package guiElements;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.StateBasedGame;
 
 import actions.GenericAction;
@@ -16,55 +14,40 @@ import theGame.GameLobbyState;
 import theGame.Main;
 import utils.Logger;
 import gamePieces.Player;
-import gamePieces.PlayerColors;
 import gamePieces.Race;
 
-public class LocalPlayerLobbyPanel implements Component{
+public class LocalPlayerLobbyPanel extends PlayerLobbyPanel{
 
-	private static TrueTypeFont nameFont = FontManager.NAME_TRUETYPE;
-	private static PlayerColors colors = new PlayerColors();
 	private static int lastId = 1;
-	
-	private String name;
-	private GameLobbyState lobby;
-	private Player player;
-	private int X;
-	private int Y;
 	
 	private Button colorBase; 
 	private ExpandingMenu colorMenu;
 	private Button raceBase;
 	private ExpandingMenu raceMenu;
-	private Image colorTile;
 	
-	private boolean hidden;
 	private boolean reporting;
 	
 	public LocalPlayerLobbyPanel(GameLobbyState lby, Player p, int x, int y) throws SlickException{
+		super(lby, p, x, y);
 		GameContainer container = Main.getStaticContainer();
-		player = p;
 		lobby = lby;
-		X = x;
-		Y= y;
 		int nameHeight = nameFont.getHeight();
 		int standardHeight = FontManager.BUTTON_TRUETYPE.getHeight();
-		colorTile = new Image(nameHeight, nameHeight);
 		colorBase = new TextButton(container, FontManager.BUTTON_FONT, "Color",
 				0, 0,
 				Main.getGame(), lby.getID(),
 				new GenericAction());
 		colorMenu = new ExpandingMenu(container, lobby.getID(), colorBase, X, y+nameHeight+container.getHeight()/50, ExpandingMenu.DOWN, 5);
-		for(Color c: colors){
-			colorMenu.addButton(new ImageButton(container, new SpriteSheet(colors.getColorAsImage(c, standardHeight, standardHeight), standardHeight, standardHeight, 1),
+		for(Color c: playerColors){
+			colorMenu.addButton(new ImageButton(container, new SpriteSheet(playerColors.getColorAsImage(c, standardHeight, standardHeight), standardHeight, standardHeight, 1),
 					0, 0,
 					Main.getGame(),
 					lby.getID(), 
-					new GenericIdAction(colors.getId(c)){
+					new GenericIdAction(playerColors.getId(c)){
 				public void activate(){
-					Color temp = colors.getColor(this.id);
+					Color temp = playerColors.getColor(this.id);
 					if(!lobby.isColorTaken(temp)){
-						lobby.setColor(player, temp);
-						colorTile = colors.getColorAsImage(temp, colorTile.getWidth(), colorTile.getHeight());
+						setColor(temp);
 					}
 				}
 			}));
@@ -90,24 +73,12 @@ public class LocalPlayerLobbyPanel implements Component{
 		name = "LocalPlayerLobbyPanel" + (lastId++);
 	}
 	
-	public Player getPlayer(){
-		return player;
-	}
-	
 	public int getWidth(){
 		return (raceMenu.getX() + raceMenu.getWidth()) - X;
 	}
 	
 	public int getHeight(){
 		return (colorMenu.getY() + colorMenu.getHeight()) - Y;
-	}
-	
-	public int getX(){
-		return X;
-	}
-	
-	public int getY(){
-		return Y;
 	}
 	
 	public void setHidden(boolean b){
@@ -153,15 +124,6 @@ public class LocalPlayerLobbyPanel implements Component{
 	}
 
 	@Override
-	public boolean contains(int x, int y) {
-		if(x < X || x > X + getWidth())
-			return false;
-		if(y < Y || y > Y + getHeight())
-			return false;
-		return true;
-	}
-
-	@Override
 	public boolean mouseClick(int button, int x, int y) {
 		return raceMenu.mouseClick(button, x, y) || colorMenu.mouseClick(button, x, y);
 	}
@@ -173,15 +135,9 @@ public class LocalPlayerLobbyPanel implements Component{
 
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g) {
-		if(hidden)
-			return;
-		if(player.getRace() == null)
-			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName());
-		else
-			nameFont.drawString(X + colorTile.getWidth() + container.getWidth()/25, Y, player.getName() + " - " + player.getRace());
+		super.render(container, game, g);
 		colorMenu.render(container, game, g);
 		raceMenu.render(container, game, g);
-		colorTile.draw(X, Y);
 	}
 
 	@Override

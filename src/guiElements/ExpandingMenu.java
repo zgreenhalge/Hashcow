@@ -172,11 +172,11 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			expandFill = new Rectangle(base.getX()-5, baseY+getHeight()-1, getWidth()+10, height+1);
 		}
 		for(Button b: buttons)
-			if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2)){
+			if(b.getY() > expandFill.getY() && b.getY()+b.getHeight() <= expandFill.getY()+expandFill.getHeight())
 				b.setHidden(false);
-			}else{
+			else
 				b.setHidden(true);
-			}
+			
 		expanded = true;
 	}
 	
@@ -297,7 +297,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 					if(change > 0 && !contains(base.getX(), buttons.get(buttons.size()-1).getY()+buttons.get(buttons.size()-1).getHeight())){
 						for(Button b: buttons){
 							b.setLocation(b.getX(), b.getY()-4);
-							if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2))
+							if(b.getY() > expandFill.getY() && b.getY()+b.getHeight() <= expandFill.getY()+expandFill.getHeight())
 								b.setHidden(false);
 							else
 								b.setHidden(true);
@@ -306,7 +306,7 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 					else if(!contains(base.getX(), buttons.get(0).getY()-buttons.get(0).getHeight())){
 						for(Button b: buttons){
 							b.setLocation(b.getX(), b.getY()+4);
-							if(expandFill.contains(b.getX()+b.getWidth()/2, b.getY()+b.getHeight()/2))
+							if(b.getY() > expandFill.getY() && b.getY()+b.getHeight() <= expandFill.getY()+expandFill.getHeight())
 								b.setHidden(false);
 							else
 								b.setHidden(true);
