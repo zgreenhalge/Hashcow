@@ -208,16 +208,16 @@ public class GameLobbyState extends HCGameState {
 		network = true;
 	}
 
-	public void setColor(Player p, Color c){
+	public synchronized void setColor(Player p, Color c){
 		selectedColors.put(p, c);
 		p.setColor(c);
 	}
 
-	public boolean isColorTaken(Color temp) {
+	public synchronized boolean isColorTaken(Color temp) {
 		return selectedColors.containsValue(temp);
 	}
 	
-	public List<Integer> openPlayerSlots(){
+	public synchronized List<Integer> openPlayerSlots(){
 		List<Integer> ret = new ArrayList<Integer>();
 		for(PlayerLobbyPanel panel: players)
 			if(panel.getPlayer().getName().equals("Not Connected") && !panel.isHidden())
@@ -225,7 +225,7 @@ public class GameLobbyState extends HCGameState {
 		return ret;
 	}
 	
-	public PlayerLobbyPanel getPlayerPanel(int id){
+	public synchronized PlayerLobbyPanel getPlayerPanel(int id){
 		if(id < 0 || id > players.size())
 			return null;
 		return players.get(id-1);
