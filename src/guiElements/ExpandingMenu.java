@@ -219,11 +219,13 @@ public class ExpandingMenu extends MouseOverArea implements Menu{
 			return false;
 		if(base.mouseClick(button, x, y))
 			return true;
-		for(Button b: buttons)
-			if(b.mouseClick(button, x, y))
+		if(expanded){
+			for(Button b: buttons)
+				if(b.mouseClick(button, x, y))
+					return true;
+			if(expandFill.contains(x, y))
 				return true;
-		if(expanded && expandFill.contains(x, y))
-			return true;	
+		}
 		collapse();
 		return false;
 	}

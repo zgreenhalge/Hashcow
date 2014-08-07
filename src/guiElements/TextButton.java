@@ -58,7 +58,6 @@ public class TextButton extends MouseOverArea implements Button, Component{
     
     public void setHidden(boolean b){
     	hidden = b;
-    	//setAcceptingInput(!b);
     }
     
     public boolean isHidden(){

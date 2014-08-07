@@ -4,7 +4,7 @@ import gamePieces.MapInfo;
 import gamePieces.Player;
 import guiElements.ExpandingMenu;
 import guiElements.LayeredGUI;
-import guiElements.LocalPlayerLobbyPanel;
+import guiElements.PlayerLobbyPanel;
 import guiElements.PlayerLobbyPanel;
 import guiElements.TextButton;
 
@@ -66,12 +66,14 @@ public class GameLobbyState extends HCGameState {
 		players = new ArrayList<PlayerLobbyPanel>();
 		selectedColors = new OneToOneMap<Player, Color>();
 		maps = MapManager.loadMaps();
+		
 		if(cWidth < cHeight)
 			minimap = new Image(cWidth/4, cWidth/4);
 		else
 			minimap = new Image(cHeight/4, cHeight/4);
 		minimapX = 8*cWidth/9-minimap.getWidth();
 		minimapY = cHeight/10;
+		
 		Font buttonFont = FontManager.BUTTON_FONT;
 		mapMenuBase = new TextButton(container, buttonFont, "<Select A Map>",
 				0, 0,
@@ -125,6 +127,25 @@ public class GameLobbyState extends HCGameState {
 						Main.getGame().enterState(gs.getID());
 					}
 		});
+		
+		PlayerLobbyPanel temp;
+		temp = new PlayerLobbyPanel(this, new Player(1), 0, 0);
+		temp.setLocation(container.getWidth()/20, 5*temp.getHeight()/4);
+		numPlayers = 1;
+		players.add(temp);
+		int n = players.size();
+		while(n < MAX_LOBBY){
+			if(network){
+				players.add(new PlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
+				players.get(players.size()-1).setNetwork(true);
+			}
+			else
+				players.add(new PlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
+			players.get(n-1).setHidden(true);
+		}
+		
+		addPlayerButton.setLocation(temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
+		removePlayerButton.setLocation(temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
 	}
 	
 	@Override
@@ -138,23 +159,6 @@ public class GameLobbyState extends HCGameState {
 		removePlayerButton.setEnabled(false);
 		mapMenu.collapse();
 		if(gui == null){
-			PlayerLobbyPanel temp;
-			temp = new LocalPlayerLobbyPanel(this, new Player(1), 0, 0);
-			temp.setLocation(container.getWidth()/20, 5*temp.getHeight()/4);
-			numPlayers = 1;
-			players.add(temp);
-			int n = players.size();
-			while(n < MAX_LOBBY){
-				if(network){
-					players.add(new NetworkPlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
-					players.get(players.size()-1).getPlayer().setName("Not Connected");
-				}
-				else
-					players.add(new LocalPlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
-				players.get(n-1).setHidden(true);
-			}
-			addPlayerButton.setLocation(temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
-			removePlayerButton.setLocation(temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
 			gui = new LayeredGUI();
 			gui.add(mapMenu, 0);
 			gui.add(startButton, 1);
@@ -179,11 +183,6 @@ public class GameLobbyState extends HCGameState {
 		if(container.getInput().isKeyPressed(Input.KEY_ESCAPE))
 			game.enterState(MainMenuState.ID);
 		evaluateStartButton();
-		if(network){
-			//check for any new Actions
-			//perform Action/return any asked values
-			//send Action out to all connected peers
-		}
 		gui.update(container, game, delta);
 		super.update(container, game, delta);
 		
@@ -224,6 +223,12 @@ public class GameLobbyState extends HCGameState {
 			if(panel.getPlayer().getName().equals("Not Connected") && !panel.isHidden())
 				ret.add(players.indexOf(panel));
 		return ret;
+	}
+	
+	public PlayerLobbyPanel getPlayerPanel(int id){
+		if(id < 0 || id > players.size())
+			return null;
+		return players.get(id-1);
 	}
 	
 	public void addPlayer(){
