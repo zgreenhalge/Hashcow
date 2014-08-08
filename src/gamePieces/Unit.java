@@ -423,7 +423,7 @@ public abstract class Unit implements Selectable, Serializable{
 		return owner;
 	}
 
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+	/*private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeInt(unitId);		
 		oos.writeObject(map);
 		oos.writeObject(location);
@@ -467,7 +467,7 @@ public abstract class Unit implements Selectable, Serializable{
 		baseDefense = ois.readInt();
 		baseHealth = ois.readInt();
 		currentHealth = ois.readInt();
-	}
+	}*/
 	
 	
 	/**

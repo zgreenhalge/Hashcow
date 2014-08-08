@@ -37,13 +37,13 @@ public class LobbyHost extends Thread {
 			if(Thread.interrupted()) //manual check for interrupt
 				break;
 			if(!greeter.isAlive())
-				Logger.loudLog(new Exception("LobbyGreeter thread has died!"));
+				Logger.loudLog(new Exception("LobbyGreeter thread has died!")); //should do something more than log - maybe spin new one back up?
 			if(!messenger.isAlive())
-				Logger.loudLog(new Exception("LobbyMessenger thread has died!"));
+				Logger.loudLog(new Exception("LobbyMessenger thread has died!")); //should do something more than log - maybe spin new one back up?
 			synchronized(listLock){
 				for(LobbyClient client: clientList){
 					if(client.in.hasNextLine())
-						processMessage(client.in.nextLine());
+						processMessage(client.in.nextLine(), client);
 				}
 			}
 		}
@@ -51,18 +51,22 @@ public class LobbyHost extends Thread {
 		messenger.interrupt();
 	}
 	
-	private void processMessage(String nextLine) {
+	private void processMessage(String nextLine, LobbyClient sender) {
 		//read String
 		//perform required Actions
 		//send to outbound queue
 	}
 
 	public synchronized void startGame(){
-		
+		//clear outbound messages
+		//tell all clients to start game
+		//spin up game threads
 	}
 	
 	public synchronized void closeLobby(){
-		
+		//clear outbound messages
+		//tell all clients to exit lobby
+		//spin down lobby threads
 	}
 
 	/**
@@ -81,14 +85,14 @@ public class LobbyHost extends Thread {
 						server.close();
 						return;
 					}
-					temp = new LobbyClient(server.accept());
-					synchronized(listLock){
+					temp = new LobbyClient(server.accept()); //accept new socket connection
+					synchronized(listLock){					 //lock on the clientList lock
 							List<Integer> open = lobby.openPlayerSlots();
-							if(!clientList.contains(temp) && !open.isEmpty()){
+							if(!clientList.contains(temp) && !open.isEmpty()){ //if the player hasn't connected already and we have an empty slot
 								clientList.add(temp);
-								temp.out.println(LobbyMessages.LOBBY_ACCEPT+":"+open.get(0));
+								temp.out.println(LobbyMessages.LOBBY_ACCEPT+"|"+open.get(0)); //tell client of acceptance, give client position in lobby
 							}else 
-								temp.out.println(LobbyMessages.LOBBY_FULL);
+								temp.out.println(LobbyMessages.LOBBY_FULL); //tell client the lobby is full
 					}
 				}
 			} catch (IOException e) {
@@ -111,12 +115,12 @@ public class LobbyHost extends Thread {
 			while(true){
 				if(Thread.interrupted())
 					return;
-				while(messages.size() > 0){
+				while(messages.size() > 0){ //while there are messages in the list
 					synchronized(messageLock){
-						message = messages.remove();
+						message = messages.remove(); //lock the list, then pull the front off
 					}
 					synchronized(listLock){
-						for(LobbyClient client: clientList){
+						for(LobbyClient client: clientList){	//send the message to every client
 							client.out.println(message);
 						}
 					}

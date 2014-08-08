@@ -206,6 +206,7 @@ public class PlayerLobbyPanel implements Component{
 	}
 	
 	public void setNetwork(boolean b){
+		player.setNetwork(b);
 		colorMenu.setHidden(b);
 		raceMenu.setHidden(b);
 		network = b;

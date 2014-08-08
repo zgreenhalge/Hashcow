@@ -30,6 +30,8 @@ public class Player implements Serializable{
 	private ArrayList<Unit> owned;
 	private SightMap sight;
 	
+	private boolean network;
+	
 	//research
 	//resources
 	//unit cap?
@@ -206,7 +208,15 @@ public class Player implements Serializable{
 		return scale;
 	}
 	
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+	public void setNetwork(boolean b){
+		network = b;
+	}
+	
+	public boolean isNetwork(){
+		return network;
+	}
+	
+	/*private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeInt(id);
 		oos.writeInt(lastX);
 		oos.writeInt(lastY);
@@ -231,6 +241,6 @@ public class Player implements Serializable{
 		buildings = (ArrayList<Building>) ois.readObject();
 		owned = (ArrayList<Unit>) ois.readObject();
 		sight = (SightMap) ois.readObject();
-	}
+	}*/
 	
 }

@@ -26,7 +26,7 @@ public class HCGameState extends BasicGameState{
 	public void init(GameContainer container, StateBasedGame game) throws SlickException{
 		if(!Logger.isInit()){
 			try {
-				Logger.init(new File("logs"), container, false);
+				Logger.init(new File("logs"), container, true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

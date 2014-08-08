@@ -21,6 +21,8 @@ public class SaveState implements Serializable{
 
 	private static final String saveDir = "saves";
 	
+	private File file;
+	
 	private ArrayList<Player> players;
 	private MapInfo map;
 	private int turn;
@@ -33,6 +35,10 @@ public class SaveState implements Serializable{
 		turn = game.getTurn();
 		turnLength = 4;
 		curPlayer = game.getCurrentPlayer().getId()-1;
+	}
+	
+	public SaveState(File f){
+		file = f;
 	}
 	
 	public ArrayList<Player> getPlayers(){

@@ -27,6 +27,7 @@ public class LoadGameState extends HCGameState {
 	
 	private VerticalMenu gameList;
 	private ArrayList<SaveState> savedGames;
+	private ArrayList<File> fileList;
 	private File saveFolder;
 	
 	private int mapWidth;
@@ -49,30 +50,10 @@ public class LoadGameState extends HCGameState {
 		mMapY = gc.getWidth()/20;
 		gameList = new VerticalMenu(mMapY, mMapY);
 		savedGames = new ArrayList<SaveState>();
-		TextButton temp;
+		fileList = new ArrayList<File>();
 		saveFolder = new File("saves");
 		minimap = new Image(mapWidth, mapWidth);
 		loadGame = new LoadGameAction();
-		if(saveFolder.exists())
-			for(File f: saveFolder.listFiles()){
-				savedGames.add(SaveState.load(f.getPath()));
-				temp = new TextButton(gc, FontManager.DEFAULT_FONT, f.getName(), 0, 0,
-						sbg, ID, null);
-				temp.setAction(new SelectTextButtonAction(temp){
-					public void activate(){
-						activateBorders();
-						if(selectedButton != null)
-							selectedButton.setBorderEnabled(false);
-						selectedButton = this.getButton();
-						save = savedGames.get(gameList.getIndex(selectedButton));
-						for(Unit u: save.getMap().getAll())
-							u.load();
-						minimap = save.getMap().getMinimap(mapWidth, mapWidth);
-						loadGame.setSaveState(save);
-					}
-				});
-				gameList.addButton(temp);
-			}
 		loadGameButton = new TextButton(gc, FontManager.BUTTON_FONT, "Load",
 				mMapX, mMapY + gc.getHeight() - FontManager.BUTTON_TRUETYPE.getLineHeight()*4,
 				sbg, ID,
@@ -86,6 +67,29 @@ public class LoadGameState extends HCGameState {
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
 		super.enter(container, game);
 		if(gui == null){
+			TextButton temp;
+			if(saveFolder.exists())
+				for(File f: saveFolder.listFiles()){
+					savedGames.add(null);
+					fileList.add(f);
+					temp = new TextButton(container, FontManager.DEFAULT_FONT, f.getName(), 0, 0,
+							game, ID, null);
+					temp.setAction(new SelectTextButtonAction(temp){
+						public void activate(){
+							activateBorders();
+							if(selectedButton != null)
+								selectedButton.setBorderEnabled(false);
+							selectedButton = this.getButton();
+							save = savedGames.get(gameList.getIndex(selectedButton));
+							if(save == null)
+								save = SaveState.load(fileList.get(savedGames.indexOf(save)).getAbsolutePath());
+							save.getMap().load();
+							minimap = save.getMap().getMinimap(mapWidth, mapWidth);
+							loadGame.setSaveState(save);
+						}
+					});
+					gameList.addButton(temp);
+				}
 			loadGameButton.setBorderEnabled(true);
 			backButton.setBorderEnabled(true);
 			loadGameButton.setReport(true);

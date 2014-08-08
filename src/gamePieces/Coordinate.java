@@ -84,18 +84,18 @@ public class Coordinate implements Serializable{
 		return X + "," + Y;
 	}
 	
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+	/*private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.defaultWriteObject();
 	}
 	
 	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException{
 		ois.defaultReadObject();
-	}
+	}*/
 
 	/**
 	 * Get a Coordinate that shares the values of the passed Coordinate
 	 * @param target - the Coordinate to make a copy of
-	 * @return a new Coordinate with the sme values as the one passed
+	 * @return a new Coordinate with the same values as the one passed
 	 */
 	public static Coordinate copy(Coordinate target) {
 		return new Coordinate(target.X, target.Y);

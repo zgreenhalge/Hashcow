@@ -173,7 +173,7 @@ public class Tile implements Selectable, Serializable{
 			ani.draw(X, Y, maskFill);
 	}
 	
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+	/*private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeObject(name);
 		
 		oos.flush();
@@ -189,5 +189,5 @@ public class Tile implements Selectable, Serializable{
 			load();
 			break;
 		}
-	}
+	}*/
 }

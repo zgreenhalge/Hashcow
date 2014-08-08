@@ -111,7 +111,6 @@ public class InGameState extends HCGameState {
 			menuBar.addButton(endTurnButton);
 			menuBar.addButton(saveGameButton);
 			menuBar.setLocation(container.getWidth() - menuBar.getWidth(), 0);
-			Logger.loudLogLine("menuBar width: " + menuBar.getWidth());
 			gui.add(menuBar);
 		}
 		if(!playing){
@@ -139,11 +138,11 @@ public class InGameState extends HCGameState {
 	@Override
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
-		/****************************************************************************/
+		/**********************************************************************/
 		g.scale((float)scale, (float)scale);
 		map.render(g, X, Y);
 		g.resetTransform();
-		/***************************************************************************/
+		/**********************************************************************/
 		gui.render(container, game, g);
 		super.render(container, game, g);
 	}
@@ -208,13 +207,15 @@ public class InGameState extends HCGameState {
 	}
 	
 	public void startTurn(){
-		X = curPlayer.getLastX();
-		Y = curPlayer.getLastY();
-		scale = curPlayer.getScale();
 		for(Unit u: curPlayer.owned())
 			u.setVisible(true);
-		map.setSightMap(curPlayer.getSightMap());
-		map.applySightMap();
+		if(!curPlayer.isNetwork()){
+			X = curPlayer.getLastX();
+			Y = curPlayer.getLastY();
+			scale = curPlayer.getScale();
+			map.setSightMap(curPlayer.getSightMap());
+			map.applySightMap();
+		}
 	}
 	
 	public void endTurn(){

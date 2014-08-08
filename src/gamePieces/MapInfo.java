@@ -63,6 +63,16 @@ public class MapInfo implements Serializable{
 		return name;
 	}
 	
+	public void load(){
+		for(Unit u: units.values())
+			u.load();
+		for(Unit u: buildings.values())
+			u.load();
+		for(Tile[] array: board)
+			for(Tile tile: array)
+				tile.load();
+	}
+	
 	/**
 	 * Update the entire map - Tiles, Units, Buildings
 	 * @param delta - the time since the last update call
@@ -487,7 +497,7 @@ public class MapInfo implements Serializable{
 		return build.getImage().getScaledCopy(width, height);
 	}
 	
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+/*	private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeObject(board);
 		oos.writeObject(inputStack);
 		oos.writeObject(units);
@@ -520,7 +530,7 @@ public class MapInfo implements Serializable{
 		displayMode = ois.readInt();
 		pos = (String) ois.readObject();
 		
-	}
+	}*/
 
 	public ArrayList<Unit> getAll() {
 		ArrayList<Unit> ret = new ArrayList<Unit>();

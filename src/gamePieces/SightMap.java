@@ -140,7 +140,7 @@ public class SightMap implements Serializable{
 		return playerId;
 	}
 	
-	private void writeObject(ObjectOutputStream oos) throws IOException{
+	/*private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.writeObject(units);
 		oos.writeObject(map);
 		oos.writeInt(playerId);
@@ -152,5 +152,5 @@ public class SightMap implements Serializable{
 		units = (ArrayList<Unit>) ois.readObject();
 		map = (OneToOneMap<Coordinate, ArrayList<Unit>>) ois.readObject();
 		playerId = ois.readInt();
-	}
+	}*/
 }
