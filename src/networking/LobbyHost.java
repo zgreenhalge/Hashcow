@@ -3,6 +3,7 @@ package networking;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import theGame.GameLobbyState;
@@ -13,28 +14,32 @@ public class LobbyHost extends Thread {
 	private static final int PORT = 0; //automatically finds an open port - should find a static port eventually
 	
 	private static Object listLock = new Object();
-	private static Object outboundLock = new Object();
+	private static Object messageLock = new Object();
 	
 	private GameLobbyState lobby;
 	private ArrayList<LobbyClient> clientList;
-	private ArrayList<String> outbound;
+	private LinkedList<String> messages;
 	//private ArrayList
 	
 	public LobbyHost(GameLobbyState lobby) throws IOException{
 		this.lobby = lobby;
 		clientList = new ArrayList<LobbyClient>();
-		outbound = new ArrayList<String>();
+		messages = new LinkedList<String>();
 	}
 	
 	@Override
 	public void run(){
 		Thread greeter = new Thread(new LobbyGreeter());
-		Thread messenger = new Thread();
+		Thread messenger = new Thread(new LobbySender());
 		greeter.start();
 		messenger.start();
 		while(true){
 			if(Thread.interrupted()) //manual check for interrupt
 				break;
+			if(!greeter.isAlive())
+				Logger.loudLog(new Exception("LobbyGreeter thread has died!"));
+			if(!messenger.isAlive())
+				Logger.loudLog(new Exception("LobbyMessenger thread has died!"));
 			synchronized(listLock){
 				for(LobbyClient client: clientList){
 					if(client.in.hasNextLine())
@@ -78,12 +83,12 @@ public class LobbyHost extends Thread {
 					}
 					temp = new LobbyClient(server.accept());
 					synchronized(listLock){
-						List<Integer> open = lobby.openPlayerSlots();
-						if(!clientList.contains(temp) && !open.isEmpty()){
-							clientList.add(temp);
-							temp.out.println(LobbyMessages.LOBBY_ACCEPT+":"+open.get(0));
-						}else 
-							temp.out.println(LobbyMessages.LOBBY_FULL);
+							List<Integer> open = lobby.openPlayerSlots();
+							if(!clientList.contains(temp) && !open.isEmpty()){
+								clientList.add(temp);
+								temp.out.println(LobbyMessages.LOBBY_ACCEPT+":"+open.get(0));
+							}else 
+								temp.out.println(LobbyMessages.LOBBY_FULL);
 					}
 				}
 			} catch (IOException e) {
@@ -94,4 +99,29 @@ public class LobbyHost extends Thread {
 		
 	}
 
+	/**
+	 * A Runnable that will continually remove Strings from the message queue and send them to each LobbyClient
+	 *
+	 */
+	private class LobbySender implements Runnable{
+
+		@Override
+		public void run() {
+			String message;
+			while(true){
+				if(Thread.interrupted())
+					return;
+				while(messages.size() > 0){
+					synchronized(messageLock){
+						message = messages.remove();
+					}
+					synchronized(listLock){
+						for(LobbyClient client: clientList){
+							client.out.println(message);
+						}
+					}
+				}
+			}
+		}
+	}
 }

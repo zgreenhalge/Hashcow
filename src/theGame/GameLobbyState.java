@@ -67,12 +67,14 @@ public class GameLobbyState extends HCGameState {
 		selectedColors = new OneToOneMap<Player, Color>();
 		maps = MapManager.loadMaps();
 		
+		
 		if(cWidth < cHeight)
 			minimap = new Image(cWidth/4, cWidth/4);
 		else
 			minimap = new Image(cHeight/4, cHeight/4);
 		minimapX = 8*cWidth/9-minimap.getWidth();
-		minimapY = cHeight/10;
+		minimapY = cHeight/20;
+		
 		
 		Font buttonFont = FontManager.BUTTON_FONT;
 		mapMenuBase = new TextButton(container, buttonFont, "<Select A Map>",
@@ -92,6 +94,8 @@ public class GameLobbyState extends HCGameState {
 						}
 			}));
 		}
+		
+		
 		removePlayerButton = new TextButton(container, buttonFont, " - ",
 				0, 0,
 				game, this.getID(), 
@@ -109,11 +113,11 @@ public class GameLobbyState extends HCGameState {
 					}
 		});
 		backButton = new TextButton(container, buttonFont, "Back",
-				minimapX + minimap.getWidth()/2 + (minimap.getWidth()/2 - FontManager.BUTTON_TRUETYPE.getWidth("Back"))/2, minimapY + minimap.getHeight()*2 + 10,
+				minimapX + minimap.getWidth()/2 + (minimap.getWidth()/2 - FontManager.BUTTON_TRUETYPE.getWidth("Back"))/2, mapMenu.getY()+mapMenu.getHeight()+FontManager.BUTTON_TRUETYPE.getHeight()*4,
 				game, this.getID(), 
 				new StateTransitionAction(game, MainMenuState.ID));
 		startButton = new TextButton(container, buttonFont, "Start",
-				minimapX + (minimap.getWidth()/2 - FontManager.BUTTON_TRUETYPE.getWidth("Start"))/2, minimapY + minimap.getHeight()*2 + 10,
+				minimapX + (minimap.getWidth()/2 - FontManager.BUTTON_TRUETYPE.getWidth("Start"))/2, mapMenu.getY()+mapMenu.getHeight()+FontManager.BUTTON_TRUETYPE.getHeight()*4,
 				game, this.getID(),
 				new GenericAction(){
 					public void activate(){
@@ -123,26 +127,24 @@ public class GameLobbyState extends HCGameState {
 								return;
 						InGameState gs = new InGameState(selectedMap, temp);
 						Main.getGame().addState(gs);
-						
 						Main.getGame().enterState(gs.getID());
 					}
 		});
 		
+		
 		PlayerLobbyPanel temp;
 		temp = new PlayerLobbyPanel(this, new Player(1), 0, 0);
-		temp.setLocation(container.getWidth()/20, 5*temp.getHeight()/4);
+		temp.setLocation((minimapX - cWidth/20 - temp.getWidth())/2, cHeight/20);
 		numPlayers = 1;
 		players.add(temp);
 		int n = players.size();
 		while(n < MAX_LOBBY){
-			if(network){
-				players.add(new PlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
+			players.add(new PlayerLobbyPanel(this, new Player(++n), (minimapX - cWidth/20 - temp.getWidth())/2, (n)*(5*temp.getHeight()/4)));
+			if(network)
 				players.get(players.size()-1).setNetwork(true);
-			}
-			else
-				players.add(new PlayerLobbyPanel(this, new Player(++n), container.getWidth()/20, n*(5*temp.getHeight()/4)));
 			players.get(n-1).setHidden(true);
 		}
+		
 		
 		addPlayerButton.setLocation(temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
 		removePlayerButton.setLocation(temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
@@ -175,7 +177,10 @@ public class GameLobbyState extends HCGameState {
 		super.render(container, game, g);
 		gui.render(container, game, g);
 		minimap.draw(minimapX, minimapY);
-		
+		if(selectedMap != null){
+			g.drawString(selectedMap.getName() + " (" + selectedMap.getWidth() + "x" + selectedMap.getHeight() + ")", mapMenu.getX(), mapMenu.getY() + mapMenu.getHeight() + FontManager.BUTTON_TRUETYPE.getHeight());
+			g.drawString("Players: " + selectedMap.getMaxPlayers(), mapMenu.getX(), mapMenu.getY() + mapMenu.getHeight() + FontManager.BUTTON_TRUETYPE.getHeight()*2);
+		}
 	}
 	
 	@Override
@@ -233,8 +238,8 @@ public class GameLobbyState extends HCGameState {
 	
 	public void addPlayer(){
 		PlayerLobbyPanel temp = players.get(numPlayers++);
-		Logger.loudLogLine(numPlayers + " players");
 		temp.setHidden(false);
+		temp.setNetwork(network);
 		addPlayerButton.setLocation(addPlayerButton.getX(), temp.getY() + temp.getHeight() + temp.getHeight()/2);
 		removePlayerButton.setLocation(removePlayerButton.getX(), temp.getY() + temp.getHeight() + temp.getHeight()/2);
 		if(numPlayers == MAX_LOBBY)
@@ -244,7 +249,6 @@ public class GameLobbyState extends HCGameState {
 	
 	public void removePlayer(){
 		PlayerLobbyPanel temp = players.get(--numPlayers);
-		Logger.loudLogLine(numPlayers + " players");
 		temp.setHidden(true);
 		addPlayerButton.setLocation(addPlayerButton.getX(), temp.getY() + temp.getHeight()/2);
 		removePlayerButton.setLocation(removePlayerButton.getX(), temp.getY() + temp.getHeight()/2);
