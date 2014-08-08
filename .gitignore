@@ -1,4 +1,5 @@
 /bin
 /.classpath
 /config.txt
-/saves/*.dat
+/saves/*
+/logs/*
