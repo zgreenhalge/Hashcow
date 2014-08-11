@@ -56,6 +56,10 @@ public class LobbyHost extends Thread {
 		//perform required Actions
 		//send to outbound queue
 	}
+	
+	public synchronized void sendMessage(String s){
+		//send the message to all connected clients (including host?)
+	}
 
 	public synchronized void startGame(){
 		//clear outbound messages
