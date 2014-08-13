@@ -41,6 +41,7 @@ public class PlayerLobbyPanel implements Component{
 	private boolean hidden;
 	private boolean reporting;
 	private boolean network;
+	private boolean ready;
 	
 	public PlayerLobbyPanel(GameLobbyState lby, Player p, int x, int y) throws SlickException{
 		GameContainer container = Main.getStaticContainer();
@@ -205,6 +206,10 @@ public class PlayerLobbyPanel implements Component{
 		return false;
 	}
 	
+	public boolean isNetwork(){
+		return network;
+	}
+	
 	public void setNetwork(boolean b){
 		player.setNetwork(b);
 		colorMenu.setHidden(b);
@@ -217,13 +222,21 @@ public class PlayerLobbyPanel implements Component{
 		colorTile = playerColors.getColorAsImage(c, colorTile.getWidth(), colorTile.getHeight());
 	}
 	
+	public void setReady(boolean b){
+		ready = b;
+	}
+	
+	public boolean isReady(){
+		return ready;
+	}
+	
 	public void clear(){
 		if(network)
 			player.setName("Not Connected");
 		else
 			player.setName("Player " + player.getId());
 		player.setRace(null);
-		player.setColor(playerColors.getColor(-1)); //clear
+		player.setColor(playerColors.getColor(-1)); //transparent
 	}
 	
 }

@@ -1,10 +1,14 @@
 package networking;
 
+import gamePieces.Race;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.newdawn.slick.Color;
 
 import theGame.GameLobbyState;
 import utils.Logger;
@@ -52,12 +56,35 @@ public class LobbyHost extends Thread {
 	}
 	
 	private void processMessage(String nextLine, LobbyClient sender) {
-		//read String
-		//perform required Actions
-		//send to outbound queue
+		String[] args = nextLine.split(":");
+		String message = args[0];
+		if(message.equals(LobbyMessages.CHAT)){
+			//print message in lobby	
+		}else if(message.equals(LobbyMessages.CHANGE_COLOR)){
+			String[] ints = args[2].split(",");
+			Color temp = new Color(Integer.parseInt(ints[0]), Integer.parseInt(ints[1]), Integer.parseInt(ints[2]), Integer.parseInt(ints[3]));
+			lobby.getPlayerPanel(Integer.parseInt(args[1])).setColor(temp);
+		}else if(message.equals(LobbyMessages.CHANGE_RACE)){
+			Race r = Race.getRace(Integer.parseInt(args[2]));
+			lobby.getPlayerPanel(Integer.parseInt(args[1])).getPlayer().setRace(r);
+		}else if(message.equals(LobbyMessages.CHANGE_NAME)){
+			lobby.getPlayerPanel(Integer.parseInt(args[1])).getPlayer().setName(args[2]);			
+		}else if(message.equals(LobbyMessages.READY)){
+			if(Boolean.parseBoolean(args[1]))
+				lobby.getPlayerPanel(Integer.parseInt(args[1])).setReady(true);
+			else
+				lobby.getPlayerPanel(Integer.parseInt(args[1])).setReady(false);
+		}else if(message.equals(LobbyMessages.QUIT_LOBBY)){
+			lobby.getPlayerPanel(Integer.parseInt(args[1])).clear();
+			synchronized(listLock){
+				clientList.remove(sender);
+			}
+		}else return; //message does not match any known messages - don't forward it
+		
+		sendMessage(nextLine, sender);
 	}
 	
-	public synchronized void sendMessage(String s){
+	public synchronized void sendMessage(String s, LobbyClient sender){
 		//send the message to all connected clients (including host?)
 	}
 
@@ -93,8 +120,10 @@ public class LobbyHost extends Thread {
 					synchronized(listLock){					 //lock on the clientList lock
 							List<Integer> open = lobby.openPlayerSlots();
 							if(!clientList.contains(temp) && !open.isEmpty()){ //if the player hasn't connected already and we have an empty slot
+								int pos =open.get(0);
 								clientList.add(temp);
-								temp.out.println(LobbyMessages.LOBBY_ACCEPT+"|"+open.get(0)); //tell client of acceptance, give client position in lobby
+								temp.out.println(LobbyMessages.LOBBY_ACCEPT+":"+pos); //tell client of acceptance, give client position in lobby
+								lobby.getPlayerPanel(pos).getPlayer().setName("Player " + pos);
 							}else 
 								temp.out.println(LobbyMessages.LOBBY_FULL); //tell client the lobby is full
 					}
@@ -132,4 +161,5 @@ public class LobbyHost extends Thread {
 			}
 		}
 	}
+	
 }

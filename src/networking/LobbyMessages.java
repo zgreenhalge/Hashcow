@@ -8,6 +8,7 @@ public enum LobbyMessages {
 	CHAT("~Chat"),
 	CHANGE_COLOR("~ColorChange"),
 	CHANGE_RACE("~RaceChange"),
+	CHANGE_NAME("~NameChange"),
 	QUIT_LOBBY("~QuitLobby"),
 	READY("~Ready");
 	

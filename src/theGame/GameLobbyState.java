@@ -56,7 +56,7 @@ public class GameLobbyState extends HCGameState {
 	private TextButton removePlayerButton;
 	
 	private static boolean network;
-	private boolean host;	
+	private static boolean host;	
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game) throws SlickException{
@@ -163,12 +163,14 @@ public class GameLobbyState extends HCGameState {
 		if(gui == null){
 			gui = new LayeredGUI();
 			gui.add(mapMenu, 0);
-			gui.add(startButton, 1);
-			gui.add(backButton, 1);
+			if(host){
+				gui.add(startButton, 1);
+				gui.add(backButton, 1);
+				gui.add(addPlayerButton, 9);
+				gui.add(removePlayerButton, 9);
+			}
 			for(int i = players.size()-1; i>-1; i--)
 				gui.add(players.get(i), i);
-			gui.add(addPlayerButton, 9);
-			gui.add(removePlayerButton, 9);
 		}
 	}
 		
@@ -207,10 +209,12 @@ public class GameLobbyState extends HCGameState {
 
 	public static void setLocal(){
 		network = false;
+		host = true;
 	}
 	
-	public static void setNetwork(){
+	public static void setNetwork(boolean host){
 		network = true;
+		GameLobbyState.host = host;
 	}
 
 	public synchronized void setColor(Player p, Color c){
@@ -231,7 +235,7 @@ public class GameLobbyState extends HCGameState {
 	}
 	
 	public synchronized PlayerLobbyPanel getPlayerPanel(int id){
-		if(id < 0 || id > players.size())
+		if(id <= 0 || id > players.size())
 			return null;
 		return players.get(id-1);
 	}
@@ -263,11 +267,17 @@ public class GameLobbyState extends HCGameState {
 		}else if(numPlayers == 1){
 			startButton.setEnabled(false);
 		}else if(numPlayers <= selectedMap.getMaxPlayers()){
-			for(Player p: getPlayers())
-				if(!p.ready()){
+			for(PlayerLobbyPanel p: players){
+				if(p.isNetwork()){
+					if(!p.isReady() || !p.getPlayer().ready()){
+						startButton.setEnabled(false);
+						return;
+					}
+				}else if(!p.getPlayer().ready()){
 					startButton.setEnabled(false);
 					return;
 				}
+			}
 			startButton.setEnabled(true);
 		}else
 			startButton.setEnabled(false);
