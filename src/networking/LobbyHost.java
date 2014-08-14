@@ -60,21 +60,21 @@ public class LobbyHost extends Thread {
 		String message = args[0];
 		if(message.equals(LobbyMessages.CHAT)){
 			//print message in lobby	
-		}else if(message.equals(LobbyMessages.CHANGE_COLOR)){
+		}else if(message.equals(LobbyMessages.CHANGE_COLOR)){//<---------------change color
 			String[] ints = args[2].split(",");
 			Color temp = new Color(Integer.parseInt(ints[0]), Integer.parseInt(ints[1]), Integer.parseInt(ints[2]), Integer.parseInt(ints[3]));
 			lobby.getPlayerPanel(Integer.parseInt(args[1])).setColor(temp);
-		}else if(message.equals(LobbyMessages.CHANGE_RACE)){
+		}else if(message.equals(LobbyMessages.CHANGE_RACE)){//<----------------change race 
 			Race r = Race.getRace(Integer.parseInt(args[2]));
 			lobby.getPlayerPanel(Integer.parseInt(args[1])).getPlayer().setRace(r);
-		}else if(message.equals(LobbyMessages.CHANGE_NAME)){
+		}else if(message.equals(LobbyMessages.CHANGE_NAME)){//<----------------change name
 			lobby.getPlayerPanel(Integer.parseInt(args[1])).getPlayer().setName(args[2]);			
-		}else if(message.equals(LobbyMessages.READY)){
+		}else if(message.equals(LobbyMessages.READY)){//<----------------------ready 
 			if(Boolean.parseBoolean(args[1]))
 				lobby.getPlayerPanel(Integer.parseInt(args[1])).setReady(true);
 			else
 				lobby.getPlayerPanel(Integer.parseInt(args[1])).setReady(false);
-		}else if(message.equals(LobbyMessages.QUIT_LOBBY)){
+		}else if(message.equals(LobbyMessages.QUIT_LOBBY)){//<-----------------quit
 			lobby.getPlayerPanel(Integer.parseInt(args[1])).clear();
 			synchronized(listLock){
 				clientList.remove(sender);
