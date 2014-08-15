@@ -21,20 +21,21 @@ public class LobbyHost extends Thread {
 	private static Object messageLock = new Object();
 	
 	private GameLobbyState lobby;
-	private ArrayList<LobbyClient> clientList;
+	private ArrayList<HostSideLobbyClient> clientList;
 	private LinkedList<String> messages;
-	//private ArrayList
+	private Thread greeter;
+	private Thread messenger;
 	
 	public LobbyHost(GameLobbyState lobby) throws IOException{
 		this.lobby = lobby;
-		clientList = new ArrayList<LobbyClient>();
+		clientList = new ArrayList<HostSideLobbyClient>();
 		messages = new LinkedList<String>();
 	}
 	
 	@Override
 	public void run(){
-		Thread greeter = new Thread(new LobbyGreeter());
-		Thread messenger = new Thread(new LobbySender());
+		greeter = new Thread(new LobbyGreeter());
+		messenger = new Thread(new LobbySender());
 		greeter.start();
 		messenger.start();
 		while(true){
@@ -45,7 +46,7 @@ public class LobbyHost extends Thread {
 			if(!messenger.isAlive())
 				Logger.loudLog(new Exception("LobbyMessenger thread has died!")); //should do something more than log - maybe spin new one back up?
 			synchronized(listLock){
-				for(LobbyClient client: clientList){
+				for(HostSideLobbyClient client: clientList){
 					if(client.in.hasNextLine())
 						processMessage(client.in.nextLine(), client);
 				}
@@ -55,7 +56,7 @@ public class LobbyHost extends Thread {
 		messenger.interrupt();
 	}
 	
-	private void processMessage(String nextLine, LobbyClient sender) {
+	private void processMessage(String nextLine, HostSideLobbyClient sender) {
 		String[] args = nextLine.split(":");
 		String message = args[0];
 		if(message.equals(LobbyMessages.CHAT)){
@@ -81,23 +82,45 @@ public class LobbyHost extends Thread {
 			}
 		}else return; //message does not match any known messages - don't forward it
 		
-		sendMessage(nextLine, sender);
+		synchronized(messageLock){ //add message to list for LobbySender to deal with
+			messages.add(nextLine);
+		}
 	}
 	
-	public synchronized void sendMessage(String s, LobbyClient sender){
-		//send the message to all connected clients (including host?)
+	public synchronized void sendMessage(String s, HostSideLobbyClient sender){
+		if(sender == null){
+			synchronized(listLock){
+				for(HostSideLobbyClient client: clientList)
+					client.out.println(s);
+			}
+		}else{
+			synchronized(listLock){
+				for(HostSideLobbyClient client: clientList){
+					if(client.equals(sender))
+						continue;
+					client.out.println(s);
+				}
+			}
+		}
 	}
 
 	public synchronized void startGame(){
-		//clear outbound messages
-		//tell all clients to start game
-		//spin up game threads
+		synchronized(messageLock){
+			messages.clear();
+		}
+		sendMessage(LobbyMessages.START_GAME.toString(), null);
+		lobby.startGame(this);
 	}
 	
 	public synchronized void closeLobby(){
-		//clear outbound messages
-		//tell all clients to exit lobby
-		//spin down lobby threads
+		synchronized(messageLock){
+			messages.clear();
+		}
+		sendMessage(LobbyMessages.LOBBY_CLOSED.toString(), null);
+		this.interrupt();
+		greeter.interrupt();
+		messenger.interrupt();
+		lobby.closeLobby();
 	}
 
 	/**
@@ -110,13 +133,13 @@ public class LobbyHost extends Thread {
 		public void run() {
 			try {
 				ServerSocket server = new ServerSocket(PORT);
-				LobbyClient temp;
+				HostSideLobbyClient temp;
 				while(true){
 					if(Thread.interrupted()){
 						server.close();
 						return;
 					}
-					temp = new LobbyClient(server.accept()); //accept new socket connection
+					temp = new HostSideLobbyClient(server.accept()); //accept new socket connection
 					synchronized(listLock){					 //lock on the clientList lock
 							List<Integer> open = lobby.openPlayerSlots();
 							if(!clientList.contains(temp) && !open.isEmpty()){ //if the player hasn't connected already and we have an empty slot
@@ -153,7 +176,7 @@ public class LobbyHost extends Thread {
 						message = messages.remove(); //lock the list, then pull the front off
 					}
 					synchronized(listLock){
-						for(LobbyClient client: clientList){	//send the message to every client
+						for(HostSideLobbyClient client: clientList){	//send the message to every client
 							client.out.println(message);
 						}
 					}

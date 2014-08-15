@@ -12,6 +12,8 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
+import networking.LobbyHost;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -125,6 +127,7 @@ public class GameLobbyState extends HCGameState {
 						for(Player p: temp)
 							if(!p.ready())
 								return;
+						//TODO something in InGameState should be changed to enable network play
 						InGameState gs = new InGameState(selectedMap, temp);
 						Main.getGame().addState(gs);
 						Main.getGame().enterState(gs.getID());
@@ -202,8 +205,12 @@ public class GameLobbyState extends HCGameState {
 	
 	private ArrayList<Player> getPlayers(){
 		ArrayList<Player> ret = new ArrayList<Player>();
-		for(int i = 0; i<numPlayers; i++)
+		for(int i = 0; i<numPlayers; i++){
+			if(network)
+				if(players.get(i).getName().equals("Not Connected"))
+					continue;
 			ret.add(players.get(i).getPlayer());
+		}
 		return ret;
 	}
 
@@ -259,6 +266,16 @@ public class GameLobbyState extends HCGameState {
 		if(numPlayers == 1)
 			removePlayerButton.setEnabled(false);
 		addPlayerButton.setEnabled(true);		
+	}
+	
+	public void startGame(LobbyHost host){
+		host.closeLobby();
+		startButton.getAction().activate();
+	}
+	
+	public void closeLobby(){
+		//set main menu to display closed lobby message
+		//transition to main menu
 	}
 	
 	private void evaluateStartButton(){

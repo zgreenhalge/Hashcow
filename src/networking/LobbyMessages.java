@@ -5,6 +5,7 @@ public enum LobbyMessages {
 	LOBBY_ACCEPT("~LobbyAccept"),
 	LOBBY_FULL("~LobbyFull"),
 	LOBBY_CLOSED("~LobbyClosed"),
+	START_GAME("~StartGame"),
 	CHAT("~Chat"),
 	CHANGE_COLOR("~ColorChange"),
 	CHANGE_RACE("~RaceChange"),

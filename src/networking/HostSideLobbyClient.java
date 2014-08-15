@@ -7,13 +7,13 @@ import java.util.Scanner;
 
 import utils.Logger;
 
-public class LobbyClient {
+public class HostSideLobbyClient {
 
 	public PrintWriter out;
 	public Scanner in;
 	private Socket socket;
 	
-	public LobbyClient(Socket sock) throws IOException{
+	public HostSideLobbyClient(Socket sock) throws IOException{
 		socket = sock;
 		out = new PrintWriter(sock.getOutputStream());
 		in = new Scanner(sock.getInputStream());

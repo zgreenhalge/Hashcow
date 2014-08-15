@@ -227,6 +227,9 @@ public class PlayerLobbyPanel implements Component{
 	}
 	
 	public boolean isReady(){
+		if(network)
+			if(player.getName().equals("Not Connected"))
+				return false;
 		return ready;
 	}
 	
