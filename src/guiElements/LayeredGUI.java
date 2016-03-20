@@ -107,8 +107,8 @@ public class LayeredGUI implements GUI{
 	
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount){
-		if((Boolean) Settings.getSetting("dev"))
-			Logger.logNote("Mouse click: " + x + "," + y);
+//		if((Boolean) Settings.getSetting("dev"))
+//			Logger.logNote("Mouse click: " + x + "," + y);
 		tierLoop: //break out of this block once input is consumed
 		for(int layer = 0; layer<MAX_LAYER; layer++)
 			if(tiers.containsKey(layer))

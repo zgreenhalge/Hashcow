@@ -67,9 +67,10 @@ public class GameLobbyState extends HCGameState {
 		int cHeight = container.getHeight();
 		players = new ArrayList<PlayerLobbyPanel>();
 		selectedColors = new OneToOneMap<Player, Color>();
+		Logger.loudLogLine("Loading maps...");
 		maps = MapManager.loadMaps();
 		
-		
+		Logger.loudLogLine("Creating minimap...");
 		if(cWidth < cHeight)
 			minimap = new Image(cWidth/4, cWidth/4);
 		else
@@ -77,7 +78,7 @@ public class GameLobbyState extends HCGameState {
 		minimapX = 8*cWidth/9-minimap.getWidth();
 		minimapY = cHeight/20;
 		
-		
+		Logger.loudLogLine("Creating map menu...");
 		Font buttonFont = FontManager.BUTTON_FONT;
 		mapMenuBase = new TextButton(container, buttonFont, "<Select A Map>",
 				0, 0,
@@ -97,7 +98,7 @@ public class GameLobbyState extends HCGameState {
 			}));
 		}
 		
-		
+		Logger.loudLogLine("Creating buttons...");
 		removePlayerButton = new TextButton(container, buttonFont, " - ",
 				0, 0,
 				game, this.getID(), 
@@ -134,7 +135,7 @@ public class GameLobbyState extends HCGameState {
 					}
 		});
 		
-		
+		Logger.loudLogLine("Creating player panel...");
 		PlayerLobbyPanel temp;
 		temp = new PlayerLobbyPanel(this, new Player(1), 0, 0);
 		temp.setLocation((minimapX - cWidth/20 - temp.getWidth())/2, cHeight/20);
@@ -151,10 +152,12 @@ public class GameLobbyState extends HCGameState {
 		
 		addPlayerButton.setLocation(temp.getX() + 2*temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
 		removePlayerButton.setLocation(temp.getX() + temp.getWidth()/3, temp.getY() + temp.getHeight() + temp.getHeight()/2);
+		Logger.loudLogLine("State init complete.");
 	}
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		super.enter(container, game);
 		currentLobby = this;
 		backButton.setBorderEnabled(true);
 		startButton.setBorderEnabled(true);

@@ -19,6 +19,9 @@ public class Main extends StateBasedGame {
 
 	private static AppGameContainer appgc;
 	private static StateBasedGame currentGame;
+	protected static HCGameState MAIN_STATE = new MainMenuState();
+	protected static HCGameState LOAD_STATE = null;
+	protected static HCGameState LOBBY_STATE = null;
 	
 	public static final String GAME_VERSION = "0.01a";
 	
@@ -40,7 +43,7 @@ public class Main extends StateBasedGame {
 		}*/
 		
 		try{
-			currentGame = new Main("This Is The Title");
+			currentGame = new Main("Loading. . .");
 			Display.setResizable(true);
 			appgc = new AppGameContainer(currentGame);
 			String[] res = ((String) Settings.getSetting("resolution")).split("x");
@@ -72,9 +75,9 @@ public class Main extends StateBasedGame {
 	
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
-		addState(new MainMenuState());
-		addState(new LoadGameState());
-		addState(new GameLobbyState());
+		addState(MAIN_STATE);
+//		addState(new LoadGameState());
+//		addState(new GameLobbyState());
 	}
 	
 	public static StateBasedGame getGame(){
@@ -93,6 +96,20 @@ public class Main extends StateBasedGame {
 			Logger.log(e);
 		}
 		return modes;
+	}
+	
+	public static void addLobbyState() throws SlickException
+	{
+		LOBBY_STATE = new GameLobbyState();
+		LOBBY_STATE.init(appgc, currentGame);
+		currentGame.addState(LOBBY_STATE);
+	}
+	
+	public static void addLoadState() throws SlickException
+	{
+		LOAD_STATE = new LoadGameState();
+		LOAD_STATE.init(appgc, currentGame);
+		currentGame.addState(LOBBY_STATE);
 	}
 
 	/**

@@ -103,6 +103,7 @@ public class InGameState extends HCGameState {
 	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game) throws SlickException{
+		super.enter(container, game);
 		if(!init)
 			init(container, game);
 		if(gui == null){

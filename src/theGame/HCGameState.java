@@ -15,7 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import utils.Logger;
 import utils.Settings;
 
-public class HCGameState extends BasicGameState{
+public abstract class HCGameState extends BasicGameState{
 
 	private static boolean displayLog;
 	private static final int DISPLAY_LENGTH = 3500; //how long to display the log
@@ -71,10 +71,6 @@ public class HCGameState extends BasicGameState{
 		Logger.loudLogLine("Entering state " + getID());
 	}
 
-	//MUST BE OVERRIDDEN IN EACH SUB CLASS
-	@Override
-	public int getID(){
-		return -1;
-	}
+	public abstract int getID();
 
 }
